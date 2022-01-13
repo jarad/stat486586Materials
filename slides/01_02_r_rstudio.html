@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>STAT486/586  R and RStudio</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Xiongtao Dai" />
+    <script src="libs/header-attrs-2.11/header-attrs.js"></script>
+    <link rel="stylesheet" href="myslides.css" type="text/css" />
+    <link rel="stylesheet" href="myslides-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# STAT486/586 </br> R and RStudio
+### Xiongtao Dai
+
+---
+
+class: middle, big
+
+# R and RStudio 
+
+
+
+---
+
+
+## R is ...
+
+* One of the most popular statistical/data science programming languages
+* __Free__ to use, __open source__ so you can see what code is doing to your data
+* __Powerful__ for data analysis
+    * With the right tools, get more work done, faster.
+* __Extensible__: More than 18000 user contributed add-on packages currently on CRAN! Bioconductor more than 2000 packages. Many researchers provide R packages through github.
+* __Flexible__
+    * Not a question of _can_, but _how_.
+
+
+
+---
+
+## RStudio is ... 
+
+RStudio is an integrated development environment (IDE) for R.
+
+Data scientist [Julie Lowndes](http://jules32.github.io/resources/RStudio_intro/) said:  
+
+&lt;!--&lt;img class="cover" src="images/airport.png" alt=""&gt;--&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;b&gt;If R were an airplane, RStudio would be the airport&lt;/b&gt;, providing many, many supporting services that make it easier for you, the pilot, to take off and go to awesome places. Sure, you can fly an airplane without an airport, but having those runways and supporting infrastructure is a game-changer.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+Rstudio is one of the best R development environment. Other good ones include [Visual Studio](https://docs.microsoft.com/en-us/visualstudio/rtvs/?view=vs-2017), [Nvim-r](https://github.com/jalvesaq/Nvim-R), and [ESS](http://ess.r-project.org/). 
+
+---
+
+## The RStudio IDE
+
+&lt;img class="cover" src="images/rstudio-panes.png" alt=""&gt;
+
+---
+
+## The RStudio IDE
+
+
+1. **Source editor:** Editor for multiple file types (R, HTML, JS, etc), Useful shortcuts ("Knit"), Highlighting/Tab-completion, Code-checking, Debugging features  
+
+2. **Console window:** Highlighting/Tab-completion, Search recent commands, and Terminal
+
+3. **Environment pane:** Tools for package development, git, etc
+
+4. **Other tabs/panes:** Graphics, R Help, File system navigation/access
+
+&lt;!--
+&lt;br&gt;
+&lt;br&gt;
+&lt;p class = "note"&gt;
+*Protip:* save yourself the headaches figuring out file paths and instead work in an RStudio R project (popup menu at the top left)
+&lt;/p&gt;
+--&gt;
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="macros.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

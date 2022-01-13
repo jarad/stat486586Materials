@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Understanding paths, bash, and git</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Xiongtao Dai" />
+    <script src="libs/header-attrs-2.11/header-attrs.js"></script>
+    <link rel="stylesheet" href="myslides.css" type="text/css" />
+    <link rel="stylesheet" href="myslides-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Understanding paths, bash, and git
+## STAT486/586
+### Xiongtao Dai
+
+---
+
+
+class: middle, big
+
+
+
+# Understanding Paths
+
+---
+
+## Paths
+
+- Programs rely on specifications of  *paths* to know where to read in files and save outputs
+
+- This is similar to an URL, but a path points to a file on your local machine
+
+- E.g., `read.csv('input.csv')` is going to to read from file `input.csv`
+
+- Exactly, which file in folder are we referring to?
+
+---
+
+## Current working directory
+
+
+
+- Most programs have a *(current) working directory*
+
+- It is "where you are"
+
+- In R console, `getwd()` shows the working directory
+
+  
+  ```r
+  getwd()
+  ```
+  
+  ```
+  ## [1] "/Users/xdai/Downloads"
+  ```
+  
+- So `read.csv('input.csv')` is going to read the file in the previous Downloads folder
+
+- Commonly used working directory is at the source file location. To set the working directory there, in RStudio, click Session -- Set Working Directory -- To Source File Location
+
+- You can also use `setwd()` to set the directory
+
+---
+
+## Absolute and Relative Paths
+
+- An *absolute path* is the location of a file on the hard disk. An absolute path always starts with an `/`. E.g., `/` (the root folder), `/Users/xdai`, `/c/My Documents`
+    - Avoid absolute path in your code because they make the code non-reproducible
+    
+- A *relative path* is the location of a file relative to the current working directory. E.g., 
+    - `.` (current directory), 
+    - `..` (parent directory), 
+    - `demo.R` (`demo.R` in the current directory), and 
+    - `../demo.R` (`demo.R` in the parent directory)
+    
+---
+class: middle, big
+
+## Bash
+
+---
+
+## What is `bash`
+
+- `bash` is a text-based command-line interface to your operation system
+
+- A tool to "talk to the system" using text-based command
+
+- As opposed to a graphical user interface (GUI)
+
+- bash is a very useful programming tool! Help you chain your tasks together, among other things.
+
+- We will be accessing `git` via `bash`
+
+---
+
+## `bash` Command-Line
+
+- We can access `bash` in the Terminal tab in RStudio. Homework 1 instructs you how to set this up
+
+- The most important `bash` commands are: 
+    - `pwd`, present working directory. All relative paths are relative to the present working directory.
+    - `ls`, list files; `ls -a`, list all files including hidden ones
+    - `cd`, change directory
+    
+- Other important commands: `mkdir`, `cp`, `mv`, `rm`, `open`
+
+---
+
+## `bash` Demonstration...
+
+---
+class: inverse
+
+## Bash: Your Turn
+
+
+2. &lt;img src="images/green.png" width=20&gt; In RStudio, click the Terminal tab (right to the Console tab).
+
+3. &lt;img src="images/green.png" width=20&gt; Find the present working directory.
+
+4. &lt;img src="images/green.png" width=20&gt; Create a new directory named `example1`, and then `cd` into this directory. 
+
+5. &lt;img src="images/blue.png" width=20&gt; Create an RMarkDown file named 'tmp.Rmd' in RStudio and knit it. Move it into `example1` in Bash. Also move the generated html file.
+
+6. &lt;img src="images/green.png" width=20&gt; Use `open` to view the content of the html file.
+
+---
+
+## Mess in the code
+
+&lt;center&gt;
+&lt;img src="images/yelp1.png" width=600&gt;
+&lt;/center&gt;
+
+---
+
+## Mess in the code 
+**Yelp's application update:**
+
+&lt;center&gt;
+&lt;img src="images/yelp2.png" width=900&gt;
+&lt;/center&gt;
+
+---
+
+## What is Git?
+
+- `git` is a *version control system* that is created to help developers track changes in source codes and manage collaborative projects. 
+
+- `git` tracks the evolution of a folder containing code files and subfolders. 
+&lt;!-- The tracked folder is called a **repository** or **repo**.  --&gt;
+
+- `git` helps us
+    - *make records* of the code files, creating snapshots
+    - *compare* snapshots to locate changes or bugs
+    - *rollback* to previous versions of files as necessary
+    - store *master* and multiple versions of files, no more `paper_final_final_I_really_mean_it.docx`
+    - *merge* versions and *resolve conflicts* that arise from collaboration
+
+---
+
+## Git 
+
+Terminology from [github glossary](https://help.github.com/articles/github-glossary/)
+
+- **Repository:** the basic element of `git` - like a project's folder. A repository contains all of the project files, and their __revision history__. 
+- **Commit:** A checkpoint, i.e., snapshot of the codes files at a time point. Every time you commit, git creates a unique ID that allows you to keep record of what changes were made when and by whom.
+
+`git` commands important to us: `git init`, `git status`, `git log`, `git add`, `git commit`, `git diff`.
+
+Caution: `git` works well with text files but not binary files
+
+&lt;!-- ## Looking ahead ...  --&gt;
+
+&lt;!-- In this class we will use git &amp; github for  --&gt;
+
+&lt;!-- - homework and lab assignments, and --&gt;
+&lt;!-- - the projects. --&gt;
+
+---
+
+## `git` Demonstration...
+
+---
+class: inverse
+
+## Your turn: Making git commits
+
+1.  &lt;img src="images/green.png" width=20&gt; Make `example1` your current directory. 
+
+2. &lt;img src="images/green.png" width=20&gt; Initiate the current directory as a Git repository (`git init`). What does `git status` show? 
+
+3. &lt;img src="images/green.png" width=20&gt; Ask Git to track the RMarkDown file and create a commit (`git add fileName`, and then `git commit -m 'Your Message Here'`).
+
+4. &lt;img src="images/green.png" width=20&gt; Repeat part 3 for the html file.
+
+5. &lt;img src="images/blue.png" width=20&gt; Look at the repo status (`git status`) and repo history (`git log`) 
+
+---
+
+
+## What is GitHub?
+
+[GitHub](github.com) is one of many hosting services, which provides additional project management functions 
+&lt;!-- (other choices are [Bitbucket](bitbucket.org), [GitLab](gitlab.com), etc.).  --&gt;
+
+&lt;center&gt;
+&lt;img src="images/github.png" width=400&gt;
+&lt;/center&gt;
+
+---
+
+## Resources
+
+**A great tutorial written by Nick Ulle:**
+
+- Bash &amp; Git guide: https://github.com/2016-ucdavis-sts98/notes/blob/master/git_guide.pdf
+
+**More extensive resources:**
+
+- Data Carpentry's tutorials: https://software-carpentry.org/lessons/
+- Scott Chacon and Ben Straub's *Pro Git*: https://git-scm.com/book/en/v2
+&lt;!-- - Reproducible Science Curriculum intitative: https://github.com/Reproducible-Science-Curriculum --&gt;
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="macros.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

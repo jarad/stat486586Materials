@@ -1,0 +1,206 @@
+---
+title: "Statistical Inference"
+subtitle: "STAT486/586"
+author: "Xiongtao Dai"
+output:
+  xaringan::moon_reader:
+    mathjax: "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML"
+    css: [myslides.css, myslides-fonts.css]
+    lib_dir: libs
+    nature:
+      beforeInit: "macros.js"
+      highlightLines: true
+      countIncrementalSlides: false
+---
+class: big, middle
+
+```{r xaringan-tile-view, echo=FALSE}
+xaringanExtra::use_tile_view()
+knitr::opts_chunk$set(fig.height=4, fig.width=4, fig.align='center')
+```
+
+## Statistical Inference using Random Numbers
+
+---
+
+## Outline
+
+- Hypothesis testing
+
+- Sample size calculation
+
+- Confidence interval
+
+
+---
+
+## Hypothesis testing
+
+---
+
+## Hypothesis testing: A review
+
+Hypothesis testing is one of the most critical skill of a statistician (and a scientist/engineer alike). 
+
+When performing **hypothesis testing**, we are testing the **null hypothesis** $(H_0)$, the default position, against the **alternative hypothesis** $(H_A)$, the statement we want to prove. 
+We then see whether our data provides evidence supporting $H_A$. 
+
+There are four steps to hypothesis testing. 
+For example, we are given the income $X_1, \dots, X_{30}$ of $n=30$ recent graduates, and we want to test whether their mean equals 50 thousand.
+
+1. State the null and the alternative hypothesis. E.g.,
+$$H_0: \mu = 50 \quad \text{vs} \quad H_A: \mu \ne 50.$$
+<!-- $$H_0: \mu_1 \le \mu_2 \quad \text{vs} \quad H_A: \mu_1 > \mu_2$$ -->
+<!-- $$H_0: \mu_1 \ge \mu_2 \quad \text{vs} \quad H_A: \mu_1 < \mu_2.$$ -->
+
+---
+
+2. Calculate the **test statistic**, which summarizes the evidence from the data against $H_0$. The test statistic is 
+$$T = \frac{\bar{X} - 50}{s / \sqrt{n}},$$
+where $s^2 = (n-1)^{-1}\sum_{i=1}^n (X_i - \bar{X})^2$ is the sample variance. You will plug in the data values and obtain the observed test statistic $t_s$.
+
+    Under $H_0$, *if&nbsp; $\bar{X}$ is normally distributed*, then $T$ follows a $t$-distribution with degree of freedom $df=n-1$ and will be close to zero. Under $H_A$, $t_s$ will have a large absolute value.
+
+---
+
+3\. Calculate the **p-value**, which is the probability of observing a test statistic at least as extreme as $t_s$, the one we actually obtained, if $H_0$ were true. 
+
+  Since our alternative is two-sided, 
+    $$pv=Pr(|T| > |t_s|) = 2 Pr(T > |t_s|).$$
+
+4\. Draw conclusions. Small p-value is unlikely under $H_0$, so this indicates that $H_A$ is true. We choose the **significant level** $\alpha$, say 0.05.
+
+- If $p$-value $\le \alpha$, **reject** $H_0$ and conclude $H_A$. "significant"
+- If $p$-value $> \alpha$, **fail to reject** $H_0$ and there is insufficient evidence for $H_A$. No conclusion can be made! "insignificant"
+
+---
+## Type I and Type II errors
+
+- *Type I error*: reject $H_0$ when $H_0$ is true
+- *Type II error*: do not reject $H_0$ when $H_0$ is false
+
+
+  .plainTable[
+  | |  | Decision:|  |
+  |:----:|:----:|:----:|:----:|
+  | |  | Reject $H_0$ | Do not reject $H_0$|
+  |Reality: | $H_0$ true | *Type I error* | OK|
+  |       | $H_0$ false| OK           | *Type II error*|
+  ]
+
+- The *size* of the test is
+$$Pr(\text{Type I error}) = Pr(\text{reject } H_0|H_0\text{ is true}).$$
+When you set $\alpha = 0.05$, the goal is that $Pr(\text{Type I error})<0.05$.
+
+- The *power* of the test is 
+$$Pr(\text{Type II error}) = Pr(\text{not reject } H_0|H_A\text{ is true}).$$
+A common goal when planning for the sample size in an experiment is that the power is greater than $\beta = 0.8$ (for example).
+
+
+---
+
+## Case study: Hypothesis testing
+
+Suppose that the income $X_1,\dots,X_{30}$ follows i.i.d. $\text{Gamma}(\alpha=10, \beta=1) + 40$. The true mean is 50. Let's see how often does the $t$-test reject and find out the size of the test (type I error rate) at the $\alpha=0.1$ significance level.
+
+```{r}
+alpha <- 0.1
+n <- 30
+mu0 <- 50
+income <- rgamma(n, 10, 1) + 40
+ts <- (mean(income) - mu0) / (sd(income) / sqrt(n))
+(pv <- pt(abs(ts), df=n - 1, lower.tail = FALSE) * 2)
+```
+
+The test does not reject ($pv > \alpha=0.1$) in one experiment, but of course, we need to replicate the experiment.
+
+---
+
+Wrap the p-value calculation in a function and repeat 500 times
+```{r}
+library(purrr)
+
+set.seed(1)
+MC <- 500
+pvs <- map_dbl(seq_len(MC), function(i) {
+  income <- rgamma(n, 10, 1) + 40
+  ts <- (mean(income) - mu0) / (sd(income) / sqrt(n))
+  pv <- pt(abs(ts), df=n - 1, lower.tail = FALSE) * 2
+})
+mean(pvs <= alpha)
+```
+
+So the type I error is slightly inflated, but probably not of a great concern.
+
+Since the computation power nowadays is rich, run at least 500 repeats if affordable. 
+
+---
+
+Now, what about the power? Suppose now that $X_i \sim \text{Gamma}(\alpha=10, \beta=1) + 41$. Now the true mean is 51.
+```{r}
+set.seed(1)
+pvs <- map_dbl(seq_len(MC), function(i) {
+  income <- rgamma(n, 10, 1) + 41
+  ts <- (mean(income) - mu0) / (sd(income) / sqrt(n))
+  pv <- pt(abs(ts), df=n - 1, lower.tail = FALSE) * 2
+})
+(power <- mean(pvs <= alpha))
+```
+
+We only reject `r power*100`% of the time. What if we want to recruits so a larger number of respondents so that the power is at least $\beta=.8$, under the setup we consider here?
+
+---
+
+## Sample size calculation
+
+We are going to repeat the power calculation for a number of sample sizes, and then find the smallest sample size that give us enough power.
+
+```{r}
+set.seed(1)
+calcPower <- function(n, MC) {
+  pvs <- map_dbl(seq_len(MC), function(i) {
+    income <- rgamma(n, 10, 1) + 41
+    ts <- (mean(income) - mu0) / (sd(income) / sqrt(n))
+    pv <- pt(abs(ts), df=n - 1, lower.tail = FALSE) * 2
+  })
+  mean(pvs <= alpha)
+}
+calcPower(n, MC) # same answer as before, since we set seed
+
+beta <- 0.8
+nVec <- seq(30, 100, by=5)
+powerVec <- map_dbl(nVec, calcPower, MC=MC)
+nVec[which(powerVec >= beta)[1]]
+```
+---
+
+## Confidence intervals
+
+Suppose you have a sample $\{X_1,\dots,X_n\}$ and you have a parameter of interest $\theta$ (say, the mean). A 95% *confidence interval* is an interval $(L,U)$ constructed from the sample so that the *coverage* of the interval
+$$P(\theta \in (L,U))$$
+is at least 95%.
+
+- If $\theta = \mu$ in the one-sample setting or $\mu_1 - \mu_2$ in the two-sample setting, then often a c.i. is constructed using the $t$-statistic. This is called the *parametric approach*. 
+
+- If you have a hypothesis test for $H_0:\theta = \theta_0$ at the $\alpha$ significance level, then
+$$\{\theta_0\vert \text{the test does not reject }H_0:\theta = \theta_0\}$$
+is a $(1-\alpha)100\%$ c.i. 
+So you can invert a hypothesis test to obtain a confidence interval. 
+
+- Vise versa, if you have a $(1-\alpha)\%$ c.i. $(L,U)$, then a hypothesis test at the  $\alpha$ level is obtained as follows: rejects $H_0$ if $\theta_0 \notin (L,U)$.
+
+---
+
+class: inverse
+
+## Your turn
+
+TODO
+
+<img src="images/green.png" width=20> Generate a random sample of size $n=10$ from the following distributions: (a). Beta(1,2) and (b). Uniform(0,100)
+
+<img src="images/green.png" width=20> Sample 5 random rows from `iris` without replacement
+
+<img src="images/green.png" width=20> Randomly shuffle the 5 rows
+
+<img src="images/green.png" width=20> Sample 10 random rows from `iris` with replacement

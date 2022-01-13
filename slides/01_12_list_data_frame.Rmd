@@ -1,0 +1,232 @@
+---
+title: "List and Data Frame"
+subtitle: "STAT486/586"
+author: "Xiongtao Dai"
+output:
+  xaringan::moon_reader:
+    mathjax: "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML"
+    css: [myslides.css, myslides-fonts.css]
+    lib_dir: libs
+    nature:
+      beforeInit: "macros.js"
+      highlightLines: true
+      countIncrementalSlides: false
+---
+class: big, middle
+
+```{r xaringan-tile-view, echo=FALSE}
+xaringanExtra::use_tile_view()
+```
+
+## List and </br> Data Frame
+
+---
+
+## Outline
+
+- What is a list
+
+- Indexing a list
+
+- Data frame as a list
+
+---
+
+## Lists
+
+- are most general form of vectors in R
+
+- List entries can be of any type and can have mixed types
+```{r}
+l <- list(1:2, c('ha', 'ma', 'da'))
+l
+```
+
+- List entries can be named
+```{r}
+lNamed <- list(foo = 1:2, bar=c('ha', 'ma', 'da'))
+lNamed
+```
+
+---
+
+## Lists
+
+- `[` accesses sub lists
+```{r}
+l[2] # `[ ]` extract a sublist
+l[1:2]
+lNamed['bar']
+```
+
+---
+
+## Lists
+
+- `[[` accesses an element
+```{r}
+l[[2]] # `[[ ]]` extract an element
+lNamed[['bar']]
+```
+- `l[['bar']]` is the same as `l$bar`. The difference is that `$` supports partial matching but `[[` does not. 
+`[[` is safer to use 
+
+```{r}
+lNamed$b
+lNamed[['b']]
+```
+
+---
+
+## List operations...
+<img src="images/listSalt.png" width="100%" alt="">
+Courtesy Hadley Wickham
+
+---
+## Expanding lists
+
+- `c` to concatenate lists. Note that a list is a vector
+
+```{r}
+l1 <- c(list(TRUE), l)
+str(l1)
+```
+
+- `append(x, values, after)` works similarly and could be more handy
+```{r}
+l2 <- append(l, list(TRUE), 0)
+str(l2)
+```
+
+## Contracting lists
+
+- Set a list entry to `NULL` in order to remove it
+```{r}
+l1[2:3] <- NULL
+str(l1)
+```
+
+- Alternatively, use negative index to de-select
+```{r}
+str(l2[-c(2, 3)])
+```
+
+---
+
+## Flatterning lists
+
+- `unlist` flatterns a list into a vector
+
+```{r}
+l3 <- list(1, l)
+l3
+unlist(l3)
+```
+
+---
+
+## R demo...
+
+---
+
+class: inverse
+
+## Your turn
+
+<img src="images/green.png" width=20> Build a list containing the following in its entries:
+1. `pi` as a number
+2. `c("pie", "pi")`
+3. The vector `letters`
+
+<img src="images/green.png" width=20> Appropriately name the entries
+
+<img src="images/green.png" width=20> Extract the first entry as a number
+
+<img src="images/blue.png" width=20> Extract the first entry as a sublist
+
+<img src="images/green.png" width=20> Append your favorite number to the list
+
+---
+
+class: big, middle
+
+## Data Frame
+
+---
+
+## Data frame in R
+
+- Data frame is a rectangular list. Namely, a list in which the elements are vectors of the same length
+
+- So all list operations apply to a data frame. The following all works
+
+    ```
+    df[['col']]
+    df$col
+    df$`a strange column%^&` # Use backtick ` to quote (not ' or ")
+    df[colIndices]
+    ```
+- `df[['col']]` and `df$col` always return a vector
+
+- Similar to working on a matrix, 
+  - `df[, "col"]` return the column as a vector, and 
+  - `df[, "col", drop=FALSE]` returns a data frame containing a single column. 
+  - .style[Make sure which version do you need, especially when programming]
+
+---
+
+## Creating a data frame
+
+- Create from scratch: Specify what each column contains
+
+```{r}
+x <- data.frame(x = 1:2, 
+                y = c("cat", "dog"), 
+                "Can you meow?" = c(TRUE, FALSE),
+                check.names=FALSE)
+x
+```
+
+- Convert from a list
+
+```{r}
+y <- as.data.frame(list(x=1:2, y=c("cat", "dog")))
+y
+```
+
+---
+
+## Operating on a data frame
+
+- Similar to working with matrices
+
+  - All indexing rules for a matrix applies to a data frame
+  
+  - `rbind` and `cbind` binds two or more data frames
+
+- `df$newCol <- ...` adds a new column
+
+- Similar to working with a list
+
+  - `c`, `append` add new columns
+  
+  - setting columns to `NULL` remove columns
+  
+- To remove rows, use indexing to create a new (sub)-data frame
+
+- Use the conversion functions `as.XXX` to cast a data frame into something else
+
+---
+
+class: inverse
+
+## Your turn
+
+Work on the `iris` dataset
+
+<img src="images/green.png" width=20> Use two ways to extract `Sepal.Length` as a numeric vector
+
+<img src="images/green.png" width=20> Use two ways to extract `Sepal.Length` as a data frame with a single column
+
+<img src="images/green.png" width=20> Use two ways to add a new column `Sepal.Length2` to contain the square of the `Sepal.Length` column
+

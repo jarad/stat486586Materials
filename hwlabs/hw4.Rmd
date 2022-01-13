@@ -1,0 +1,106 @@
+---
+title: 'Homework #4'
+output: html_document
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## A useful note
+Remove any `View()` or `install.packages()` commands in your `Rmd` file. These commands will prevent the knitting of your file. 
+
+## Matrix, list, and data frame
+
+1. Some exercise on matrices:
+    a. Create the following *matrices* (not vectors or scalars) using as concise syntax as possible:
+    $$A=\left[\begin{array}{cccc}
+    1 & 0 & 0 & 0\\
+    0 & 1 & 0 & 0\\
+    0 & 0 & 1 & 0\\
+    0 & 0 & 0 & 1
+    \end{array}\right],\;B=\left[\begin{array}{ccc}
+    3.1 & 0 & 0\\
+    0 & 2.9 & 0\\
+    0 & 0 & 1.2
+    \end{array}\right],\;C=[3.1],\;D=\left[\begin{array}{c}
+    1\\
+    2\\
+    3
+    \end{array}\right]$$
+    $$E=\left[\begin{array}{ccccc}
+    1 & 2 & 3 & 4 & 5\\
+    6 & 7 & 8 & 9 & 10
+    \end{array}\right],\;F=\left[\begin{array}{cc}
+    -3 & 0\\
+    -2 & 1\\
+    -1 & 2
+    \end{array}\right]$$
+    a. Perform the following
+        i. Extract the first row of $A$ as a matrix of one row
+        i. Extract the first row of $A$ as a vector
+        i. Set the (2,2) element of $B$ to 0
+        i. Add 1, 2, 3, and 4 to each row of $A$, respectively
+        i. Create a new matrix $G = [E F^T]$
+        i. Create a new matrix $H=\left[\begin{array}{c}
+E^{T}\\
+F
+\end{array}\right]$
+    a. Calculate the following matrix calculation. Note that for matrices $X$ and $Y$ and a scalar $c \in \mathbb{R}$, $XY$ means the matrix multiplication of two matrices, and $cX$ means the matrix whose entries are obtained by multiplying each entry of $X$ by $c$.
+        i. $EF$
+        i. $D^TD$. Make sure your answer is a scalar but not a matrix
+        i. $5B + DD^T$
+        i. Add $D$ to each column of $B$
+        i. Extract the diagonal elements in $B$
+        i. Find $(F^TF)^{-1}E$
+        i. Find the eigenvalues of $F^TF$
+        i. Find the determinant of $F^TF$. Make sure it is a scalar
+
+2. We are going to predict the iris species using the *ridge regression*. 
+    a. Create a sub-data frame `dat` containing only the setosa and versicolor species in the `iris` dataset. All subsequent questions are based on this sub-data frame.
+    a. Create a response variable $Y$ which should be `1` if the corresponding row in `dat` is setosa, and `0` if the species is versicolor. Make it a matrix with one column. [Hint: You can use `ifelse`]
+    a. We are going to predict $Y$ using 4 predictors, which are `Sepal.Length`, `Sepal.Width`, `Petal.Length`, and `Petal.Width`. Create the design matrix $X$ containing the intercept and these four predictors in its columns. Make sure it is a matrix but not a data frame.
+    a. Calculate the condition number of $X^TX$. A very large condition number means the matrix is non-invertible.
+    a. Add a column that equals to the average of the sepal length and sepal width to the design matrix $X$. Now, realculate the condition number of $X^TX$.
+    a. Can you calculate the least squares estimate $\hat{\boldsymbol{\beta}}=({X}^{T}{X})^{-1}{X}^T{Y}$ for the multiple linear regression model, and why?
+    a. We now calculate the ridge regression coefficient estimate $\hat{\boldsymbol{\beta}}_\lambda=({X}^{T}{X} + \lambda I)^{-1}{X}^T{Y}$, where $\lambda > 0$ is a scalar and $I$ is the identity matrix. Feel free to set the $\lambda$ as you wish (say $\lambda=1$) (Note: This is a slightly difference version of ridge regression as we will cover later)
+    a. Calculate the fitted values $\hat{Y}_\lambda = X\hat{\boldsymbol{\beta}}_\lambda$ and the residual sum of squares (RSS) $(Y - \hat{Y}_\lambda)^T(Y - \hat{Y}_\lambda)$. Store $\hat{\boldsymbol{\beta}}_\lambda$, $\hat{Y}_\lambda$, and the RSS in a list. Name the entries of the list appropriately.
+    a. Try three different values of $\lambda$, and see which one gives you the smallest RSS.
+    a. Set $\lambda$ to the value that gave you the smallest RSS. Our fitted values are fractional numbers but not (0, 1) labels yet. To obtain (0, 1) predictions for the iris species, set the predicted label to 0 if $\hat{Y}_\lambda < 0.5$, and 1 otherwise. Calculate how many cases do you misclassify (i.e., the predicted label is different from the truth label in $Y$). 
+
+1. Perform the following list operations.
+
+    a. Create a list containing a string, a vector of numbers, a logical values, and a list. Name the entries appropriately.
+    a. Create a list of 20 entries. The $i$ entry should contain just the number $i$. Show the structure of the list (namely, `str(yourList)`).
+    
+1. Set 
+
+    ```
+    l <- list(A = c("Red", "Green", "Black"), 
+              B = matrix(1:6, nrow = 2), 
+              C = list("Python", "PHP", "Java"))
+    ```
+    
+    Answer the following questions.
+
+    a. Find how many entries does `l` have.
+    b. Extract the third entry in `l`. Make sure it is a list but not a nested list
+    c. Create a sublist containing only the third entry in `l`. Make sure it is a nested list this time.
+    d. Extract the second row of the matrix `B` in `l`, using a single line of code.
+    e. Add 1 to each entry in `B`. Show the structure updated `l` (namely, `str(l)`).
+    f. Remove entry `A`
+    g. Add an entry `D` containing the data frame `iris`
+
+1. Work on a barley yield data. The dataset is named `barley`, available to you after loading the package `lattice`. It is a good idea to make a copy of the original data frame in case anything is messed up. Show the structure of the data frame after you performed the opeartions, unless otherwise instructed.
+
+    a. Find the dimensions of the data frame.
+    a. Find the number of variables.
+    a. Remove the first row in `barley`.
+    a. Add a row to the end of `barley` containing a new record with yield 50, variety Svansota, year 1931, and site Duluth.
+    a. Shows the first 3 rows of `barley` using `head()` (Hint: check out `?head`), and last 6 rows using `tail()`.
+    a. Convert the year column to a numeric. (Check your results!)
+    a. Add a new column `newYield` containing the yield in bushels/hectare. 1 acre is 0.4047 hectares. (Read `?barley`)
+    a. Remove the `yield` column.
+    a. Create a data frame containing only variety with a name starting with `No. `. Retain only the yield, variety, and site columns. 
+    

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Using ggplot to Perform Exploratory Analysis</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Xiongtao Dai" />
+    <script src="libs/header-attrs-2.11/header-attrs.js"></script>
+    <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view-0.2.6/tile-view.js"></script>
+    <link rel="stylesheet" href="myslides.css" type="text/css" />
+    <link rel="stylesheet" href="myslides-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Using ggplot to Perform Exploratory Analysis
+## STAT486/586
+### Xiongtao Dai
+
+---
+
+
+
+
+## Outline
+
+Making plots for 
+
+- a single variable
+
+- two continuous variables
+
+- one discrete and one continuous variable
+
+- two discrete variables
+
+---
+class: big, middle
+
+## `ggplot` for Exploratory Analysis
+
+---
+
+
+## Choosing plots for answers
+
+1. Explore how one variable is distributed: *barchart,  boxplot, or histogram*
+
+2. Explore how two variables are related:  
+
+    - two numerical variables: *scatterplot or line plot*
+
+    - one numerical variable and one categorical: *side-by-side barchart, boxplot, or histograms*
+
+    - two categorical variables: *side-by-side barchart*
+
+3. Explore how more variables are related: *facetting, color &amp; other aesthetics*
+
+---
+class: big, middle
+
+## Univariate plots
+
+---
+
+## Boxplots
+`geom_boxplot` in ggplot2 needs `y` aethetics
+
+
+```r
+library(ggplot2)
+library(classdata)
+fbi2018 &lt;- fbi[fbi$Year == 2018, ]
+ggplot(fbi2018, aes(y = log10(Count))) + geom_boxplot()
+```
+
+&lt;img src="05_02_ggplot_types_files/figure-html/unnamed-chunk-1-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Histograms
+
+- A histogram needs `x` aethetics
+
+- Optionally, set the binwidth using `geom_histogram(binwidth=...)`
+
+
+```r
+bw &lt;- 5000
+ggplot(fbiwide, aes(x = Motor.vehicle.theft)) + 
+    geom_histogram(binwidth=bw) + 
+    ggtitle(paste0("binwidth = ", bw))
+```
+
+&lt;img src="05_02_ggplot_types_files/figure-html/unnamed-chunk-2-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Changing binwidth in a histogram
+
+Use the `binwidth=bw` optional argument to change the binwidth:
+
+- It controls the bias-variance trade-off, so make sure to set an appropriate binwidth
+
+
+```r
+bw &lt;- 1000
+ggplot(fbiwide, aes(x = Motor.vehicle.theft)) + 
+    geom_histogram(binwidth=bw) + 
+    ggtitle(paste0("binwidth = ", bw))
+```
+
+&lt;img src="05_02_ggplot_types_files/figure-html/unnamed-chunk-3-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Histograms 
+
+What do we look for?
+
+- Shape of the distribution
+
+- Symmetry/Skewness
+
+- Modes, Groups  (big pattern: where is the bulk of the data?)
+
+- Gaps &amp; Outliers (deviation from the big pattern: where are the other points?)
+
+---
+
+## Boxplot vs Histogram
+
+- Pros for Boxplot:
+
+    - Compact
+
+    - Easy comparisons across multiple treatments (side by side boxplots)
+
+    - Highlights outliers
+
+- Pros for Histogram:
+
+    - Displays all information of the distribution (shape, skewness, etc.)
+
+    - Shows all modes and gaps in the data
+
+
+---
+
+## Barchart
+
+
+```r
+ggplot(fbi2018, aes(x = Type)) + geom_bar() # Shows the frequency
+```
+
+&lt;img src="05_02_ggplot_types_files/figure-html/unnamed-chunk-4-1.png" style="display: block; margin: auto;" /&gt;
+
+```r
+ggplot(fbi2018, aes(x = Type, weight=Count)) + geom_bar() + coord_flip()
+```
+
+&lt;img src="05_02_ggplot_types_files/figure-html/unnamed-chunk-4-2.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Barchart
+
+- Barchart is for showing the counts of a categorical variable or the data values of a continuous variable
+
+- If the x-labels overlap, one can switch the x- and y-axes using `coord_flip()`
+
+- The bars need to be ordered consciously
+
+---
+class: big, middle
+
+## Two continuous variables 
+
+---
+
+## Scatterplot
+
+A scatterplot shows the relationship between two continuous variables 
+
+
+```r
+iowa &lt;- fbiwide[fbiwide$State == 'Iowa', ]
+ggplot(iowa, aes(x=Robbery, y=Murder)) + geom_point()
+```
+
+&lt;img src="05_02_ggplot_types_files/figure-html/unnamed-chunk-5-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Review - Interpreting Scatterplots
+
+- Big patterns
+
+    - Form and direction
+
+    - Strength
+
+- Small patterns
+
+- Deviations from the pattern
+
+    - Outliers
+
+---
+class: big, middle
+
+## One discrete and one continous variable
+
+---
+
+## Side-by-side Boxplots
+
+```r
+ggplot(fbi2018, aes(x = Type, y = log10(Count))) +
+  geom_boxplot() + 
+  coord_flip()
+```
+
+&lt;img src="05_02_ggplot_types_files/figure-html/unnamed-chunk-6-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Side-by-side Boxplots
+
+- A *side-by-side boxplot* is used for group comparisons and outlier identifications
+
+- `geom_boxplot` in ggplot2 needs `y` variable, and optionally an `x`  (`y` is numerical, `x` is categorical)
+
+
+---
+
+## Side-by-side Histogram
+
+A *side-by-side histogram* works well comparing a small number of distributions. 
+
+- Note: Use the `fill=` aesthetics, but not `color=`
+
+
+```r
+dat &lt;- fbi2018[fbi2018$Type %in% c('Burglary', 'Larceny.theft'), ]
+ggplot(dat, aes(x = log10(Count), fill=Type)) +
+  geom_histogram(position='dodge')
+```
+
+&lt;img src="05_02_ggplot_types_files/figure-html/unnamed-chunk-7-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Stacked barcharts
+A stacked barchart visualizes one discrete (e.g., State) vs one continuous (Count)
+
+
+```r
+neigh &lt;- fbi2018[fbi2018$State %in% c('Iowa', 'Nebraska'), ]
+dat1 &lt;-  neigh[neigh$Type %in% c('Larceny.theft', 'Burglary'), ]
+ggplot(dat1, aes(x = Type, weight=Count, fill=State)) + 
+  geom_bar()
+```
+
+&lt;img src="05_02_ggplot_types_files/figure-html/unnamed-chunk-8-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+class: inverse
+
+## Your turn
+
+Use the `fbi` dataset and `ggplot2` package to answer the following questions. 
+
+&lt;img src="images/green.png" width=20&gt; Compare the distribution of the number of robberies in all states: Using ggplot2, display a side-by-side boxplot of the number of robberies by state. What does each data point stand for? 
+
+&lt;img src="images/blue.png" width=20&gt; How does the distribution of the number of thefts (over the states) compare with that of burglary? Visualize using a side-by-side histogram. 
+
+&lt;img src="images/green.png" width=20&gt; Visualize the number of violent crimes in 2018. The x-axis should show the state and the height of the bars should show the number of reports (use `aes(..., weight=)`). 
+
+&lt;img src="images/green.png" width=20&gt; Continuing the last question, now color bars by `Type`.
+
+
+---
+class: big, middle
+
+## Two discrete variables
+
+---
+
+## Example: Survival on the titanic
+
+The object `titanic` is a table of a break down of survival of passengers and crew on board the titanic by gender and age.
+
+
+```r
+str(titanic)
+```
+
+```
+## 'data.frame':	2201 obs. of  4 variables:
+##  $ Class   : Factor w/ 4 levels "1st","2nd","3rd",..: 3 3 3 3 3 3 3 3 3 3 ...
+##  $ Sex     : Factor w/ 2 levels "Male","Female": 1 1 1 1 1 1 1 1 1 1 ...
+##  $ Age     : Factor w/ 2 levels "Child","Adult": 1 1 1 1 1 1 1 1 1 1 ...
+##  $ Survived: Factor w/ 2 levels "No","Yes": 1 1 1 1 1 1 1 1 1 1 ...
+```
+
+---
+
+## Stacked barcharts
+Two discrete variables (Survival vs Sex)
+
+```r
+ggplot(titanic, aes(x=Sex, fill=Survived)) + 
+  geom_bar()
+```
+
+&lt;img src="05_02_ggplot_types_files/figure-html/unnamed-chunk-10-1.png" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+## Stacked barcharts with proportions
+Use `geom_bar(position='fill')` to make each bar display proportions summing up to 1
+
+```r
+ggplot(titanic, aes(x=Sex, fill=Survived)) + 
+  geom_bar(position='fill')
+```
+
+&lt;img src="05_02_ggplot_types_files/figure-html/unnamed-chunk-11-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Two different barcharts
+
+```r
+ggplot(titanic, aes(x=Survived, fill=Sex)) + 
+  geom_bar(position='fill')
+```
+
+&lt;img src="05_02_ggplot_types_files/figure-html/unnamed-chunk-12-1.png" style="display: block; margin: auto;" /&gt;
+
+
+```r
+ggplot(titanic, aes(x=Sex, fill=Survived)) + 
+  geom_bar(position='fill')
+```
+
+&lt;img src="05_02_ggplot_types_files/figure-html/unnamed-chunk-13-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Displaying four discrete variables
+
+
+```r
+ggplot(titanic, aes(x=Sex, fill=Survived)) + 
+  geom_bar(position='fill') +
+  facet_grid(Age~Class)
+```
+
+&lt;img src="05_02_ggplot_types_files/figure-html/unnamed-chunk-14-1.png" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+class: inverse
+
+## Your turn
+
+Use the `titanic` dataset and `ggplot2` package to answer the following questions. 
+
+&lt;img src="images/green.png" width=20&gt; Draw a barchart and show the number (not proportion) of passengers in each class. 
+
+&lt;img src="images/green.png" width=20&gt; Map survival to fill color in the barchart of Class. Interpret.
+
+&lt;img src="images/green.png" width=20&gt; In the previous barchart, show proportions instead by changing the `position` parameter to `"fill"`. Interpret.
+
+
+---
+
+## Optional Reference 
+Aesthetics and geoms supported by ggplot2: [RStudio cheat sheet](https://raw.githubusercontent.com/rstudio/cheatsheets/master/data-visualization-2.1.pdf)
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="macros.js"></script>
+<script>var slideshow = remark.create({
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

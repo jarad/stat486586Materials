@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Statistical Inference</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Xiongtao Dai" />
+    <script src="libs/header-attrs-2.11/header-attrs.js"></script>
+    <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view-0.2.6/tile-view.js"></script>
+    <link rel="stylesheet" href="myslides.css" type="text/css" />
+    <link rel="stylesheet" href="myslides-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Statistical Inference
+## STAT486/586
+### Xiongtao Dai
+
+---
+
+class: big, middle
+
+
+
+## Statistical Inference using Random Numbers
+
+---
+
+## Outline
+
+- Hypothesis testing
+
+- Sample size calculation
+
+- Confidence interval
+
+
+---
+
+## Hypothesis testing
+
+---
+
+## Hypothesis testing: A review
+
+Hypothesis testing is one of the most critical skill of a statistician (and a scientist/engineer alike). 
+
+When performing **hypothesis testing**, we are testing the **null hypothesis** `\((H_0)\)`, the default position, against the **alternative hypothesis** `\((H_A)\)`, the statement we want to prove. 
+We then see whether our data provides evidence supporting `\(H_A\)`. 
+
+There are four steps to hypothesis testing. 
+For example, we are given the income `\(X_1, \dots, X_{30}\)` of `\(n=30\)` recent graduates, and we want to test whether their mean equals 50 thousand.
+
+1. State the null and the alternative hypothesis. E.g.,
+`$$H_0: \mu = 50 \quad \text{vs} \quad H_A: \mu \ne 50.$$`
+&lt;!-- `$$H_0: \mu_1 \le \mu_2 \quad \text{vs} \quad H_A: \mu_1 &gt; \mu_2$$` --&gt;
+&lt;!-- `$$H_0: \mu_1 \ge \mu_2 \quad \text{vs} \quad H_A: \mu_1 &lt; \mu_2.$$` --&gt;
+
+---
+
+2. Calculate the **test statistic**, which summarizes the evidence from the data against `\(H_0\)`. The test statistic is 
+`$$T = \frac{\bar{X} - 50}{s / \sqrt{n}},$$`
+where `\(s^2 = (n-1)^{-1}\sum_{i=1}^n (X_i - \bar{X})^2\)` is the sample variance. You will plug in the data values and obtain the observed test statistic `\(t_s\)`.
+
+    Under `\(H_0\)`, *if&amp;nbsp; `\(\bar{X}\)` is normally distributed*, then `\(T\)` follows a `\(t\)`-distribution with degree of freedom `\(df=n-1\)` and will be close to zero. Under `\(H_A\)`, `\(t_s\)` will have a large absolute value.
+
+---
+
+3\. Calculate the **p-value**, which is the probability of observing a test statistic at least as extreme as `\(t_s\)`, the one we actually obtained, if `\(H_0\)` were true. 
+
+  Since our alternative is two-sided, 
+    `$$pv=Pr(|T| &gt; |t_s|) = 2 Pr(T &gt; |t_s|).$$`
+
+4\. Draw conclusions. Small p-value is unlikely under `\(H_0\)`, so this indicates that `\(H_A\)` is true. We choose the **significant level** `\(\alpha\)`, say 0.05.
+
+- If `\(p\)`-value `\(\le \alpha\)`, **reject** `\(H_0\)` and conclude `\(H_A\)`. "significant"
+- If `\(p\)`-value `\(&gt; \alpha\)`, **fail to reject** `\(H_0\)` and there is insufficient evidence for `\(H_A\)`. No conclusion can be made! "insignificant"
+
+---
+## Type I and Type II errors
+
+- *Type I error*: reject `\(H_0\)` when `\(H_0\)` is true
+- *Type II error*: do not reject `\(H_0\)` when `\(H_0\)` is false
+
+
+  .plainTable[
+  | |  | Decision:|  |
+  |:----:|:----:|:----:|:----:|
+  | |  | Reject `\(H_0\)` | Do not reject `\(H_0\)`|
+  |Reality: | `\(H_0\)` true | *Type I error* | OK|
+  |       | `\(H_0\)` false| OK           | *Type II error*|
+  ]
+
+- The *size* of the test is
+`$$Pr(\text{Type I error}) = Pr(\text{reject } H_0|H_0\text{ is true}).$$`
+When you set `\(\alpha = 0.05\)`, the goal is that `\(Pr(\text{Type I error})&lt;0.05\)`.
+
+- The *power* of the test is 
+`$$Pr(\text{Type II error}) = Pr(\text{not reject } H_0|H_A\text{ is true}).$$`
+A common goal when planning for the sample size in an experiment is that the power is greater than `\(\beta = 0.8\)` (for example).
+
+
+---
+
+## Case study: Hypothesis testing
+
+Suppose that the income `\(X_1,\dots,X_{30}\)` follows i.i.d. `\(\text{Gamma}(\alpha=10, \beta=1) + 40\)`. The true mean is 50. Let's see how often does the `\(t\)`-test reject and find out the size of the test (type I error rate) at the `\(\alpha=0.1\)` significance level.
+
+
+```r
+alpha &lt;- 0.1
+n &lt;- 30
+mu0 &lt;- 50
+income &lt;- rgamma(n, 10, 1) + 40
+ts &lt;- (mean(income) - mu0) / (sd(income) / sqrt(n))
+(pv &lt;- pt(abs(ts), df=n - 1, lower.tail = FALSE) * 2)
+```
+
+```
+## [1] 0.1877838
+```
+
+The test does not reject ($pv &gt; \alpha=0.1$) in one experiment, but of course, we need to replicate the experiment.
+
+---
+
+Wrap the p-value calculation in a function and repeat 500 times
+
+```r
+library(purrr)
+
+set.seed(1)
+MC &lt;- 500
+pvs &lt;- map_dbl(seq_len(MC), function(i) {
+  income &lt;- rgamma(n, 10, 1) + 40
+  ts &lt;- (mean(income) - mu0) / (sd(income) / sqrt(n))
+  pv &lt;- pt(abs(ts), df=n - 1, lower.tail = FALSE) * 2
+})
+mean(pvs &lt;= alpha)
+```
+
+```
+## [1] 0.112
+```
+
+So the type I error is slightly inflated, but probably not of a great concern.
+
+Since the computation power nowadays is rich, run at least 500 repeats if affordable. 
+
+---
+
+Now, what about the power? Suppose now that `\(X_i \sim \text{Gamma}(\alpha=10, \beta=1) + 41\)`. Now the true mean is 51.
+
+```r
+set.seed(1)
+pvs &lt;- map_dbl(seq_len(MC), function(i) {
+  income &lt;- rgamma(n, 10, 1) + 41
+  ts &lt;- (mean(income) - mu0) / (sd(income) / sqrt(n))
+  pv &lt;- pt(abs(ts), df=n - 1, lower.tail = FALSE) * 2
+})
+(power &lt;- mean(pvs &lt;= alpha))
+```
+
+```
+## [1] 0.534
+```
+
+We only reject 53.4% of the time. What if we want to recruits so a larger number of respondents so that the power is at least `\(\beta=.8\)`, under the setup we consider here?
+
+---
+
+## Sample size calculation
+
+We are going to repeat the power calculation for a number of sample sizes, and then find the smallest sample size that give us enough power.
+
+
+```r
+set.seed(1)
+calcPower &lt;- function(n, MC) {
+  pvs &lt;- map_dbl(seq_len(MC), function(i) {
+    income &lt;- rgamma(n, 10, 1) + 41
+    ts &lt;- (mean(income) - mu0) / (sd(income) / sqrt(n))
+    pv &lt;- pt(abs(ts), df=n - 1, lower.tail = FALSE) * 2
+  })
+  mean(pvs &lt;= alpha)
+}
+calcPower(n, MC) # same answer as before, since we set seed
+```
+
+```
+## [1] 0.534
+```
+
+```r
+beta &lt;- 0.8
+nVec &lt;- seq(30, 100, by=5)
+powerVec &lt;- map_dbl(nVec, calcPower, MC=MC)
+nVec[which(powerVec &gt;= beta)[1]]
+```
+
+```
+## [1] 70
+```
+---
+
+## Confidence intervals
+
+Suppose you have a sample `\(\{X_1,\dots,X_n\}\)` and you have a parameter of interest `\(\theta\)` (say, the mean). A 95% *confidence interval* is an interval `\((L,U)\)` constructed from the sample so that the *coverage* of the interval
+`$$P(\theta \in (L,U))$$`
+is at least 95%.
+
+- If `\(\theta = \mu\)` in the one-sample setting or `\(\mu_1 - \mu_2\)` in the two-sample setting, then often a c.i. is constructed using the `\(t\)`-statistic. This is called the *parametric approach*. 
+
+- If you have a hypothesis test for `\(H_0:\theta = \theta_0\)` at the `\(\alpha\)` significance level, then
+`$$\{\theta_0\vert \text{the test does not reject }H_0:\theta = \theta_0\}$$`
+is a `\((1-\alpha)100\%\)` c.i. 
+So you can invert a hypothesis test to obtain a confidence interval. 
+
+- Vise versa, if you have a `\((1-\alpha)\%\)` c.i. `\((L,U)\)`, then a hypothesis test at the  `\(\alpha\)` level is obtained as follows: rejects `\(H_0\)` if `\(\theta_0 \notin (L,U)\)`.
+
+---
+
+class: inverse
+
+## Your turn
+
+TODO
+
+&lt;img src="images/green.png" width=20&gt; Generate a random sample of size `\(n=10\)` from the following distributions: (a). Beta(1,2) and (b). Uniform(0,100)
+
+&lt;img src="images/green.png" width=20&gt; Sample 5 random rows from `iris` without replacement
+
+&lt;img src="images/green.png" width=20&gt; Randomly shuffle the 5 rows
+
+&lt;img src="images/green.png" width=20&gt; Sample 10 random rows from `iris` with replacement
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="macros.js"></script>
+<script>var slideshow = remark.create({
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

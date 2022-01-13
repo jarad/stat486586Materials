@@ -1,0 +1,251 @@
+---
+title: "Sampling"
+subtitle: "STAT486/586"
+author: "Xiongtao Dai"
+output:
+  xaringan::moon_reader:
+    mathjax: "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML"
+    css: [myslides.css, myslides-fonts.css]
+    lib_dir: libs
+    nature:
+      beforeInit: "macros.js"
+      highlightLines: true
+      countIncrementalSlides: false
+---
+class: big, middle
+
+```{r xaringan-tile-view, echo=FALSE}
+xaringanExtra::use_tile_view()
+```
+
+## Module 3: Simulation and Resampling Methods
+
+---
+class: big, middle
+
+## Probability and Sampling
+
+---
+
+## Outline
+
+- Probability in R
+
+- Random number generation
+
+- Random sampling
+
+---
+
+## Density function
+
+The *density function* $f(x)$ for a continuous random variable $X$ describes how likely it is for $X$ to lie close to $x$ on the support
+
+- often abbreviated as pdf (probability density function)
+- for a discrete r.v., the analogy is pmf (probability mass function)
+
+```{r, echo=FALSE, fig.height=4, fig.width=4, fig.align='center'}
+x <- seq(-5, 5, by=0.05)
+plot(x, dnorm(x), type='l', ylab='f(x)', main="Standard normal density")
+```
+
+- `dnorm(x, mean, sd)` returns the density values for any normal distribution
+
+---
+
+## Distribution function
+
+The *distribution function* for a continuous r.v. $X$ is the probability for $X$ to be at most $x$, namely 
+$$F(x) = P(X \le x) = \int_{-\infty}^x f(x) dx.$$
+
+- often abbreviated as cdf (cumulative distribution function)
+- For a discrete r.v., the integral becomes a summation. In this case $F(x)$ can be discontinuous
+<!-- - $F(x)$ is the probability for $X$ to be at most $x$ -->
+```{r, echo=FALSE, fig.height=3.5, fig.width=3.5, fig.align='center'}
+plot(x, pnorm(x), type='l', ylab='F(x)', main="Standard normal cdf")
+```
+- `pnorm(x, mean, sd)` returns the normal cdf values
+
+
+---
+
+## Quantile function
+
+The *quantile function* for a continuous r.v. $X$ is the inverse of the cdf
+$$Q(p) = F^{-1}(p).$$
+For any probability $p \in [0,1]$, a $p$-quantile of the distribution is a value such that there is $p$ amount of mass lying below the quantile.
+```{r, echo=FALSE, results='hide', fig.height=3.8, fig.width=8, fig.align='center'}
+par(mfrow=c(1, 2))
+p <- seq(0, 1, length.out=1000)
+plot(p, qnorm(p), type='l', ylab='Q(p)', main="Normal quantile function")
+
+p0 <- 0.8
+plot(x, dnorm(x), type='l', xlab='', ylab='f(x)')
+abline(v=p0)
+text(p0, 0.35, glue::glue("x = Q(p)"), pos=4)
+abline(h=0)
+text(p0, 0.11, glue::glue("area \nto the\nleft \n is   \n p   "), pos=2)
+par()
+```
+- `qnorm(p, mean, sd)` returns the normal quantiles
+- useful for looking up the values for hypothesis testing and confidence intervals (e.g., $z$- or $t$-values)
+- For a discrete r.v., the quantile function can jump
+
+---
+
+## Generating random variables
+
+- `rnorm(n, mean, sd)` generates $n$ normal r.v.s 
+
+```{r, fig.height=4, fig.width=4, fig.align='center'}
+X <- rnorm(500, 10, 2) # X ~ N(10, 2^2) #<<
+hist(X, freq=FALSE)
+xx <- seq(0, 20, length.out=100)
+lines(xx, dnorm(xx, 10, 2))
+```
+
+- The histogram of the random sample will approximate the underlying density, given a large sample
+
+---
+
+## Empirical cdf of your sample
+
+The *empirical* cumulative distribution function is the cdf for the *empirical distribution* of a sample. The empirical distribution puts the same mass on each raw observation. So the empirical cdf for $\{X_1, \dots, X_n\}$ is
+$$\hat{F}_{n}(x)={\frac {1}{n}}\sum _{i=1}^{n}\mathbf{1} \{X_{i}\leq x\},$$
+where $\mathbf{1}\{A\}$ is the indicator function that equals 1 if $A$ is true or 0 otherwise.
+
+---
+- `ecdf(x)` returns the empirical cdf, which is a *function*
+
+- You can evaluate or plot the returned function
+
+```{r, fig.width=5, fig.height=5, fig.align='center'}
+Fn <- ecdf(X)
+Fn(c(5, 10, 15))
+plot(Fn)
+```
+
+
+---
+
+## A table of distributions R knows
+
+| **Distribution** | **R function** | **Arguments** |
+|---------|----------|---------|
+|Beta | `*beta` | `shape1, shape2, ncp`|
+|Binomial| `*binom`| `size, prob`|
+|Cauchy| `*cauchy` | `location, scale`|
+|Chi-square| `*chisq` | `df, ncp`|
+|Exponential| `*exp` | `rate`|
+|F| `*F` | `df1, df2, ncp`|
+|Gamma| `*gamma`| `shape, rate/scale`|
+|Geometric | `*geom` | `prob`|
+|Poisson| `*pois` | `lambda`|
+|Student's $t$ | `*t` | `df, ncp`|
+|Uniform | `*unif` | `min, max`|
+
+E.g., `dt/pt/qt/rt` stand for the density/cdf/quantile/random sample for a $t$-distribution
+
+---
+
+## Random number generation
+
+```{r}
+runif(1)
+runif(1)
+```
+
+- The random numbers you generated will be most likely different, since they are random afterall...
+
+- But truely random numbers are very hard to produce -- e.g., they come from astronomical noise or radioactive decay -- so are impractical for programs
+
+- Programs uses *pseudo-random* numbers, which are generated from deterministic algorithms but behave like random numbers
+
+---
+
+- The pseudo-random numbers are generated from a *random seed*, which determines the sequence of numbers generated
+
+- Use `set.seed(seedNumber)` to set the seed
+
+```{r}
+set.seed(2)
+runif(1)
+set.seed(2)
+runif(1)
+```
+
+- Setting the random seed will make random number generation and procedures involving randomness reproducible, 
+
+- This is a good practice because someone else running the code will see exactly the same as what you see right now
+
+- .style[Make sure to always set seed before performing analyses involving randomness]
+
+---
+
+## Case study: Simulating Customer Arrival
+
+Suppose that the arrival of customers at a McDonald at lunch time follows a Poisson process with rate 0.5 customers per minute.
+That is to say, the waiting time between the arrivals of customers follow an exponential distribution with rate $\lambda=0.5$. 
+The waiting time of the first 10 customers is
+```{r, collapse=TRUE}
+n <- 10
+(wait <- rexp(n))
+```
+
+The arrival time of the $i$th customer is
+```{r, collapse=TRUE}
+(arrival <- cumsum(wait))
+```
+
+---
+
+The number of customers in the restuarant (assuming none left) at any given time $t$ in the first 5 minutes is 
+```{r, collapse=TRUE, fig.width=5, fig.height=5, fig.align='center'}
+Fn <- ecdf(arrival)
+tVec <- seq(0, 5, length.out=1000)
+plot(tVec, Fn(tVec) * n, xlab='t', ylab="Number of Customers", type="l")
+```
+
+
+---
+
+## Sampling from a vector
+
+- `sample(x, size, replace, prob)` takes a sample of the specified `size` from the elements of `x` 
+
+```{r}
+sample(1:5, 1)
+```
+
+- The default `replace=FALSE` *samples without replacement*. You will not get the same observation twice
+```{r}
+sample(1:5, 5) # same as sample(5)
+```
+
+---
+
+- `replace=TRUE` samples *with replacement*. So every draw from the vector `x` will be put back and thus is independent. You may get the same observation twice
+```{r}
+sample(1:5, 10, replace=TRUE) # same as sample(5)
+```
+
+- `prob` specifies the probability weights for obtaining the elements of the vector being sampled (e.g., for simulating a biased coin). The default is equal weight
+```{r}
+sample(c("H", "T"), 10, replace=TRUE, prob=c(0.8, 0.2))
+```
+
+---
+
+class: inverse
+
+## Your turn
+
+
+<img src="images/green.png" width=20> Generate a random sample of size $n=10$ from the following distributions: (a). Beta(1,2) and (b). Uniform(0,100)
+
+<img src="images/green.png" width=20> Sample 5 random rows from `iris` without replacement
+
+<img src="images/green.png" width=20> Randomly shuffle the 5 rows
+
+<img src="images/green.png" width=20> Sample 10 random rows from `iris` with replacement
+

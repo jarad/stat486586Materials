@@ -1,0 +1,352 @@
+---
+title: "Regression and Regularization"
+subtitle: "STAT486/586"
+author: "Xiongtao Dai"
+output:
+  xaringan::moon_reader:
+    mathjax: "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML"
+    css: [myslides.css, myslides-fonts.css]
+    lib_dir: libs
+    nature:
+      beforeInit: "macros.js"
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r xaringan-tile-view, echo=FALSE}
+xaringanExtra::use_tile_view()
+knitr::opts_chunk$set(fig.height=4, fig.width=4, fig.align='center')
+```
+
+## Outline
+
+- Ridge regression
+
+- The lasso
+
+- Selecting tuning parameters
+
+---
+
+## Ridge regression
+
+
+- The *least squares* procedure minimizes the residual sum of square (RSS)
+$$\text{RSS} \mathrel{=} \sum_{i=1}^n \left( Y_i - \beta_0 - \sum_{j=1}^p \beta_j X_{ij}\right)^2$$
+over $(\beta_0,\dots,\beta_p)$
+
+- Ridge regression is very similar, except that it minimizes a penalized (regularized) objective
+$$\begin{aligned}
+\sum_{i=1}^n \left( Y_i - \beta_0 - \sum_{j=1}^p \beta_j X_{ij}\right)^2 + \lambda \sum_{j=1}^p \beta_j^2 = \text{RSS} + \underbrace{\lambda \sum_{j=1}^p \beta_j^2}_{\text{Shrinkage penalty}},
+\end{aligned}$$
+where $\lambda \ge 0$ is a *tuning parameter*
+- Ridge regression trades off model fitting (RSS) and the size of the slope parameters
+
+---
+
+The ridge regression estimates are
+$$\begin{aligned}
+(\hat\beta_{0,\lambda}^R,\dots,\hat\beta_{p,\lambda}^R) = \mathop{argmin}_{(\beta_0,\dots,\beta_p)} \sum_{i=1}^n \left( Y_i - \beta_0 - \sum_{j=1}^p \beta_j X_{ij}\right)^2 + \lambda \sum_{j=1}^p \beta_j^2
+\end{aligned}$$
+
+- When $\lambda = 0$, the ridge estimate is the same as the least squares estimate
+
+- A large shrinkage $\lambda$ encourages the slope estimate to have small entries
+
+- Ridge regression gives one set of coefficient estimates for each value of $\lambda$. The precise choice is critical and we will determine that shortly
+
+- The shrinkage penalty is applied to only the slopes $\beta_1,\dots,\beta_p$ but not the intercept $\beta_0$. This way the slope estimate $\hat\beta_{0,\lambda}^R$ will always be $\bar{Y}$
+
+---
+
+The solution $\hat{\boldsymbol{\beta}}_\lambda^R=(\hat\beta_{0,\lambda}^R,\dots,\hat\beta_{p,\lambda}^R)$ to 
+$$\begin{aligned}
+ \mathop{argmin}_{(\beta_0,\dots,\beta_p)} \sum_{i=1}^n \left( Y_i - \beta_0 - \sum_{j=1}^p \beta_j X_{ij}\right)^2 + \lambda \sum_{j=1}^p \beta_j^2
+\end{aligned}$$
+can be obtained in a closed form as
+$$\hat{\boldsymbol{\beta}}_\lambda^R=({X}^{T}{X} + \lambda D)^{-1}{X}^T{Y}$$
+where $D=\text{diag}(0, 1, \dots, 1)$ is a diagonal matrix.
+
+- If $\mathbf{X}^T\mathbf{X} = I$ (i.e. the predictors all have mean 0 and standard deviation 1 and are uncorrelated), then 
+$$\hat\beta_{j,\lambda}^R = \frac{1}{1+\lambda}\hat\beta_j$$
+where $\hat\beta_j$ is the least squares estimate.
+    - This explains why the method is a "shrinkage" method
+
+---
+
+## E.g., the credit dataset
+
+The `Credit` dataset in `library(ISLR2)` records variables for a number of credit card holders. 
+
+.center[
+![:scale 70%](images/creditData.png)
+]
+
+---
+
+- The response: `balance` (average credit card debt for each individual) 
+
+- Quantitative predictors: 
+    - `age`, 
+    - `cards` (number of credit cards), 
+    - `education` (years of education), 
+    - `income` (in thousands of dollars), 
+    - `limit` (credit limit), and 
+    - `rating` (credit rating)
+    
+- Qualitative variables: 
+    - `own` (house ownership), 
+    - `student` (student status), 
+    - `status` (marital status), and 
+    - `region` (East, West or South)
+
+---
+
+## Results from the ridge regression
+
+.center[
+![:scale 90%](images/ridgeReg.png)
+]
+
+- The two figures differ only in how the x-values are arranged and scaled. $||\beta||_2$ is the $l_2$-norm defined as $||\beta||_2 = (\sum_{j=1}^p\beta_j^2)^{1/2}$
+
+- As $\lambda$ increases, the ridge coefficient estimates shrink towards zero (but are never exactly 0), approaching an intecept-only model
+
+---
+
+.center[
+![:scale 70%](images/ridgeReg.png)
+]
+- The least square estimates are *scale invariant*, meaning that $X_j\hat\beta_j$ stays the same when the $j$th predictor is multipled by a constant
+
+- However, the ridge regression estimates are not scale invariant. The results would be dramatically different if income is measured in dollars rather than $1,000
+
+- Thus, the predictors are usually standaridized before input to the ridge regression using
+$$\tilde{X}_{ij} = \frac{X_{ij}}{\sqrt{n^{-1}\sum_{i=1}^n (X_{ij} - \bar{X}_j)^2}}$$
+This will make the shrinkage effect balanced for all predictors
+
+---
+class: big, middle
+
+## The lasso
+
+---
+## The lasso 
+
+- Ridge regression will include all $p$ predictors in the final model since the coefficients are never exactly zero
+
+- This may not be a problem for prediction, but it may be a problem for interpretation
+    - especially when there are a large number of predictors.
+    - In the `Credit` dataset, there are only four important variables (income, limit, rating, and student) manually identified, but this is hard in general
+    
+- The lasso is an alternative to ridge regression that addresses this issue
+
+- The lasso coefficients $\hat{\boldsymbol{\beta}}_\lambda^L$ minimizes
+$$\begin{aligned}
+\sum_{i=1}^n \left( Y_i - \beta_0 - \sum_{j=1}^p \beta_j X_{ij}\right)^2 + \lambda \sum_{j=1}^p |\beta_j| = \text{RSS} + \lambda \sum_{j=1}^p |\beta_j|
+\end{aligned}$$
+
+---
+
+Compare ridge regression
+$$\begin{aligned}
+\hat{\boldsymbol{\beta}}_\lambda^R = \mathop{argmin}_{(\beta_0,\dots,\beta_p)} \sum_{i=1}^n \left( Y_i - \beta_0 - \sum_{j=1}^p \beta_j X_{ij}\right)^2 + \lambda \sum_{j=1}^p \beta_j^2
+\end{aligned}$$
+to the lasso
+$$\begin{aligned}
+\hat{\boldsymbol{\beta}}_\lambda^L = \mathop{argmin}_{(\beta_0,\dots,\beta_p)} \sum_{i=1}^n \left( Y_i - \beta_0 - \sum_{j=1}^p \beta_j X_{ij}\right)^2 + \lambda \sum_{j=1}^p |\beta_j|
+\end{aligned}$$
+we see that the only difference lie in how the size of $\beta_j$ is penalized.
+
+- Ridge regression penalizes the $l_2$-norm of $\beta$, while the lasso penalizes based on the $l_1$-norm $||\beta||_1 = \sum |\beta_j|$
+
+- Like ridge regression, the lasso shrinks the coefficient estimates towards 0
+
+- Unlike ridge regression, the lasso with the $l_1$-penalty tend to produce coefficients exactly equal to zero (*sparse*) when $\lambda$ is sufficiently large
+    - Effectively, the lasso performs *variable selection*
+
+
+---
+
+- If $\mathbf{X}^T\mathbf{X} = I$, then 
+$$\hat\beta_{j,\lambda}^R = \text{sign}(\hat\beta_j)(|\hat\beta_j| - \lambda)_+,$$
+where $\hat\beta_j$ is the least squares estimate.
+    - referred to as *soft thresholding* the LS estimate
+    
+.center[
+![:scale 100%](images/shrinkThreshold.png)
+]
+
+---
+
+## The lasso applied on the credit dataset
+
+.center[
+![:scale 80%](images/lasso.png)
+]
+
+- When $\lambda = 0$, the lasso simply gives the least squares fit
+
+- When $\lambda$ becomes sufficiently large, the lasso gives the intercept-only model where all slope estimates are zero
+
+- In between, many small coefficients are shrunk to zero exactly
+
+- Depending on $\lambda$, the lasso can produce a model involving any number of variables
+
+- In contrast, ridge regression will always include all variables
+
+---
+
+## Alternative formulations for ridge and lasso
+
+The (constrained form of) lasso solves
+$$\mathop{argmin}_{(\beta_0,\dots,\beta_p)} \sum_{i=1}^n \left( Y_i - \beta_0 - \sum_{j=1}^p \beta_j X_{ij}\right)^2 \text{ subject to  } \sum_{j=1}^p|\beta_j| \le s,$$
+and ridge regression solves
+$$\mathop{argmin}_{(\beta_0,\dots,\beta_p)} \sum_{i=1}^n \left( Y_i - \beta_0 - \sum_{j=1}^p \beta_j X_{ij}\right)^2 \text{ subject to  } \sum_{j=1}^p\beta_j^2 \le s.$$
+
+- In other words, for every $\lambda$ in the original (regularized) form, there is an $s$ that gives the same solution 
+
+---
+
+.center[
+![:scale 80%](images/ridgeLassoConstrained.png)
+]
+
+- Points on the same contour have the same objective value (RSS)
+
+- The constraints ( $\sum_{j=1}^p|\beta_j|$ and $\sum_{j=1}^p\beta_j^2$) are *budgets*. The do not matter when $s$ is large, and they come into play when $s$ is small
+
+- The constraint region for the lasso is pointy, so an optimal solution (the intersect of the constraint region and the contour just touching it) tends to be at the corners, which results in a sparse solution
+
+---
+
+## Comparing the Lasso and Ridge Regression
+
+- There are very efficient algorithms for fitting both ridge and lasso models
+
+- Lasso produces zero coefficient estimates and thus are more interpretable than ridge regression
+
+- In terms of prediction, either model could perform better than the other, depending on the data-generating mechanism
+
+    - Case 1: If only few predictors are meaningful, e.g. $Y = 1 X_1 + 1 X_2 + 0 X_3 + \dots + 0 X_{100} + \epsilon$, then the lasso will perform better than ridge regression
+    - Case 2: If many predictors are meaningful, e.g. $Y = 0.01 X_1 + 0.01 X_2 + 0.01 X_3 + \dots + 0.01 X_{100} + \epsilon$, then the lasso will perform better than ridge regression
+
+---
+
+Case 1:</br>
+![:scale 80%](images/manyCoef.png)
+- Solid: The lasso; dashed: ridge. <span style="color:DeepPink">MSE</span>, bias, <span style="color:green">variance</span>
+- The x-axis scale on the right unifies the regularization by the lasso and ridge regression
+
+Case 2:</br>
+![:scale 84%](images/sparseCoef.png)
+
+---
+
+- In both cases, $\lambda=0$ for no regularization/no constraint (LS estimates) did not lead to the best result
+
+- This is, again, because of the bias-variance trade-off. The constraints result in smaller model spaces, so the bias is increased in exchange for greater model stability. The overall MSE is reduced by imposing moderate regularization
+
+---
+
+## Selecting the tuning parameter
+
+Cross-validation provides a way to estimate the test MSE: 
+
+1. Choose a grid of $\lambda$ values, and compute the CV error for each value of $\lambda$
+
+1. Select the tuning parameter value for which the CV error is minimized (the *minimization rule*)
+
+1. The model is re-fit using all of the available observations and the selected value of the tuning parameter 
+
+- An alternative rule is the *1 standard error* rule, which in Step 2 selects the least complex model (largest value of $\lambda$) such that CV error is within 1 standard error of the minimum. This often shows better predictive performance in practice
+
+
+
+- 
+---
+
+## Code implementation
+
+We will use the `glmnet` package to perform ridge regression and the lasso. Install it (once) if you have not done so. 
+We are going to look at the ames house price data. Load `library(classdata)` and look at `?ames`.
+
+The `glmnet` function performs both ridge regression and the lasso. Set
+- `alpha = 0` for ridge regression
+- `alpha = 1` for the lasso
+
+```{r, eval=FALSE}
+library(glmnet)
+X <- model.matrix(SalePrice ~ ., ames)[, -(1:2), drop=FALSE]
+y <- ames$SalePrice
+ridge <- glmnet(X, y, alpha=0)
+
+beta <- coef(ridge)
+dim(beta)
+ridge$lambda[59]
+beta[, 59]
+
+plotInd <- 1:100
+matplot(log10(ridge$lambda[plotInd]), t(beta[-1, plotInd, drop=FALSE]), type="l", lwd=2)
+# legend("right", rownames(beta)[-1], col=1:6, lty=1:5, lwd=2)
+
+lambda1 <- 50000
+beta1 <- predict(ridge, s=lambda1, type="coefficients")[, 1]
+resp <- predict(ridge, newx=X, s=lambda1, type="response")
+
+# Estimate the prediction error
+testInd <- sample(n, round(n/2), replace = FALSE)
+trainInd <- setdiff(seq_len(n), testInd)
+
+ridgeTrain <- glmnet(X[trainInd, , drop=FALSE], y[trainInd], alpha=0)
+yPredTest <- predict(ridgeTrain, newx = X[testInd, , drop=FALSE], 
+                     s=1e4,
+                     type="response")
+testMSE <- colMeans((yPredTest - y[testInd])^2)
+# plot(log10(ridgeTrain$lambda), testMSE, type="l")
+
+# Use CV to select lambda
+ridgeCV <- cv.glmnet(X[trainInd, ], y[trainInd], alpha=0) # the glmnet.fit field is a fit for the full data
+plot(ridgeCV)
+lambda2 <- ridgeCV$lambda.min
+lambda3 <- ridgeCV$lambda.1se
+yPredTest <- predict(ridgeCV, newx = X[testInd, , drop=FALSE], 
+                     s=c(lambda2, lambda3),
+                     type="response")
+testMSERidge <- colMeans((yPredTest - y[testInd])^2)
+
+lassoCV <- cv.glmnet(X[trainInd, ], y[trainInd], alpha=1)
+plot(lassoCV)
+lambda4 <- lassoCV$lambda.min
+lambda5 <- lassoCV$lambda.1se
+betaMin <- predict(lassoCV, s="lambda.min", type="coefficients")
+beta1se <- predict(lassoCV, s="lambda.1se", type="coefficients")
+betaAll <- predict(lassoCV$glmnet.fit, type="coefficients")
+
+yPredTest <- predict(lassoCV, newx = X[testInd, , drop=FALSE], 
+                     s=c(lambda4, lambda5),
+                     type="response")
+testMSELasso <- colMeans((yPredTest - y[testInd])^2)
+# ridge has better predictive performance
+
+plotInd <- 1:74
+matplot(log10(lassoCV$lambda[plotInd]), t(betaAll[-1, plotInd, drop=FALSE]), type="l", lwd=2)
+```
+
+---
+
+
+class: inverse
+
+## Your turn
+
+TODO
+
+<img src="images/green.png" width=20> Generate a random sample of size $n=10$ from the following distributions: (a). Beta(1,2) and (b). Uniform(0,100)
+
+<img src="images/green.png" width=20> Sample 5 random rows from `iris` without replacement
+
+<img src="images/green.png" width=20> Randomly shuffle the 5 rows
+
+<img src="images/green.png" width=20> Sample 10 random rows from `iris` with replacement
+

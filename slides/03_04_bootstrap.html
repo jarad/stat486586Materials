@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Bootstrap</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Xiongtao Dai" />
+    <script src="libs/header-attrs-2.11/header-attrs.js"></script>
+    <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view-0.2.6/tile-view.js"></script>
+    <link rel="stylesheet" href="myslides.css" type="text/css" />
+    <link rel="stylesheet" href="myslides-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Bootstrap
+## STAT486/586
+### Xiongtao Dai
+
+---
+
+class: big, middle
+
+
+
+## The Bootstrap
+
+---
+
+## Outline
+
+- Sampling distribution
+
+- The bootstrap
+
+- Bootstrap confidence intervals
+
+---
+
+## The bootstrap
+
+- The bootstrap is a general method to assess uncertainties in estimation problems, using *data* and *simulation* rather than *mathematical derivation*
+
+- It falls in the class of *resampling methods*, because you will be resampling the original data
+
+- The boostrap is a computationally heavy method, which is made possible due to the general access to greater computational power
+
+- We will be using the bootstrap for two tasks: (1) to estimate standard errors and (2) to construct confidence intervals
+
+---
+
+## An introductory task
+
+Suppose that we have i.i.d. observations `\(X_1,\dots,X_n\)` from a distribution with an unknown cdf `\(F\)`. Let `\(T_n = g(X_1,\dots, X_n)\)` be a statistic. 
+
+- *For now, consider `\(T_n\)` being the sample median*, which is used to estimate the population median.
+
+- We want to estimate the standard error `\(\text{var}(T_n)\)` 
+
+- There is no formula that gives `\(\text{var}(T_n)\)` (unlike if `\(T_n\)` was the sample mean)
+
+---
+
+## The sampling distribution
+
+The distribution of the statistic `\(T_n\)` is called the *sampling distribution*. 
+
+- The randomness of `\(T_n\)` comes from the randomness in the sampling process (you could have had a different sample).
+
+- If we were able sample from the distribution of `\(X_i\)`, then we could solve the problem using simulation!
+
+    - Draw a sample `\(\{X_i\}_{i=1}^n\)`, and repeat a lot of times
+    - Each time calculate a value `\(T_n\)`
+    - Pooling the realizations of `\(T_n\)` together you have the sampling distribution 
+    - Estimate the standard error using the standard deviation of the realizations of `\(T_n\)`
+
+&lt;!-- - If we can sample from the distribution of `\(X_i\)`, say if we knew `\(X_i \sim \exp(\lambda=1)\)`, then we can then use simulation to obtain the sampling distribution, and estimate the standard error. --&gt;
+---
+
+E.g., if we knew `\(X_i \sim \exp(\lambda=1)\)`, 
+
+```r
+library(purrr)
+set.seed(1)
+n &lt;- 100
+B &lt;- 1000 # repeats
+getTn &lt;- function(i) {
+  X &lt;- rexp(n)
+  median(X)
+}
+Tn &lt;- map_dbl(seq_len(B), getTn)
+hist(Tn) # A nice, normal-like distribution
+```
+
+&lt;img src="03_04_bootstrap_files/figure-html/unnamed-chunk-1-1.png" style="display: block; margin: auto;" /&gt;
+
+```r
+sd(Tn)
+## [1] 0.1015577
+```
+
+---
+
+## Monte Carlo integration
+
+Here is some rigorous justification for what we did. Let `\(G\)` be any distribution, and `\(Y_1,\dots, Y_B\)` be i.i.d. observations from `\(G\)`.
+
+- By the law of large numbers, 
+`$$\frac{1}{n} \sum_{j=1}^n Y_j \overset{P}{\rightarrow} E(Y_1) = \int x dG(x).$$`
+
+- More generally, for any function `\(h: \mathbb{R} \rightarrow \mathbb{R}\)`,
+`$$\frac{1}{n} \sum_{j=1}^n h(Y_j) \rightarrow E(h(Y_1)) = \int h(x) dG(x).$$`
+
+- So if we can use simulation to obtain a sample from `\(G\)`, we can use the average (sample quantities) to estimate the true expectation/integral. This is called the *Monte Carlo integration*
+
+- If `\(G\)` is the sampling distribution of `\(T_n\)`, and we have `\(B\)` realizations from it, the standard deviation of the realizations approximates the standard error of `\(T_n\)`
+
+---
+
+## Back to the introductory task
+
+- But in real life we do not know the distribution `\(F\)` of `\(X_i\)` and cannot sample from it
+
+- The idea of bootstrap is that we use the empirical distribution `\(F_n\)` of `\(\{X_1,\dots,X_n\}\)` to approximate `\(F\)`
+
+    - Recall that the empirical distribution `\(F_n\)` is the distribution that puts the same mass on each of the data points
+
+- Namely, each time obtain a *bootstrap sample* `\(\{X_1^*,\dots,X_n^*\}\)` of size `\(n\)` where `\(X_i^*\)` is sampled *with replacement* from `\(\{X_1,\dots,X_n\}\)`
+
+- Then calculate `\(T_n^*\)` from `\(\{X_1^*,\dots,X_n^*\}\)`
+
+- Repeat for a large `\(B\)` number of times. Usually, `\(B=500\)` or 1000 if not more
+
+||Distribution| Sample | Estimate|
+|---|---|---|---|
+|Real world | `\(F\)` | `\(X_1,\dots,X_n\)` | `\(T_n=g(X_1,\dots,X_n)\)`|
+|Bootstrap world | `\(F_n\)` | `\(X_1^*,\dots,X_n^*\)` | `\(T_n^* = g(X_1^*,\dots,X_n^*)\)`
+
+---
+E.g., if our dataset `\(X_1,\dots, X_{32}\)` contains the 1/4 mile time of randomly selected cars
+
+```r
+(X &lt;- mtcars$qsec)
+##  [1] 16.46 17.02 18.61 19.44 17.02 20.22 15.84 20.00 22.90 18.30 18.90 17.40
+## [13] 17.60 18.00 17.98 17.82 17.42 19.47 18.52 19.90 20.01 16.87 17.30 15.41
+## [25] 17.05 18.90 16.70 16.90 14.50 15.50 14.60 18.60
+```
+
+The bootstrap standard error estimate of the sample median is
+
+```r
+n &lt;- length(X)
+B &lt;- 2000
+Tnstar &lt;- map_dbl(seq_len(B), function(i) {
+  Xstar &lt;- sample(X, n, replace=TRUE)
+  median(Xstar)
+})
+sd(Tnstar)
+```
+
+```
+## [1] 0.3974552
+```
+
+---
+
+## Summary for bootstrap s.e. estimate
+
+Setting: Given i.i.d. data `\(X_1,\dots,X_n\)`, estimate the standard error of a (general) test statistic `\(T_n = g(X_1,\dots, X_n)\)`
+- `\(T_n\)` can be any statistic, e.g., median, sd, kurtosis
+- Each `\(X_i\)` can be multivariate or paired. So `\(T_n\)` can be correlation etc
+
+The bootstrap procedure:
+1. Draw `\(\{X_1^*,\dots,X_n^*\}\)` from `\(\{X_1,\dots,X_n\}\)` with replacement
+1. Compute `\(T_n^* = g(X_1^*,\dots,X_n^*)\)`
+1. Repeat the previous steps `\(B\)` times and obtain *bootstrap estimates* `\(T_{n1}^*,\dots,T_{nB}^*\)`. The distribution of `\(T_{n1}^*\)` is the *bootstrap distribution*
+1. The bootstrap s.e. estimate is 
+`$$s_{\text{boot}} = \sqrt{\frac{1}{B}\sum_{b=1}^B\left( T_{n,b}^* - \bar{T}_n^* \right)^2},$$`
+where `\(\bar{T}_n^* = \frac{1}{B}\sum_{j=1}^B T_{nj}\)`
+
+---
+
+## Bootstrap confidence intervals
+
+Let `\(\theta\)` be a parameter of interest, and `\(\hat\theta_n = T_n = g(X_1,\dots,X_n)\)` be an estimate targeting `\(\theta\)`. 
+
+- There are many ways to construct bootstrap confidence intervals
+
+- All are valid if the sample size is large, but there may be practically different if the sample size is small
+
+- We will cover three methods, so you will not be unfamiliar the next time you see such as c.i.
+
+  1. The normal interval
+  
+  1. A pivotal interval
+  
+  1. A percentile interval
+
+
+---
+
+## The normal bootstrap c.i.
+
+The `\(1-\alpha\)` *normal boostrap c.i.* is simply
+`$$\hat\theta_n \pm z_{\alpha/2} s_\text{boot},$$`
+where `\(z_{\alpha/2}\)` is the upper `\(\alpha/2\)` quantile of `\(N(0,1)\)`, and `\(s_\text{boot}\)` is the bootstrap s.e. estimate for `\(\hat\theta_n\)`
+
+- Advantage: Simplicity
+
+- Disadvantage: The interval requires the sampling distribution of `\(\hat\theta_n\)` to be close to normal. If this is not true, the normal c.i. will not be very accurate
+  
+- Fortunately, most of the time the asymptotic distribution of `\(\hat\theta_n\)` is normal, e.g. the sample median
+
+- More on when the bootstrap fails later
+
+---
+
+## The pivotal method
+
+Let `\(\theta_\alpha^*\)` be the `\(\alpha\)`-sample quantile of the bootstrap estimates `\(\{\theta_{n1}^*,\dots,\theta_{nB}^*\}\)`. 
+The `\(1-\alpha\)` *pivotal bootstrap c.i.* is
+`$$(2\hat\theta_n - \hat\theta_{1-\alpha/2}^*,\, 2\hat\theta_n - \hat\theta_{\alpha/2}^*)$$`
+
+- Advantage: The pivotal method could be more accurate than the normal method because of a better approximation to the sampling distribution of `\(\hat\theta_n\)`
+
+---
+
+## Why "pivotal"? Why it works?
+
+Let `\(R_n = \hat\theta_n - \theta\)` be the *pivot*. If we knew the distribution `\(H\)` of `\(R_n\)`, we would use c.i.
+`$$(\hat\theta_n - H^{-1}(1-\frac{\alpha}{2}),\, \hat\theta_n - H^{-1}(\frac{\alpha}{2})).$$`
+This c.i. will cover `\(\theta\)` with probability exactly `\(1-\alpha\)`.
+
+But since we don't know `\(H\)`, let `\(R_{nb}^* = \hat\theta_{nb}^* - \hat\theta_n\)` be the bootstrap version of the pivot. 
+We do not know the distribution of `\(R_{n1}^*\)` either, but we can generate many bootstrap estimates and use the empirical distribution of `\((R_{n1}^*,\dots,R_{nB}^*)\)` to approximate the former (very closely).
+
+Let `\(q^*_\alpha\)` be the `\(\alpha\)`-sample quantile of `\((R_{n1}^*,\dots,R_{nB}^*)\)`. The bootstrap pivotal c.i. is
+`$$(\hat\theta_n - q_{1-\alpha/2}^*,\, \hat\theta_n - q_{\alpha/2}^*) = (2\hat\theta_n - \hat\theta_{1-\alpha/2}^*,\, 2\hat\theta_n - \hat\theta_{\alpha/2}^*).$$`
+
+
+---
+
+## The percentile method
+
+The `\(1-\alpha\)` *bootstrap percentile c.i.* is 
+`$$(\theta_{\alpha/2}^*, \theta_{1-\alpha/2}^*).$$`
+
+- Recall that `\(\theta_\alpha^*\)` is the `\(\alpha\)`-sample quantile of the bootstrap estimates `\(\{\theta_{n1}^*,\dots,\theta_{nB}^*\}\)`
+
+- Advantage: Simplicity
+
+- Disadvantage: The coverage error is often substantial is the distribution of `\(\hat\theta_n\)` is not symmetric
+
+---
+
+## Example: Bootstrap c.i.s for `\(\text{cor}(X,Y)\)`
+
+The data are the LSAT scores (for entrance to law school) and GPA. 
+We are interested in seeing whether the entrance score is correlated to GPA.
+Note that the sample size `\(n=15\)` is quite small, so the bootstrap results should be interpreted with some skepticism.
+
+```r
+lsat &lt;- c(576,  635,  558,  578,  666,  580,  555,  661,  651,  605,  653,  575,  545,  572,  594)
+gpa  &lt;- c(3.39, 3.30, 2.81, 3.03, 3.44, 3.07, 3.00, 3.43, 3.36, 3.13, 3.12, 2.74, 2.76, 2.88, 2.96)
+```
+
+Obtain bootstrap estimates and s.e.
+
+```r
+n &lt;- length(lsat)
+B &lt;- 1000
+alpha &lt;- 0.05
+thetan &lt;- cor(lsat, gpa)
+thetaStar &lt;- map_dbl(seq_len(B), function(i) {
+  index &lt;- sample(n, replace=TRUE)  
+  xStar &lt;- lsat[index]
+  yStar &lt;- gpa[index]
+  cor(xStar, yStar)
+})
+(sboot &lt;- sd(thetaStar))
+## [1] 0.1346896
+```
+
+---
+
+Construct the three bootstrap c.i.s
+
+```r
+# Normal method
+zz &lt;- qnorm(alpha / 2, lower.tail = FALSE)
+(normal &lt;- c(thetan - zz * sboot, thetan + zz * sboot))
+## [1] 0.5123877 1.0403613
+```
+
+```r
+# Pivotal method
+thetaStarQ &lt;- unname(quantile(thetaStar, c(alpha / 2, 1 - alpha / 2)))
+(pivotal &lt;- c(2 * thetan - thetaStarQ[2], 2 * thetan - thetaStarQ[1]))
+## [1] 0.5868467 1.0927439
+```
+
+```r
+# Percentile method
+(percentile &lt;- thetaStarQ)
+## [1] 0.4600051 0.9659023
+```
+Since correlation coefficient must lie in `\([-1, 1]\)`, trim the c.i.s
+
+```r
+trimCor &lt;- function(rho) pmin(pmax(rho, -1), 1)
+trimCor(normal)
+## [1] 0.5123877 1.0000000
+trimCor(pivotal)
+## [1] 0.5868467 1.0000000
+trimCor(percentile)
+## [1] 0.4600051 0.9659023
+```
+
+
+---
+
+## When the bootstrap works and fails
+
+The bootstrap works 
+
+- given any i.i.d. observations
+
+- without assuming a form for the underlying distribution. So bootstrap is a *nonparametric* method
+
+The bootstrap may not work well if:
+
+- the sample size is too small
+
+- there are outliers
+
+The bootstrap does not work if:
+
+- the test statistic involve the extremes `\(\max(X_i)\)` or `\(\min(X_i)\)`
+
+- `\(X_1,\dots,X_n\)` are dependent. E.g., if they come from a time series
+
+---
+
+class: inverse
+
+## Your turn
+
+TODO
+
+&lt;img src="images/green.png" width=20&gt; Generate a random sample of size `\(n=10\)` from the following distributions: (a). Beta(1,2) and (b). Uniform(0,100)
+
+&lt;img src="images/green.png" width=20&gt; Sample 5 random rows from `iris` without replacement
+
+&lt;img src="images/green.png" width=20&gt; Randomly shuffle the 5 rows
+
+&lt;img src="images/green.png" width=20&gt; Sample 10 random rows from `iris` with replacement
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="macros.js"></script>
+<script>var slideshow = remark.create({
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

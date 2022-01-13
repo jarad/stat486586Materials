@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Sampling</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Xiongtao Dai" />
+    <script src="libs/header-attrs-2.11/header-attrs.js"></script>
+    <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view-0.2.6/tile-view.js"></script>
+    <link rel="stylesheet" href="myslides.css" type="text/css" />
+    <link rel="stylesheet" href="myslides-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Sampling
+## STAT486/586
+### Xiongtao Dai
+
+---
+
+class: big, middle
+
+
+
+## Module 3: Simulation and Resampling Methods
+
+---
+class: big, middle
+
+## Probability and Sampling
+
+---
+
+## Outline
+
+- Probability in R
+
+- Random number generation
+
+- Random sampling
+
+---
+
+## Density function
+
+The *density function* `\(f(x)\)` for a continuous random variable `\(X\)` describes how likely it is for `\(X\)` to lie close to `\(x\)` on the support
+
+- often abbreviated as pdf (probability density function)
+- for a discrete r.v., the analogy is pmf (probability mass function)
+
+&lt;img src="03_01_sampling_files/figure-html/unnamed-chunk-1-1.png" style="display: block; margin: auto;" /&gt;
+
+- `dnorm(x, mean, sd)` returns the density values for any normal distribution
+
+---
+
+## Distribution function
+
+The *distribution function* for a continuous r.v. `\(X\)` is the probability for `\(X\)` to be at most `\(x\)`, namely 
+`$$F(x) = P(X \le x) = \int_{-\infty}^x f(x) dx.$$`
+
+- often abbreviated as cdf (cumulative distribution function)
+- For a discrete r.v., the integral becomes a summation. In this case `\(F(x)\)` can be discontinuous
+&lt;!-- - `\(F(x)\)` is the probability for `\(X\)` to be at most `\(x\)` --&gt;
+&lt;img src="03_01_sampling_files/figure-html/unnamed-chunk-2-1.png" style="display: block; margin: auto;" /&gt;
+- `pnorm(x, mean, sd)` returns the normal cdf values
+
+
+---
+
+## Quantile function
+
+The *quantile function* for a continuous r.v. `\(X\)` is the inverse of the cdf
+`$$Q(p) = F^{-1}(p).$$`
+For any probability `\(p \in [0,1]\)`, a `\(p\)`-quantile of the distribution is a value such that there is `\(p\)` amount of mass lying below the quantile.
+&lt;img src="03_01_sampling_files/figure-html/unnamed-chunk-3-1.png" style="display: block; margin: auto;" /&gt;
+- `qnorm(p, mean, sd)` returns the normal quantiles
+- useful for looking up the values for hypothesis testing and confidence intervals (e.g., `\(z\)`- or `\(t\)`-values)
+- For a discrete r.v., the quantile function can jump
+
+---
+
+## Generating random variables
+
+- `rnorm(n, mean, sd)` generates `\(n\)` normal r.v.s 
+
+
+```r
+*X &lt;- rnorm(500, 10, 2) # X ~ N(10, 2^2)
+hist(X, freq=FALSE)
+xx &lt;- seq(0, 20, length.out=100)
+lines(xx, dnorm(xx, 10, 2))
+```
+
+&lt;img src="03_01_sampling_files/figure-html/unnamed-chunk-4-1.png" style="display: block; margin: auto;" /&gt;
+
+- The histogram of the random sample will approximate the underlying density, given a large sample
+
+---
+
+## Empirical cdf of your sample
+
+The *empirical* cumulative distribution function is the cdf for the *empirical distribution* of a sample. The empirical distribution puts the same mass on each raw observation. So the empirical cdf for `\(\{X_1, \dots, X_n\}\)` is
+`$$\hat{F}_{n}(x)={\frac {1}{n}}\sum _{i=1}^{n}\mathbf{1} \{X_{i}\leq x\},$$`
+where `\(\mathbf{1}\{A\}\)` is the indicator function that equals 1 if `\(A\)` is true or 0 otherwise.
+
+---
+- `ecdf(x)` returns the empirical cdf, which is a *function*
+
+- You can evaluate or plot the returned function
+
+
+```r
+Fn &lt;- ecdf(X)
+Fn(c(5, 10, 15))
+```
+
+```
+## [1] 0.004 0.480 0.994
+```
+
+```r
+plot(Fn)
+```
+
+&lt;img src="03_01_sampling_files/figure-html/unnamed-chunk-5-1.png" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+## A table of distributions R knows
+
+| **Distribution** | **R function** | **Arguments** |
+|---------|----------|---------|
+|Beta | `*beta` | `shape1, shape2, ncp`|
+|Binomial| `*binom`| `size, prob`|
+|Cauchy| `*cauchy` | `location, scale`|
+|Chi-square| `*chisq` | `df, ncp`|
+|Exponential| `*exp` | `rate`|
+|F| `*F` | `df1, df2, ncp`|
+|Gamma| `*gamma`| `shape, rate/scale`|
+|Geometric | `*geom` | `prob`|
+|Poisson| `*pois` | `lambda`|
+|Student's `\(t\)` | `*t` | `df, ncp`|
+|Uniform | `*unif` | `min, max`|
+
+E.g., `dt/pt/qt/rt` stand for the density/cdf/quantile/random sample for a `\(t\)`-distribution
+
+---
+
+## Random number generation
+
+
+```r
+runif(1)
+```
+
+```
+## [1] 0.9547801
+```
+
+```r
+runif(1)
+```
+
+```
+## [1] 0.5945762
+```
+
+- The random numbers you generated will be most likely different, since they are random afterall...
+
+- But truely random numbers are very hard to produce -- e.g., they come from astronomical noise or radioactive decay -- so are impractical for programs
+
+- Programs uses *pseudo-random* numbers, which are generated from deterministic algorithms but behave like random numbers
+
+---
+
+- The pseudo-random numbers are generated from a *random seed*, which determines the sequence of numbers generated
+
+- Use `set.seed(seedNumber)` to set the seed
+
+
+```r
+set.seed(2)
+runif(1)
+```
+
+```
+## [1] 0.1848823
+```
+
+```r
+set.seed(2)
+runif(1)
+```
+
+```
+## [1] 0.1848823
+```
+
+- Setting the random seed will make random number generation and procedures involving randomness reproducible, 
+
+- This is a good practice because someone else running the code will see exactly the same as what you see right now
+
+- .style[Make sure to always set seed before performing analyses involving randomness]
+
+---
+
+## Case study: Simulating Customer Arrival
+
+Suppose that the arrival of customers at a McDonald at lunch time follows a Poisson process with rate 0.5 customers per minute.
+That is to say, the waiting time between the arrivals of customers follow an exponential distribution with rate `\(\lambda=0.5\)`. 
+The waiting time of the first 10 customers is
+
+```r
+n &lt;- 10
+(wait &lt;- rexp(n))
+##  [1] 0.40474807 0.14665267 1.73070972 0.08952618 0.66689763 1.07436686 1.51162930
+##  [8] 1.31427591 0.15653028 0.74511896
+```
+
+The arrival time of the `\(i\)`th customer is
+
+```r
+(arrival &lt;- cumsum(wait))
+##  [1] 0.4047481 0.5514007 2.2821105 2.3716366 3.0385343 4.1129011 5.6245304 6.9388063
+##  [9] 7.0953366 7.8404556
+```
+
+---
+
+The number of customers in the restuarant (assuming none left) at any given time `\(t\)` in the first 5 minutes is 
+
+```r
+Fn &lt;- ecdf(arrival)
+tVec &lt;- seq(0, 5, length.out=1000)
+plot(tVec, Fn(tVec) * n, xlab='t', ylab="Number of Customers", type="l")
+```
+
+&lt;img src="03_01_sampling_files/figure-html/unnamed-chunk-10-1.png" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+## Sampling from a vector
+
+- `sample(x, size, replace, prob)` takes a sample of the specified `size` from the elements of `x` 
+
+
+```r
+sample(1:5, 1)
+```
+
+```
+## [1] 1
+```
+
+- The default `replace=FALSE` *samples without replacement*. You will not get the same observation twice
+
+```r
+sample(1:5, 5) # same as sample(5)
+```
+
+```
+## [1] 1 4 3 2 5
+```
+
+---
+
+- `replace=TRUE` samples *with replacement*. So every draw from the vector `x` will be put back and thus is independent. You may get the same observation twice
+
+```r
+sample(1:5, 10, replace=TRUE) # same as sample(5)
+```
+
+```
+##  [1] 5 3 1 5 5 2 2 3 4 3
+```
+
+- `prob` specifies the probability weights for obtaining the elements of the vector being sampled (e.g., for simulating a biased coin). The default is equal weight
+
+```r
+sample(c("H", "T"), 10, replace=TRUE, prob=c(0.8, 0.2))
+```
+
+```
+##  [1] "H" "T" "H" "T" "H" "H" "H" "T" "H" "H"
+```
+
+---
+
+class: inverse
+
+## Your turn
+
+
+&lt;img src="images/green.png" width=20&gt; Generate a random sample of size `\(n=10\)` from the following distributions: (a). Beta(1,2) and (b). Uniform(0,100)
+
+&lt;img src="images/green.png" width=20&gt; Sample 5 random rows from `iris` without replacement
+
+&lt;img src="images/green.png" width=20&gt; Randomly shuffle the 5 rows
+
+&lt;img src="images/green.png" width=20&gt; Sample 10 random rows from `iris` with replacement
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="macros.js"></script>
+<script>var slideshow = remark.create({
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>dplyr examples</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Xiongtao Dai" />
+    <script src="libs/header-attrs-2.11/header-attrs.js"></script>
+    <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view-0.2.6/tile-view.js"></script>
+    <link rel="stylesheet" href="myslides.css" type="text/css" />
+    <link rel="stylesheet" href="myslides-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# dplyr examples
+## STAT486/586
+### Xiongtao Dai
+
+---
+
+
+
+
+## Outline
+
+- Case study: Analyzing 2020 Cyclone football data with `dplyr`
+
+- working with `dplyr` verbs
+
+
+---
+
+class: big, middle
+ 
+
+##  Cyclone Football Example
+.center[![:scale 50%](https://upload.wikimedia.org/wikipedia/commons/thumb/f/f9/Iowa_State_Cyclones_logo.svg/640px-Iowa_State_Cyclones_logo.svg.png)
+]
+---
+
+## The 2020 Cyclone football data
+
+- Iowa State University Athelete hosts some statistics for the Cyclone football team for the current season [here](https://cyclones.com/cumestats.aspx?path=football). 
+
+- When using dataset on the internet, always check whether you have the permission to do so!
+
+- An excerpt of the individual player data is available from our course website. Dowload the [excel file](cyclonesFootball2020.xlsx) and put the file next to your Rmd file. Look at what does the file contain. 
+
+---
+
+## Loading data
+The following command is going to load the per-game defense data into your R session:
+
+
+```r
+library(readxl)
+defense &lt;- read_excel('cyclonesFootball2020.xlsx', sheet='Defensive')
+str(defense)
+```
+
+```
+## tbl_df [372 × 11] (S3: tbl_df/tbl/data.frame)
+##  $ Name             : chr [1:372] "Rose, Mike" "Rose, Mike" "Rose, Mike" "Rose, Mike" ...
+##  $ Opponent_Opponent: chr [1:372] "Louisiana" "TCU" "Oklahoma" "Texas Tech" ...
+##  $ Tackles_Solo     : chr [1:372] "2" "6" "6" "3" ...
+##  $ Tackles_ASST     : chr [1:372] "4" "4" "5" "0" ...
+##  $ Tackles_TFL      : chr [1:372] "1.0" "0" "1.5" "1.0" ...
+##  $ Tackles_Sack     : chr [1:372] "0" "0" "0.5" "0" ...
+##  $ Turnover_FF      : chr [1:372] "0" "0" "0" "0" ...
+##  $ Turnover_FR      : chr [1:372] "0" "0" "0" "0" ...
+##  $ Turnover_INT     : chr [1:372] "0" "1" "0" "0" ...
+##  $ Pass_QBH         : chr [1:372] "0" "0" "1" "0" ...
+##  $ Pass_PB          : chr [1:372] "0" "0" "0" "0" ...
+```
+
+---
+
+
+## R demo...
+
+
+---
+
+class: inverse
+
+## Your turn: group_by and summarize 
+
+For this your turn use the `defense` data from the `cyclonesFootball2020.xlsx` 
+
+&lt;img src="images/green.png" width=20&gt; What is the total number of tackle assists per game?
+
+&lt;img src="images/green.png" width=20&gt; Which two ISU players have the highest average number of tackle assists? 
+
+&lt;img src="images/green.png" width=20&gt; Is our defense more successful against U of Iowa or TCU? Filter data first and compare total number of solo tackles. 
+
+&lt;img src="images/green.png" width=20&gt; What is the relationship between the ability of solo tackles and tackles assists? 
+
+&lt;img src="images/green.png" width=20&gt; Find a plot that shows the differences for each one of the above summaries.
+
+---
+class: big, middle
+
+## Brief Summaries 
+
+---
+
+## Cleaning up `defense`
+
+- convert numbers to numeric variable: `as.numeric`: 
+- here I clean up solo tackles &amp; tackle assists
+- the remaining cleaning is just pretty tedious manual work ...
+
+
+```r
+library(ggplot2)
+library(dplyr)
+defense &lt;- defense %&gt;% 
+    mutate(Tackles_Solo = as.numeric(Tackles_Solo),
+           Tackles_ASST = as.numeric(Tackles_ASST)) 
+str(defense)
+```
+
+```
+## tbl_df [372 × 11] (S3: tbl_df/tbl/data.frame)
+##  $ Name             : chr [1:372] "Rose, Mike" "Rose, Mike" "Rose, Mike" "Rose, Mike" ...
+##  $ Opponent_Opponent: chr [1:372] "Louisiana" "TCU" "Oklahoma" "Texas Tech" ...
+##  $ Tackles_Solo     : num [1:372] 2 6 6 3 7 4 7 4 4 2 ...
+##  $ Tackles_ASST     : num [1:372] 4 4 5 0 3 1 4 3 9 3 ...
+##  $ Tackles_TFL      : chr [1:372] "1.0" "0" "1.5" "1.0" ...
+##  $ Tackles_Sack     : chr [1:372] "0" "0" "0.5" "0" ...
+##  $ Turnover_FF      : chr [1:372] "0" "0" "0" "0" ...
+##  $ Turnover_FR      : chr [1:372] "0" "0" "0" "0" ...
+##  $ Turnover_INT     : chr [1:372] "0" "1" "0" "0" ...
+##  $ Pass_QBH         : chr [1:372] "0" "0" "1" "0" ...
+##  $ Pass_PB          : chr [1:372] "0" "0" "0" "0" ...
+```
+
+---
+
+## More cleaning
+
+- Change the name for the opponent column
+- order the Opponent column in a meaningful fashion: factor, and make 'UNI' the first level
+
+
+```r
+defense &lt;- defense %&gt;% 
+    rename(Opponent=Opponent_Opponent) %&gt;% 
+    mutate(Opponent = factor(Opponent))
+
+lvls &lt;- as.character(sort(unique(defense$Opponent)))
+lvls &lt;- c('UNI', lvls[lvls != 'UNI'])
+defense &lt;- defense %&gt;% 
+  mutate(Opponent = factor(Opponent, lvls))
+```
+
+---
+
+## The variable `Tackles_Solo`
+
+
+```r
+defense %&gt;% ggplot(aes(x = Tackles_Solo)) + 
+  geom_histogram(binwidth = 1)
+```
+
+&lt;img src="06_02_dplyr_example_files/figure-html/unnamed-chunk-4-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+
+## Summarizing dataset
+
+```r
+defense %&gt;% 
+  summarize(n = n(), solo = sum(Tackles_Solo))
+```
+
+```
+## # A tibble: 1 x 2
+##       n  solo
+##   &lt;int&gt; &lt;dbl&gt;
+## 1   372   336
+```
+
+```r
+defense %&gt;% 
+  group_by(Opponent) %&gt;% 
+  summarize(n = n(), solo = sum(Tackles_Solo)) %&gt;% 
+  arrange(solo) %&gt;% 
+  head(3)
+```
+
+```
+## # A tibble: 3 x 3
+##   Opponent      n  solo
+##   &lt;fct&gt;     &lt;int&gt; &lt;dbl&gt;
+## 1 Texas        30    17
+## 2 Oregon       27    19
+## 3 Louisiana    31    21
+```
+
+---
+
+## Summarizing Tackles
+
+The total number of solo tackles in each game
+
+
+```r
+soloPerGame &lt;- defense %&gt;% 
+  group_by(Opponent) %&gt;% 
+  summarize(solo = sum(Tackles_Solo))
+ggplot(soloPerGame, aes(x=Opponent, weight=solo)) + geom_bar() + coord_flip()
+```
+
+&lt;img src="06_02_dplyr_example_files/figure-html/unnamed-chunk-6-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+
+## Helper function
+
+- Counting players appeared in each game: `n()` provides the number of rows of a subset:
+
+```r
+defense %&gt;% 
+  group_by(Opponent) %&gt;% 
+  summarize(n = n(), solo = sum(Tackles_Solo)) %&gt;% 
+  str
+```
+
+```
+## tbl_df [11 × 3] (S3: tbl_df/tbl/data.frame)
+##  $ Opponent: Factor w/ 12 levels "UNI","Baylor",..: 2 3 4 5 6 7 8 9 10 11 ...
+##  $ n       : int [1:11] 30 35 33 31 63 30 27 30 30 31 ...
+##  $ solo    : num [1:11] 35 35 22 21 51 42 19 42 17 27 ...
+```
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="macros.js"></script>
+<script>var slideshow = remark.create({
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

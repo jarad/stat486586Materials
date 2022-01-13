@@ -1,0 +1,244 @@
+---
+title: "Monte Carlo Simulations"
+subtitle: "STAT486/586"
+author: "Xiongtao Dai"
+output:
+  xaringan::moon_reader:
+    mathjax: "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML"
+    css: [myslides.css, myslides-fonts.css]
+    lib_dir: libs
+    nature:
+      beforeInit: "macros.js"
+      highlightLines: true
+      countIncrementalSlides: false
+---
+class: big, middle
+
+```{r xaringan-tile-view, echo=FALSE}
+xaringanExtra::use_tile_view()
+knitr::opts_chunk$set(fig.height=4, fig.width=4, fig.align='center')
+```
+
+## Monte Carlo Simulations
+
+---
+
+## Outline
+
+- Visualizing the law of large numbers and the central limit theorem
+
+- Simulating stochastic processes
+
+- Saving/loading results
+
+---
+
+## Visualizing the LLN and CLT
+
+- The law of large numbers says that the same mean $\bar{X}$ of $X_1,\dots,X_n$ converges stochastically to the true mean $\mu$ as $n\rightarrow \infty$
+
+- The central limit theorem says that $\sqrt{n}/s(\bar{X} - \mu)$ is approximately $N(0, \sigma^2)$ where $\sigma^2$ is the variance of $X_1$
+
+- Let's use simulation to verify this
+
+- Recall that we use `map_dbl` to repeat calling a function that returns a numeric scalar
+
+---
+
+```{r, eval=FALSE}
+library(purrr)
+# Try different sample sizes
+nVec <- c(10, 100, 100, 10000)
+mu <- 1
+MC <- 500
+
+
+par(mfcol=c(3, length(nVec))) # Set plotting device
+
+walk(nVec, function(n) {
+  X <- rexp(n, rate = 1/mu)
+  hist(X)
+  
+  set.seed(1)
+  means <- map_dbl(seq_len(MC), function(i) {
+    X <- rexp(n, rate = 1/mu)
+    mean(X)
+  })
+  hist(means, xlim=c(0, 5)) # LLN
+  hist(sqrt(n) * (means - mu), xlim=c(-4, 4), freq=FALSE) # CLT
+})
+
+par(mfcol=c(1,1)) # Reset plotting device
+```
+
+---
+
+```{r, echo=FALSE, fig.width=10, fig.height=8}
+library(purrr)
+nVec <- c(10, 100, 100, 10000)
+mu <- 1
+MC <- 500
+
+par(mfcol=c(3, length(nVec)))
+walk(nVec, function(n) {
+  X <- rexp(n, rate = 1/mu)
+  hist(X)
+  
+  set.seed(1)
+  means <- map_dbl(seq_len(MC), function(i) {
+    X <- rexp(n, rate = 1/mu)
+    mean(X)
+  })
+  hist(means, xlim=c(0, 5))
+  hist(sqrt(n) * (means - mu), xlim=c(-4, 4), freq=FALSE)
+})
+par(mfcol=c(1,1))
+```
+
+---
+
+## Simulating stochastic processes
+
+- A *stochastic process* $X_t$ is random function in time $t\in\mathcal{T}$, where the time domain $\mathcal{T}$ can be discrete (e.g., $\{0,1,2,\dots\}$) or continuous (e.g., $[0,1]$). 
+
+- E.g., 
+  - the Wiener process (or Brownion motion) is a continuous-time continuous-state stochastic process on $[0, 1]$
+  
+  <!-- - similarly, the Brownian bridge is a continuous-time continuous-state stochastic process on $[0, 1]$ -->
+  
+  - The Poisson process (e.g., customer arrival) is a continuous-time discrete-state stochastic process 
+  
+  - The Markov chain is a discrete-time discrete-state stochastic process 
+
+
+---
+
+## Wiener process (Brownian motion)
+
+The Wiener process is characterized by the following properties:
+
+1. $W_0=0$
+1. Independent increments: For any $t > 0$, the increment $W_{t+u}-W_t$, $u\ge 0$ are independent of the past values $W_s$, $s\le t$.
+1. Normal increament: $W_{t+u}-W_t \sim N(0, u)$
+1. $W_t$ is continuous in $t$.
+
+Some implications:
+- $W_1 \sim N(0, 1)$
+- Disjoint jumps are independent: $W_{a} - W_{b}$ is independent of $W_c - W_d$ if $[a,b] \cap [c,d] = \varnothing$.
+---
+
+To simulate the Wiener process, generate small independent normal jumps
+```{r, fig.height=3.5}
+nStep <- 1000
+n <- 50
+
+simWiener <- function(n, nStep) {
+  t <- seq(0, 1, length.out=nStep + 1)
+  jumpSize <- t[2] - t[1]
+  W <- map(seq_len(n), function(i) {
+    jumps <- rnorm(nStep, 0, sqrt(jumpSize))
+    cumsum(c(0, jumps))
+  })
+  W <- do.call(rbind, W) # each row is a process
+  list(t=t, W=W)
+}
+
+wiener <- simWiener(n, nStep)
+# matplot shows each column in a matrix
+matplot(wiener$t, t(wiener$W[1:10, ]), main="Wiener process", type="l") 
+```
+
+---
+
+## The Brownian bridge
+
+Roughly speaking, the Brownian bridge is a stochastic process obtained by tying both ends of a Brownian motion at 0. 
+More predicely, the *Brownian bridge* is, for $t \in [0, 1]$,
+$$B_t = W_t - tW(1).$$
+
+```{r}
+simBB <- function(n, nStep) {
+  wiener <- simWiener(n, nStep)
+  B <- wiener$W - matrix(wiener$t, n, nStep + 1, byrow=TRUE) * 
+    matrix(wiener$W[, ncol(wiener$W)], n, nStep + 1)
+  list(t=wiener$t, B=B)
+}
+BB <- simBB(n, nStep)
+matplot(BB$t, t(BB$B[1:10, ]), main="Brownian bridge", type="l")
+```
+
+---
+
+## Kolmogorov–Smirnov test
+
+Kolmogorov–Smirnov test (K–S test or KS test) is a nonparametric test for the equality of distributions. 
+For a one sample test, let $X_1,\dots,X_n$ be i.i.d. observations coming from an unknown distribution $F$. 
+
+1. To test whether $X_i$ follows a given distribution $F_0$, the hypothesis is 
+$$H_0: F = F_0 \quad \text{vs} \quad H_A: F \ne F_0.$$
+
+2. The test statistic is 
+$$D_n = \sqrt{n}\sup_x|F_n(x) - F_0(x)|,$$
+where $\hat{F}_{n}(x)=n^{-1}\sum _{i=1}^{n}\mathbf{1} \{X_{i}\leq x\}$ is the empirical cdf.
+
+3. The observed test statistic $d_n$ is compared against the asymptotic null distribution of $D$, which is the supremum of a Brownian bridge, 
+$$D = \sup_{t\in[0,1]} |B_t|.$$
+The p-value is $pv=P(D > d_n)$.
+
+---
+
+- The distribution of $D$ is not in a closed form, so we cannot calculate the p-value explicitly. Instead, we resort to Monte Carlo method (simulation). The plan is:
+
+  a\. Generate a sample of $D_1,\dots,D_{M} \sim D$, by first generating a sample of $B_t$
+  
+  b\. Approximate the p-value $P(D > d_n)$ by the proportion $M^{-1}\sum_{j=1}^M \mathbf{1}\{D_j > d_n\}$.
+  
+  
+---
+
+## Example
+Test whether the sepal length in the `iris` data follows a normal distribution. Set $F_0$ to be the cdf of $N(\bar{X}, s^2)$.
+```{r, collapse=TRUE}
+X <- iris$Sepal.Length
+Fn <- ecdf(X)
+grid <- seq(min(X), max(X), length.out=100)
+Fx <- pnorm(grid, mean(X), sd(X)) # the closest normal distribution
+dn <- sqrt(length(X)) * max(abs(Fn(grid) - Fx))
+BB <- simBB(500, 1000)
+D <- apply(BB$B, 1, function(x) max(abs(x)))
+(pv <- mean(D >= dn))
+```
+
+R has a build-in `ks.test` which has a slightly different implementation:
+```{r, collapse=TRUE}
+ks.test(X, "pnorm", mean=mean(X), sd=sd(X))
+```
+
+---
+
+## Saving and loading results
+
+- Sometimes a simulation may run for very long time. You may ask system to save the all the results first and then go back and explore
+
+- Use `save(var1, var2, ..., file)` to save variables
+
+- Use `load(file)` to load the variables back into your workspace
+
+- .style[The saving/loading technique should be used very sparingly.] 
+It could make it harder to reproduce the results if you rely on saved objects
+
+---
+
+class: inverse
+
+## Your turn
+
+TODO
+
+<img src="images/green.png" width=20> Generate a random sample of size $n=10$ from the following distributions: (a). Beta(1,2) and (b). Uniform(0,100)
+
+<img src="images/green.png" width=20> Sample 5 random rows from `iris` without replacement
+
+<img src="images/green.png" width=20> Randomly shuffle the 5 rows
+
+<img src="images/green.png" width=20> Sample 10 random rows from `iris` with replacement

@@ -1,0 +1,77 @@
+---
+title: 'Homework #2'
+output: html_document
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Example question and answer
+0\. Find the value of 1+1. Storage it in a variable named `a0` and print it.
+
+**Example answer**:
+In the RMarkDown file, type in
+<pre>```{r}
+a0 <- 1 + 1
+a0
+```</pre>
+The knitted html file will show:
+```{r}
+a0 <- 1 + 1
+a0
+```
+
+## A useful note
+Remove any `View()` or `install.packages()` commands in your `Rmd` file. These commands will prevent RStudio from knitting your file. 
+
+## R commands
+1. An Olympic diving athelete's scores were 9.3, 8.7, 9.5, 10, 9, and 8.9, given by 6 referees. The final score for that dive is the average of the scores after crossing out the highest and lowest scores. Find the final score for that dive. Store the answer in a variable named `ave` and print. Make sure to answer this question progmatically, instead of hard coding numbers (so if you just start by a vector of four numbers without the lowest and highest scores, you will lose credits). 
+2. Create a vector of numbers (with length 21) to store the number of days in each of 2000, 2001, ..., 2020 has Olympic Games. Store the answer in a variable named `ndays` and print.
+<!-- An entry of the vector should be `1` if the corresponding year has Olympic Games, and `0` otherwise. Note that Olympic Games take place every two years (there are both summer and winter Olympic Games), and that 2020 does not have Olympic Games. Store the answer in a variable named `olympic` and print. -->
+3. 
+    a. Create a vector in which the $i$th entry is 
+    $$\frac{(-1)^{i+1}}{i}.$$
+    You may decide the length of the vector. Show the first few entries.
+    a. Give a (good) approximation to 
+    $$\sum_{i=1}^\infty \frac{(-1)^{i+1}}{i}.$$
+    a. How did you decide the approximation is good?
+3. Calculate the BMI of Chris and Mary, who are siblings. Chris is 1.8 meters tall and 70 kilograms in weight; Mary is 1.65 meters tall and 49 kilograms in weight. The formula for BMI is `bmi = weight (in kg) / height^2 (in meter)`. Store the answers in a vector of length 2 named `bmi` and print. Make sure the entries of `bmi` are named. 
+4. Create a vector as follows
+
+    ```
+    x <- c(1, 1, 4, 6, 4, 7, 5, 9)
+    ```
+    
+    a. Sort the vector
+    a. Returns the rank of the elements. If there is a tie, define the rank as the rank of minimum. E.g., the first two elements in `x` should both have rank 1. [Hint: see the `ties.method=` argument in `?rank`]
+    a. find the number of unique elements in `x`
+    a. Find the number of reversals. A reversal occurs when an element is strictly smaller than the element before it.
+    a. Find the average of the four numbers closest to 5
+    a. Find the average of all numbers that differ from 5 by at most 2
+
+1. Examine the results of `trunc(.5 + -2:4)` and `round(.5 + -2:4)`. Check out the documentations for the two functions, and explain why there are differences in the results.
+
+## Penguins
+For this part we will use the `penguins` data set.
+First, install the library `palmerpenguins` using `install.packages('palmerpenguins')`. 
+You can then access the data by loading the package using `library(palmerpenguins)`. 
+The `penguins` data includes size measurements for adult penguins near Palmer Station, Antarctica.
+For more details, check out `?penguins`.
+
+1. Use three commands to inspect the data frame. Make sure to show the outputs in your `Rmd`.
+
+2. Find the species of the 5 largest penguins in terms of body mass. 
+
+3. Tabulate the species of the 5 largest penguins.
+
+4. Find the mean and median of the body masses for all the penguins.
+
+5. 
+    a. Create a histogram for the body mass. Make sure to label the x-, y-axis, and title.
+    a. Create a side-by-side boxplot for the body mass of the penguins grouped by sex. 
+    a. Create a barchart to display the number of penguins with different species.
+    a. Create a scatterplot for body mass versus flipper length. Use color to indicate sex. Also show a legend. (Note: var1 versus var2 usually means var1 is the y and var2 is the x)
+
+6. [*Optional for STAT 486 students but required for STAT 586 students*] Which island has the largest penguins? Use graphs *and* summary statistics to answer this question. Make sure to explain how you define what does "the largest" mean.

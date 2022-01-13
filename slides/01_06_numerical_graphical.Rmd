@@ -1,0 +1,213 @@
+---
+title: "Numerical and graphical functions"
+subtitle: "STAT486/586"
+author: "Xiongtao Dai"
+output:
+  xaringan::moon_reader:
+    css: [myslides.css, myslides-fonts.css]
+    lib_dir: libs
+    nature:
+      beforeInit: "macros.js"
+      highlightLines: true
+      countIncrementalSlides: false
+---
+class: big, middle
+
+```{r xaringan-tile-view, echo=FALSE}
+xaringanExtra::use_tile_view()
+```
+
+## Welcome to R
+
+---
+
+## Outline
+
+- Math/stat funcitons
+
+- A first glimpse at data
+
+---
+
+class: big, middle
+
+## Numerical Functions
+
+---
+
+## Numerical Functions
+
+Functions below take in numeric vector(s) and returns a numeric vector with the same length
+
+- `sqrt(x)`, square root of `x`
+- `abs`, absolute value
+- `round`, `ceiling`, `floor`, for rounding numbers
+- `log`, `log2`, `log10`, `exp`, taking logarithms and exponential
+- `cos`, `sin`, `tan`, `acos`, `asin`, `atan`, trigonometric functions
+- `pmin`, `pmax`, elementwise minimum or maximum
+- `cumsum`, `cummax`, cumulative sum and max
+- `diff`, differences between consecutive elements
+- In general, look up R functions you want to use by Googling
+- For a quick reminder of the function, use `args(funcName)` or `?funcName` to show the arguments or the full documentation of the function, resp.
+- You can also use `??` to search the documentation as well. E.g., `??choose`
+
+---
+
+## Statistical Summary Functions
+
+Functions below takes in a numeric vector and returns a number
+
+- Summation and product: `sum`, `prod`
+
+- Elements of the five point summary: <br>
+`mean, median, min, max, quantile` 
+
+- Tally/tabulate: `table`
+
+- Other summary statistics:<br>
+`range, sd, var`
+
+- Summaries of two variables:<br>
+`cov, cor`
+
+---
+
+## R demo
+
+---
+class: inverse
+
+## Your Turn
+
+Continue the last Your turn.
+
+<img src="images/green.png" width=20> Find the mean and median of `x`
+
+<img src="images/blue.png" width=20>  Use vectorized calculation the Euclidean distance between the two vectors $x$ and $y$, defined as 
+$$
+d = \sqrt{\sum_{i=1}^4 (x_i - y_i)^2}
+$$
+
+<!-- - <img src="images/blue.png" width=20> What does a negative index do? (Hint: Try `x[-1]`) -->
+
+<!-- - <img src="images/blue.png" width=20> What happens if an index is repeated multiple times, i.e. what is `x[c(1,1,1,2,2,2,3,3,3)]`? -->
+
+---
+class: big, middle
+
+## Exploring Data
+
+---
+
+## Sort, Rank, Order, and Unique
+
+- `sort(x)` returns a sorted version of `x`
+
+- `rank(x)` returns the rank for each element in `x`
+
+- `order(x)` returns the indices which would arrange the elements of `x` in order
+
+- `unique(x)` returns the unique elements in `x`
+
+---
+
+## Graphical summaries
+- `plot(x, y, type, col, pch, lwd, lty, xlim, ylim, main, xlab, ylab, ...)`: Make a scatter plot of `x` vs `y` with various options
+- `lines, points`: Add lines and points to an existing plot, resp.
+- `barplot, hist, boxplot`: Create a barplot,  histogram, and boxplot, resp.
+- `legend`: Add legends
+
+---
+
+## Boxplot definition
+
+- definition by J.W. Tukey (1960s, EDA 1977)
+<img src="images/boxplots-definition.png" alt="" width=100%>
+
+---
+
+## Exploring data
+
+We will play with the crime data `cities`. 
+
+- To show what columns are available, use `names(df)`
+```{r}
+library(classdata) # load the dataset
+names(cities)
+```
+
+- To extract a column, use `df$column`:
+```{r}
+cities$City
+```
+
+---
+
+## Missing values in R
+
+- `NA` is the special code for "not available"
+- R consistently handles mising values. Eg. we get 
+```{r}
+NA + 1
+```
+
+```{r}
+NA | TRUE
+```
+- Caution: Direct testing for missing values is resulting in an `NA`:
+```{r}
+x <- c(1, NA)
+x == NA
+```
+<!-- - `NaN` is the code for "not a number", e.g. in 0/0 -->
+
+---
+
+## Essential functions 
+
+- Use function `is.na` for testing `NA`s
+```{r}
+x <- c(1, NA)
+is.na(x)
+```
+- `complete.cases(data)` test the existence of `NA`s in the rows of data frames
+<!-- - `drop_na(data, col1, ...)` drops the rows if `NA`s exist in `col1` or additional columns -->
+
+---
+
+## Handling missing values
+
+There are a few principles for handing missing values. 
+
+- Errors in the dataset should be removed
+
+- If uncertain whether missing values are due to errors, perform analysis with as little distortion to the data as possible
+
+- Performing a sensitivity analysis is a good idea: One version with missing values, and the other without. Compare the results.
+
+
+
+---
+
+## R demo...
+
+---
+class: inverse
+
+## Your turn
+
+<img src="images/green.png" width=20> Look at the first 10 data records of the `cities` data 
+
+<img src="images/green.png" width=20> Compute the mean and standard deviation for the number of burglaries.
+
+<img src="images/blue.png" width=20> Why do you get NAs? (read `?NA`)
+
+<img src="images/blue.png" width=20> Read `?mean` and `?sd`, and fix missing value problem
+
+---
+
+## (Optional) R Reference Card
+
+- Download the R Reference Card from https://cran.r-project.org/doc/contrib/Baggott-refcard-v2.pdf
+- Open/print it so that you can glance at it while working
+

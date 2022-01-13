@@ -1,0 +1,267 @@
+\documentclass[10pt]{article}
+\usepackage{graphicx, fancyhdr, enumerate}
+\usepackage{amsmath, amsfonts, color}
+\usepackage[colorlinks=true, allcolors=blue, draft=false]{hyperref}
+
+\setlength{\topmargin}{-.5 in} 
+\setlength{\textheight}{8.875 in}
+\setlength{\textwidth}{6.5 in} 
+\setlength{\evensidemargin}{0 in}
+\setlength{\oddsidemargin}{0 in} 
+\setlength{\parindent}{0 in}
+
+%\rhead{\raisebox{0pt}{Name:\hspace{1in}}} 
+%\lhead{\Large\sffamily DS 202 (Spring 2020): Syllabus} 
+%\rhead{\sffamily Last update: \today}
+%\cfoot{\thepage} 
+%\renewcommand{\headrulewidth}{0.4pt}
+%\renewcommand{\footrulewidth}{0pt} 
+\newcommand{\sep}{\vspace*{0.4cm}}
+\newcommand{\tab}{\hspace*{0.8cm}}
+
+\begin{document}
+%\layout
+%\thispagestyle{empty}
+
+%DS 202 (DATA SCIENCE 202) DATA ACQUISN&ANALYS
+%Prereqs:
+%DS 201X
+%Section: 1
+%9884005
+%Credits: 3
+%20 Open Seats
+% 
+%Meets: 01/13/2020 - 05/08/2020
+% 
+%Mon Wed 	12:10 PM - 1:30 PM	DAI XIONGTAO	GILMAN 2272
+%\vspace*{-3pc}
+
+\begin{center}
+\textbf{\large DS 202 (Fall 2021): Data Acquisition and Exploratory Data Analysis}
+\end{center}
+\sep
+
+\textbf{Delivery method:}
+In-person lectures
+%, with both synchronous and asynchronous contents.
+\sep
+
+\textbf{Meeting times and location:}
+Tuesday and Thursday 8:00 am -- 9:20 am, Gilman 1352
+\sep
+
+\textbf{Instructor:} 
+Xiongtao Dai\\
+%\tab Office: 2220 Snedecor Hall\\
+\tab Email: {\tt xdai@iastate.edu}\\
+\tab Office hours: Thursday 1:00 -- 2:00 pm, and by appointment\\
+\tab \tab -- Physical location: On the turf south of the Parks Library\\
+\tab \tab -- Zoom link: \url{https://iastate.zoom.us/j/93009772568?pwd=aWlWWHN0SmN2U011K3BiejhFK3E4Zz09}
+\sep
+
+\textbf{Teaching assistant:} 
+Chengpeng Zeng \\
+%\tab Office: 1404 Snedecor Hall\\
+\tab Email: {\tt czeng@iastate.edu}\\
+\tab Office hours: Wednesday and Friday 3:00 -- 4:00 pm, and by appointment\\
+\tab \tab -- Physical location: Snedecor 1205\\
+\tab \tab -- Zoom link: \url{https://iastate.zoom.us/j/93009772568?pwd=aWlWWHN0SmN2U011K3BiejhFK3E4Zz09}
+\sep
+
+\textbf{Prerequisites:} DS 201
+\sep
+
+\textbf{Course description:}
+Data acquisition: file structures, web-scraping, database access; ethical aspects of data acquisition; types of data displays; numerical and visual summaries of data; pipelines for data analysis: filtering, transformation, aggregation, visualization and (simple) modeling; good practices of displaying data; data exploration cycle; graphics as tools of data exploration; strategies and techniques for data visualizations; basics of reproducibility and repeatability; web-based interactive applets for visual presentation of data and results. Programming exercises. 
+\sep
+
+\textbf{What you will learn:}
+Be able to 
+\begin{itemize}
+\setlength\itemsep{0pt}
+\item acquire and read data in different formats and from different sources;
+\item implement a basic data processing pipeline;
+\item explore data;
+\item visualize complex data in appropriate forms; and 
+\item communicate your findings in a reproducible form.
+\end{itemize}
+\sep
+
+\textbf{How you will learn:}
+%The course will be taught in a flipped format, with everything delivered remotely (so there is no in-person meetings).  
+In a typical week, you will 
+\begin{itemize}
+\setlength\itemsep{0pt}
+\item attend lectures on Tuesday and Thursday;
+\item post questions on Piazza and attend office hours throughout the week;
+\item finish a weekly individual quiz by Thursday; and
+\item hand in your assignment by the end of Saturday. 
+\end{itemize}
+\sep
+
+
+\textbf{Computer software:} This class will be teaching the \texttt{R} language (\url{https://www.r-project.org/}). 
+Making proper use of version control systems \texttt{git} and GitHub will be required for the homework, lab, and final project. 
+\sep
+
+%\textbf{Text and references:} 
+\textbf{Optional reading materials:} 
+\begin{itemize}
+\setlength\itemsep{0pt}
+\item \emph{R for Data Science}, Garrett Grolemund and Hadley Wickham, \url{https://r4ds.had.co.nz/}
+%\item \emph{Hands-On Programming with R}, Garrett Grolemund, \url{https://rstudio-education.github.io/hopr/}
+\item Chapter 1--2, \emph{Pro Git}, Scott Chacon and Ben Straub, \url{https://git-scm.com/book/en/v2}
+\end{itemize}
+\sep
+
+\textbf{Course webpage:} We will post course materials and announcement on Canvas. 
+Much of the materials are developed by Dr Heike Hofmann. 
+Past recordings of lecture videos will be posted on Canvas to facilitate your learning.
+The contents covered by the past recordings will be mostly the same as what we cover in class, except for Module 14.
+The presentation of materials and examples might differ.
+\sep
+
+\textbf{Whiteboard notes:} Occasional notes made in class will be posted here:  \url{https://iowastate-my.sharepoint.com/:o:/g/personal/xdai_iastate_edu/EvzyiJQqTRlEsJIbF3phE6sBrdEuiSVKHdyzVOz5tco1ew?e=y8Bp1g}. (Bookmark this page!) \\
+
+\textbf{Piazza:} We will be using Piazza for class discussion. The system is highly catered to getting you help fast and efficiently from classmates, the TA, and myself. Rather than emailing questions to the TA and the instructor, you are highly encouraged to post your questions on Piazza. 
+Piazza is integrated into Canvas so you can access it there; alternatively, visit \url{piazza.com/iastate/fall2021/ds202} in your browser.
+The response time is 24 hours.
+Email the TA and the instructor only for personal matters.
+\\
+
+When posting on Piazza, please follow adequate netiquettes:
+\begin{itemize}
+\setlength\itemsep{0pt}
+\item Be polite and respectful to others.
+\item Search before you post. Your question may have already been asked and answered. 
+\item When you post a question, please explain the context and give an example of what you have issue with. 
+Posting screenshots and asking ``What is going wrong?'' is unacceptable.
+\item Posting short snippet of code is fine, but please refrain from posting a complete solution to a question.
+\end{itemize}
+
+%\textbf{Learning groups:} You will be assigned to a learning group that lasts throughout the semester. 
+%The learning group is where you can turn to for discussion and group work. 
+
+\sep
+
+\textbf{Quizzes:}
+There will be weekly individual quizzes posted on Canvas. 
+The quiz questions are supposed to be relatively simple and can be immediately answered after learning from the two weekly lectures.
+The individual quizzes are due by Thursday at 11:59 pm, and will be immediately graded. 
+You have two attempts. 
+The higher score from the two attempts will be kept.
+%\\
+%
+%Students will be able to correct mistakes and attempt a higher score in the group quiz in Monday's class. The group quiz will be the same as the individual quiz. 
+%Students will discuss within the learning group and arrive at a single answer. 
+%One of the group members will submit the quiz answers on Canvas, representing the group. 
+%If a question is answered incorrectly in the individual quiz but correctly in the group quiz, the student will gain back the deducted scores. 
+%You will only gain scores by taking the group quiz -- it will never decrease your quiz score. 
+%Only students who participated in the group quiz will receive credits from the group quiz.
+\sep
+
+\textbf{Homework and Labs:}
+There will be 6 homework and 5 lab assignments throughout the semester, except for the midterm and preparation weeks.
+Homework are to be finished individually, and lab assignments can be finished either individually or (optionally) in a team of two.
+%You can optionally work in teams of 2 or 3 students in your study group for each lab (except for Lab 1 on GitHub where you are required to team up). 
+Feel free to discuss the assignments with anyone in the class, including your classmates, TA, and the instructor.
+However, you (and your lab mate) must write the assignments individually. 
+\textbf{Plagiarism detection will be strictly enforced} using the Measure Of Software Similarity (MOSS, \url{https://theory.stanford.edu/~aiken/moss/}).
+\sep
+
+
+\textbf{Midterm exam:}
+There will be one midterm exam on October 21 from 7:30 am to 9:30 am (no lecture on that day).
+The midterm will be an open-book open-Internet take-home exam. You cannot obtain help from anyone else, however. 
+The midterm exam will test on your understanding of \texttt{R} and \texttt{git} commands, data wrangling, graphics production, and real data analysis. 
+There is no final exam.
+\sep
+
+\textbf{Final project:}
+The final project is a data analysis project. 
+You can optionally work in a team of two formed among yourself.
+The project consists of an investigation proposal, a written report, and a short oral presentation. 
+More information is available on Canvas.
+\sep
+
+\textbf{Participation:}
+%Full participation in Monday's class is expected. Please turn on your camera and unmute when it is time for the group discussions. 
+Active participation in class, office hours, and on Piazza are highly encouraged. 
+If you work in a team, you should actively contribute to the group work. 
+If a team member does not respond in a timely fashion, the other team member reserves the right to submit the group work as he/her individual work, giving no credits to the delaying team member.
+%Students will be assessed by their group members at the end of the semester.
+
+\sep
+
+\textbf{Grading:} Letter grades will be assigned by the instructor. 
+The grade may be curved, but only in a direction beneficial to the students as compared to the standard grading scheme (90\% A-range, 80\% B-range, etc). 
+The graded components are
+\begin{itemize}
+\setlength\itemsep{0pt}
+\item 10\% weekly quizzes % (drop the lowest)
+%\item 5\% group quizzes (drop the lowest)
+\item 40\% homework and labs
+\item 20\% midterm exam 
+\item 25\% final project (5\% proposal, 10\% presentation, 10\% report)
+\item 5\% participation (primarily Piazza)
+\end{itemize}
+\sep
+
+
+\textbf{Academic dishonesty:}
+The class will follow Iowa State University's policy on academic dishonesty.
+Anyone suspected of academic dishonesty will be reported to the Dean of
+Students Office:\\
+\centerline{\url{http://www.dso.iastate.edu/ja/academic/misconduct.html}}
+\sep
+
+
+%\textbf{COVID-19 health and safety requirements:}
+%Please find up-to-date information regarding the university's safety policy for COVID-19 on \url{https://web.iastate.edu/safety/updates/covid19}, in case you will participate in in-person activities with your teammates. \\
+%
+%Students are responsible for abiding by the university’s COVID-19 health and safety expectations. All students attending this class in-person are required to follow university policy regarding health, safety, and face coverings:
+%\begin{itemize}
+%\item wear a cloth face covering in all university classrooms, laboratories, studios, and other in-person instructional settings and learning spaces. Cloth face coverings are additionally required to be worn indoors in all university buildings, and outdoors when other people are or may be present where physical distancing of at least 6 feet from others is not possible. Students with a documented health or medical condition that prevents them from wearing a cloth face covering should consult with Student Accessibility Services in the Dean of Students Office.
+%\item ensure that the cloth face covering completely covers the nose and mouth and fits snugly against the side of the face.
+%\item practice physical distancing to the extent possible.
+%\item assist in maintaining a clean and sanitary environment.
+%\item not attend class if you are sick or experiencing symptoms of COVID-19.
+%\item not attend class if you have been told to self-isolate or quarantine by a health official.
+%\item follow the instructor’s guidance with respect to these requirements. Failure to comply constitutes disruptive classroom conduct. Faculty and teaching assistants have the authority to deny a non-compliant student entry into a classroom, laboratory, studio, conference room, office, or other learning space.
+%\end{itemize}
+%
+%These requirements extend outside of scheduled class time, including coursework in laboratories, studios, and other learning spaces, and to field trips. These requirements may be revised by the university at any time during the semester.
+%\\
+%
+%In accordance with university policy, instructors may use a face shield while they are teaching as long as they are able to maintain 8 feet of physical distance between themselves and students during the entire instructional period. Some form of face covering must be worn at all times in learning spaces regardless of the amount of physical distancing.
+%\\
+% 
+%Faculty may refer matters of non-compliance to the Dean of Students Office for disciplinary action, which can include restrictions on access to, or use of, university facilities; removal from university housing; required transition to remote-only instruction; involuntary disenrollment from one or more in-person courses; and other such measures as necessary to promote the health and safety of campus.
+%\\
+%
+%It is important for students to recognize their responsibility in promoting the health and safety of the Iowa State University community, through actions both on- and off-campus.
+%The university’s faculty asks that you personally demonstrate a commitment to
+%our Cyclones Care campaign. Iowa State University’s faculty support the Cyclones Care campaign and ask you personally to demonstrate a commitment to our campaign. Your dedication and contribution to the campaign will also protect your family, classmates, and friends, as well as their friends and families. Our best opportunity for a successful fall semester with in-person learning and extramural activities requires all of us to collaborate and fully participate in the Cyclones Care campaign.
+
+\textbf{Face masks encouraged}: Because of the continuing COVID-19 pandemic, all students are encouraged—but not required—to wear face masks, consistent with current recommendations from the Centers for Disease Control and Prevention. Further information on the proper use of face masks is available at: \url{https://www.cdc.gov/coronavirus/2019-ncov/your-health/effective-masks.html}
+\sep
+
+\textbf{Vaccinations encouraged}: All students are encouraged to receive a vaccination against COVID-19. Multiple locations are available on campus for free, convenient vaccination. Further information is available at: \url{https://web.iastate.edu/safety/updates/covid19/vaccinations} Vaccinations may also be obtained from health care providers and pharmacies.
+\sep
+
+\textbf{Physical distancing encouraged for unvaccinated individuals}: Classrooms and other campus spaces are operating at normal capacities, and physical distancing by faculty, staff, students, and visitors to campus is not required. However, unvaccinated individuals are encouraged to continue to physically distance themselves from others when possible.
+\sep
+
+\textbf{Free expression}: Iowa State University supports and upholds the First Amendment protection of freedom of speech and the principle of academic freedom in order to foster a learning environment where open inquiry and the vigorous debate of a diversity of ideas are encouraged. Students will not be penalized for the content or viewpoints of their speech as long as student expression in a class context is germane to the subject matter of the class and conveyed in an appropriate manner.
+\sep
+
+\textbf{Classroom disruption policy:}
+The class will follow university's Classroom Disruption Policy outlined here \url{www.studentassistance.dso.iastate.edu/faculty-and-staff-resources/disruption}.
+\sep
+
+%\textbf{Accessibility Statement:} Iowa State University is committed to assuring that all educational activities are free from discrimination and harassment based on disability status.  Students requesting accommodations for a documented disability are required to work directly with staff in Student Accessibility Services (SAS) to establish eligibility and learn about related processes before accommodations will be identified.  After eligibility is established, SAS staff will create and issue a Notification Letter for each course listing approved reasonable accommodations.  This document will be made available to the student and instructor either electronically or in hard-copy every semester.  Students and instructors are encouraged to review contents of the Notification Letters as early in the semester as possible to identify a specific, timely plan to deliver/receive the indicated accommodations.  Reasonable accommodations are not retroactive in nature and are not intended to be an unfair advantage.  Additional information or assistance is available online at www.sas.dso.iastate.edu, by contacting SAS staff by email at accessibility@iastate.edu, or by calling 515-294-7220. Student Accessibility Services is a unit in the Dean of Students Office located at 1076 Student Services Building.
+%\sep
+
+\textbf{Other course policies and accommodation:} \url{www.celt.iastate.edu/teaching/preparing-to-teach/recommended-iowa-state-university-syllabus-statements/}
+
+\end{document}

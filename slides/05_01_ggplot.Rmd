@@ -1,0 +1,290 @@
+---
+title: "Graphical Analysis with ggplot"
+subtitle: "STAT486/586"
+author: "Xiongtao Dai"
+output:
+  xaringan::moon_reader:
+    mathjax: "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML"
+    css: [myslides.css, myslides-fonts.css]
+    lib_dir: libs
+    nature:
+      beforeInit: "macros.js"
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r xaringan-tile-view, echo=FALSE}
+xaringanExtra::use_tile_view()
+knitr::opts_chunk$set(fig.height=4, fig.width=4, fig.align='center')
+```
+
+## Outline
+
+- tidyverse
+
+- The grammar of graphics
+
+- ggplot
+
+---
+
+## Data Science in R: the `tidyverse` 
+
+![:scale 80%](images/tidyverse.png)
+
+---
+
+## `tidyverse`
+
+- We will cover tidyverse packages in this module. 
+
+- The tidyverse (defined by Hadley Wickham) is a collection of packages that are great producivity boosters and work well together
+
+- `library(tidyverse)` will load:
+  -   [purrr](https://purrr.tidyverse.org), for functional programming.
+  -   [stringr](https://github.com/tidyverse/stringr), for strings.
+  -   [ggplot2](https://ggplot2.tidyverse.org), for data visualisation.
+  -   [dplyr](https://dplyr.tidyverse.org), for data manipulation.
+  -   [tidyr](https://tidyr.tidyverse.org), for data tidying.
+  -   [readr](https://readr.tidyverse.org), for data import.
+  -   [tibble](https://tibble.tidyverse.org), for tibbles, a modern
+      re-imagining of data frames.
+  -   [forcats](https://github.com/tidyverse/forcats), for factors.
+
+---
+class: big, middle
+
+## Explore data with `ggplot2`
+
+---
+
+## Why `ggplot2`
+
+- Wildly popular package for statistical graphics: over 27 million downloads from CRAN from 2015 (almost 20 thousand times per day). 
+
+- Developed by Hadley Wickham (An ISU alumni, COPSS Presidents' Award receipient)
+
+- Ported to Python
+
+- Designed to adhere to good graphical practices
+
+- Supports a wide variety plot types and extensions
+
+- Constructs plots using the concept of layers
+
+---
+
+## Example by ggplot: Crime rates in 2018
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.width=12, fig.height=10, out.width='100%',cache=TRUE}
+library(classdata)
+library(ggplot2)
+library(dplyr)
+library(reshape2)
+dat <- fbiwide %>% 
+  melt(c('State', 'Abb', 'Year', 'Population'), variable.name='crime') %>% 
+  filter(Year == 2018) %>% 
+  mutate(crimeRate = value / Population * 1000)
+p <- ggplot(dat, aes(x=crime, y=crimeRate, fill=crime)) + geom_bar(stat='identity') + facet_wrap(~State) + ylab('# of crimes per thousand') + theme(axis.text.x = element_text(angle = 70, hjust = 1))
+p
+```
+
+---
+
+## Grammar of Graphics
+
+A graphical representation (plot) consists of:
+
+1. **mappings** (`aes`):  data variables are mapped to graphical elements (x- and y-coordinate, color, shape, ...)
+
+2. **layers**:  geometric elements (`geoms`, such as points, lines, rectangles, text, ...) and position adjustments (e.g. jitter points, side-by-side histograms)
+
+3. **scales**: the mapping from data space to values in an aesthetic space (e.g. axis transformation; low value--blue, high value--red)
+
+4. **coordinate system** (`coord`): normally Cartesian, but pie charts use polar coordinates
+
+5. **facetting**: for multiple plots (according to subsets) and their arrangement
+
+6. **theme**: fine-tune display items, such as font and its size, ...
+
+---
+
+## Getting ready
+
+Load libraries:
+
+```{r}
+library(ggplot2)
+library(classdata) # not found? run devtools::install_github("xdaiisu/classdata")
+```
+
+---
+
+## `ggplot` Function
+
+The `ggplot` function is the basic workhorse of ggplot2
+
+- Produces all plot types available with ggplot2
+
+- Allows for plotting options within the function statement
+
+- Creates an object that can be saved
+
+- Plot layers can be added to modify plot complexity
+
+---
+
+## `ggplot` Structure
+
+The `ggplot` function has the basic syntax:
+
+`ggplot(data, mappings) + geom_type(options)`
+
+- `data`: dataset to be used
+
+- `mappings`: determines which variables are used for the x- and y-axis, color, linetype, etc. Done with `aes()`, which stands for aesthetic mappings
+
+- `type`: determines type of the plot, e.g. `point`, `line`, `bar`, `histogram`
+
+- `options`: there are so, so many options!
+
+---
+
+## Example: Scatterplots in `ggplot2`
+
+`aes` allows us to specify mappings; scatterplots need a mapping for `x` and a mapping for `y`:
+```{r, warning=FALSE}
+ggplot(data = fbiwide, aes(x = Burglary, y = Murder)) +
+  geom_point() 
+```  
+
+---
+
+## Aesthetics
+
+Can map other variables to `size`, `color`, `shape`, ....
+
+```{r, warning=FALSE}
+ggplot(aes(x = Burglary, y = Motor.vehicle.theft,
+           color=Year), data=fbiwide) + geom_point() 
+```           
+
+---
+## R demo...
+
+
+---
+
+class: inverse
+
+## Your turn
+
+Work on the `cities` data in `library(classdata)`
+
+<img src="images/blue.png" width=20> Use barchart to represent the state populations. 
+
+<img src="images/green.png" width=20> Draw a scatterplot of the number of burglaries by murders.
+
+<img src="images/blue.png" width=20> Adjust the numbers of the above scatterplot to show log transformed numbers. How can we interpret the numbers on the axes?
+
+<img src="images/blue.png" width=20> Draw a scatterplot of the log transformed number of burglaries by motor vehicle thefts. Map the state variable to colour. Why is this a terrible idea?
+
+<img src="images/blue.png" width=20> Draw a scatterplot of the log transformed number of burglaries by motor vehicle thefts. Map Population to size. How do we interpret the output?
+
+---
+    
+## Grammar of Graphics
+
+A graphical representation (plot) consists of:
+
+1. <span style="color:gray"> **mappings** (`aes`):  data variables are mapped to graphical elements (x- and y-coordinate, color, shape, ...)
+
+2. <span style="color:gray"> **layers**:  geometric elements (`geoms`, such as points, lines, rectangles, text, ...) and position adjustments (e.g. jitter points, side-by-side histograms)
+
+3. <span style="color:gray"> **scales**: the mapping from data space to values in an aesthetic space (e.g. axis transformation; low value--blue, high value--red)
+
+4. **coordinate system** (`coord`): normally Cartesian, but pie charts use polar coordinates
+
+5. **facetting**: for small multiples (subsets) and their arrangement
+
+6. **theme**: fine-tune display items, such as font and its size, ...
+
+---
+
+## Coordinate system
+
+Some coordinate systems we will commonly use:
+
+- `coord_cartesian(xlim=c(0, 5), ylim=...)`: Cartesian coordinate, `xlim` and `ylim` crop the displayed region
+
+- `coord_flip`: Flip x- and y-axis
+
+- `coord_map`: Useful later for making maps
+
+---
+
+## Facetting: Display different subsets
+
+E.g., `facet_wrap` produces a long series of `facets` (panels) and wrap them around
+
+```{r, message=FALSE, fig.width=10, fig.height=7, out.height="80%", cache=TRUE}
+ggplot(aes(x = Year, y = Murder), data=fbiwide) + geom_line() +
+    facet_wrap(~State)
+```
+
+---
+
+## Setup of `facet_wrap` and `facet_grid`
+
+- `facet_wrap` has formula specification `~ variables` 
+
+    - Great for visualizing one factor
+
+- `facet_grid` has formula specification: `rows ~ cols`
+
+    - Great for visualizing all combinations of two factors
+
+---
+
+## Facets vs aesthetics?
+
+- Will need to experiment as to which one answers your question/tells the story best
+
+- Rule of thumb: comparisons of interest should be close together
+
+---
+
+## Themes
+
+- `... + ggtitle('title text')` to show a figure title
+
+- `... + xlab('Axis text'), ylab('Axis text')` to show axis labels
+
+- (TODO) More later
+
+---
+
+## R demo...
+
+---
+
+class: inverse
+
+## Your turn
+
+Use the `fbiwide` data from the package `classdata` for this your turn. 
+
+<img src="images/green.png" width=20> Plot the number of car thefts by year for each state (facet by state). What year had the most theft?
+
+<img src="images/green.png" width=20> The numbers are dominated by the number of thefts in California, New York, and Texas. Use a log-scale for the y-axis. Does that help?
+
+The numbers are dominated by the number of thefts in California, New York, and Texas. Use a log-scale for the y-axis. Does that help?
+
+<img src="images/blue.png" width=20> Another approach to fix the domination by CA, TX and NY: Read up on the `scale=` parameter in `facet_wrap` to find a way to give each panel its own scale. Comment on the difference in the results.
+
+
+---
+
+## Optional Reference 
+Aesthetics and geoms supported by ggplot2: [RStudio cheat sheet](https://raw.githubusercontent.com/rstudio/cheatsheets/master/data-visualization-2.1.pdf)
+
+

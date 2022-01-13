@@ -1,0 +1,401 @@
+---
+title: "R Fundamentals"
+subtitle: "STAT486/586"
+author: "Xiongtao Dai"
+output:
+  xaringan::moon_reader:
+    css: [myslides.css, myslides-fonts.css]
+    lib_dir: libs
+    nature:
+      beforeInit: "macros.js"
+      highlightLines: true
+      countIncrementalSlides: false
+---
+class: big, middle
+
+```{r xaringan-tile-view, echo=FALSE}
+xaringanExtra::use_tile_view()
+```
+
+## Welcome to R
+
+---
+
+## Outline
+
+- TODO
+- R language
+- Data types
+- Making vectors
+- Assignment operator `<-`
+- Numerical operators
+- Math/stat funcitons
+- Extract elements
+- A first glimpse at data
+
+---
+
+## The R language
+
+For someone who had experience with C/C++/Python/etc:
+
+- R is an intuitive high-level programming language
+
+- R has an excellent handling of data, analysis, and graphics. At the same time, it is also general purposed
+
+- You will use R interactively
+
+---
+
+## Some Specifics
+
+- Each to access to documentation: E.g., type `?cos` in the R console
+
+- R functions are like mathmatical functions. So `cos(x)` means "return me the cosine of the value of the variable `x`". Not going to modify `x` (calling by value but almost never by reference)
+
+- So R is great for functional programming
+
+- R is case-sensitive, so `function` and `Function` are very different
+
+- R counts from 1 (unlike Python & C++ which counts from 0)
+
+---
+## R Syntax Examples 
+
+|**Math** | **Code**|
+|:-------:|:-------:|
+|Assignments $x = \frac{2}{3}$ | `x <- 2/3` |
+|Vectors $y = \left( 1, 2, 3, 5\right)$ | `y <- c(1, 2, 3, 5)`|
+| Indices $y_1$ | `y[1]` | 
+| $2y$ | `2 * y` |
+|Functions $\sqrt{x}$ | `sqrt(x)` |
+|Mathematical Operators $\sum_{i=1}^{4} y$ | `sum(y)` |
+
+
+---
+
+## R Data Types
+
+R has different data types:
+
+- Numeric variables, e.g. `3`, `1:20`, `pi`
+
+- Character variables, e.g. `hello world`, `c("cat", "dog")`
+
+- Logical variables, e.g. `TRUE`, `FALSE`, `c(FALSE, TRUE)`
+
+- Missing values `NA` (more next time)
+
+- Data frame. Use `$` to extract a column. E.g., `df$column` 
+
+- Matrix (more soon)
+
+- List (more soon)
+
+Here, `c()` is the function for creating a vector (combine/concatenate)
+
+---
+
+## Inspecting objects
+
+for an object `x`, we can try out the following commands:
+
+- `x` 
+- `print(x)`
+- `class(x)`
+- `length(x)`
+- `str(x)`
+- `head(x)`
+- `tail(x)`
+- `summary(x)`
+- `dim(x)`
+- `View(x)` (offered by RStudio)
+
+---
+
+## Quick demo
+
+---
+
+## Loading class data
+
+- Some R packages have built-in datasets
+
+- I made an R package for this class available on github containing datasets
+
+- Installing `classdata` package:
+
+```{r, message=FALSE, results='hide', eval=FALSE}
+devtools::install_github("xdaiISU/classdata")
+```
+
+- Make the data available when needed (once after you start R):
+```{r}
+library(classdata)
+```
+
+- In general, `library(pkgname)` loads the package `pkgname` into R
+
+---
+
+## The `cities` data
+
+- `cities` is a data frame with columns (variables) and rows (records)
+
+```{r}
+str(cities)
+```
+
+---
+
+## R demo...
+
+---
+class: inverse
+
+## Your Turn
+
+<img src="images/green.png" width=20> Install the package `classdata` on your machine <br>
+
+<img src="images/green.png" width=20> Make the package active in your current R session:
+```
+library(classdata)
+```
+
+<img src="images/green.png" width=20> Check the R help on the dataset `cities`<br>
+
+<img src="images/green.png" width=20> Use the object browser to view the data frame by issuing `View(cities)`.<br>
+
+<img src="images/green.png" width=20> Use different R commands to inspect the dataset `cities`.
+
+
+
+---
+
+## Functions for Building a Vector
+
+- `c()`, for combining elements and vectors
+
+- `:`, for creating a simple sequence of numbers
+
+- `seq()`, for creating a sequence of numbers
+
+- `rep()`, for repeating a vector
+
+- `ifelse()`, for creating a vector where the value of each entry depends on a logical vector
+
+- `vector(mode = "numeric", length=10)`, for initializing a numeric vector of length 10. .style[Initialization can most of the time be avoided in R]
+
+More details in the demo
+
+---
+
+## Assignment
+
+- `<-` is the assignment operator. `=` also works as an assignment operator, .style[but please avoid it as a matter of style.] E.g., 
+  ```{r}
+  x <- c(2, 5)
+  ```
+- You can assign names and other attributes
+  ```{r}
+  names(x) <- c("male", "female")
+  x
+  ```
+  ```{r}
+  class(x) <- "tally"
+  x
+  ```
+
+???
+When R is smart enough to tell how the variable should be typed. You don't need to declare types
+
+---
+
+## R workspace
+
+- Your current R environment is called the *workspace*. It contains all variables you defined.
+
+- Your workspace lives in your computer memory and will be cleared once you exit R
+
+- To see what variables are in the workspace, use 
+
+```{r}
+ls()
+```
+
+- Use `rm()` to remove one or more variables
+
+```{r}
+rm(x)
+ls()
+``` 
+
+---
+
+## Reproducibility
+
+- For reproducibility, you want any meaningful work to be reproducible. Namely, the results should be reproduced by running the **code** you saved, but not by saving the results directly
+
+- Thus, saving R variables onto your hard disk is not a great idea
+
+- Instead, a great idea is to always write code in a `.R` or `.Rmd` file
+
+- When exiting R, you will be prompted to save the workspace image. **Always select Don't Save** for reproduciblity
+
+
+---
+
+## R demo
+
+---
+class: inverse
+
+## Your Turn
+
+<img src="images/green.png" width=20> Introduce vector $x$ defined as $x = (4, 1, 3, 9)$ and $y$ defined as $y = (1, 2, 3, 4)$
+
+<img src="images/green.png" width=20> Create character vector $z$ containing `c`, `b`, and `a` in its three entries
+
+<img src="images/green.png" width=20> Save your code in either a `.R` or a `.Rmd` file
+
+<img src="images/green.png" width=20> Restart RStudio *without* saving workspace image. Then reproduce vectors `x`, `y`, and `z` by rerunning the code you saved
+
+
+---
+
+## Numerical Opertions
+
+- `+`, `-`, `*`, `/`, Add, substract, multiple, and divide
+
+- `x ^ a`, x raised to the power of a
+
+- `x %/% y`, x integer divided by y (fractional part is discarded)
+
+- `x %% y`, take the remainder of x integer divided by y (also called modulo or mod)
+
+- Note the operator precedence. See `?Syntax`
+
+---
+
+## Comparison Operations
+
+- `a == b`, test whether two variables equal elementwise. To test equality for objects as a whole, use `identical(a, b)`
+
+- `a != b`, test whether two variables are different elementwise
+
+- `a > b`, `a < b`, `a >= b`, `a <= b`, comparisons
+
+- `a %in% b`, whether each element of `a` is a member of `b`
+
+---
+
+## Vectorized Operations
+
+- Most of the R opeartions and functions are vectorized. Namely, they apply to vectors and not just to scalars
+
+- The calculation will be performed for each element in the vector. E.g., 
+
+  ```{r}
+  1:4 + 4:1
+  1:4 + 2
+  ```
+  
+- The *recycling rule*: Basic R operations follow a recycling rule: If the two vectors have different length, the shorter one will be repeated so match the length of the longer one. .style[Write code in an intuitive way]
+
+  ```{r}
+  rep(30, 6) + c(1, 0) # Add one day to odd months
+  ```
+
+---
+class: inverse
+
+## Your Turn
+
+Continue the last Your turn.
+
+<img src="images/green.png" width=20> Play with the arithmatic and comparison operators on `x` and `y`
+
+<img src="images/blue.png" width=20> Evaluate `rep(0, 9) + 1:3`. Reason about the result with the recycling rule
+
+
+---
+
+## Indexing with Integers
+
+- Use square brackets `[]` to extract index or modify indexed entries
+- Note that R counts from 1
+- Indexing with integers: 
+```{r}
+x <- month.abb
+x[1]
+x[c(6, 6, 7, 8)]
+x[c(6, 7, 8)] <- "break!"
+x
+x[-1] # What is this?
+```
+
+
+---
+
+## Indexing with Names
+
+- Indexing with names: The index vector can be a character vector
+
+```{r}
+pets <- c(cat = 10, dog = 15, lizard = 2)
+pets
+pets[c("cat", "dog")]
+```
+
+---
+
+## Indexing with Logicals
+
+- Indexing with logicals: E.g., `x[logiVec]`. You can use a logical vector with the same length as `x` to index
+
+```{r}
+x <- 1:3
+x[c(TRUE, FALSE, TRUE)]
+```
+
+- Oftentimes the logical index vector is created by comparison
+
+```{r}
+x[x > 2]
+```
+
+---
+
+## Which
+
+- `which(logiVec)` returns the integer positions where the entry of `logiVec` is `TRUE`
+
+```{r}
+logi <- month.abb == "Jun"
+logi
+which(logi)
+month.abb[which(logi) + 2]
+```
+
+---
+
+## Indexing Data Frames
+
+For a data frame `x`, we can extract parts in the following manner:
+
+```
+x$variable
+x[, "variable"]
+x$variable[rows]
+
+x[rows, columns]
+x[1:5, 2:3]
+x[c(1,5,6), c("State", "Year")]
+```
+
+- `rows` and `columns` each can be a vector of integer position indices or a logical vector 
+
+- `columns` can also be a character vector specifying the names. .style[This is the preferred way of specifying the columns]
+
+- `x[, "variable"]` will give a vector (not a data frame any more).</br>
+`x[, "variable", drop=TRUE]` will give a data frame with a single column

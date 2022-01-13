@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Monte Carlo Simulations</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Xiongtao Dai" />
+    <script src="libs/header-attrs-2.11/header-attrs.js"></script>
+    <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view-0.2.6/tile-view.js"></script>
+    <link rel="stylesheet" href="myslides.css" type="text/css" />
+    <link rel="stylesheet" href="myslides-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Monte Carlo Simulations
+## STAT486/586
+### Xiongtao Dai
+
+---
+
+class: big, middle
+
+
+
+## Monte Carlo Simulations
+
+---
+
+## Outline
+
+- Visualizing the law of large numbers and the central limit theorem
+
+- Simulating stochastic processes
+
+- Saving/loading results
+
+---
+
+## Visualizing the LLN and CLT
+
+- The law of large numbers says that the same mean `\(\bar{X}\)` of `\(X_1,\dots,X_n\)` converges stochastically to the true mean `\(\mu\)` as `\(n\rightarrow \infty\)`
+
+- The central limit theorem says that `\(\sqrt{n}/s(\bar{X} - \mu)\)` is approximately `\(N(0, \sigma^2)\)` where `\(\sigma^2\)` is the variance of `\(X_1\)`
+
+- Let's use simulation to verify this
+
+- Recall that we use `map_dbl` to repeat calling a function that returns a numeric scalar
+
+---
+
+
+```r
+library(purrr)
+# Try different sample sizes
+nVec &lt;- c(10, 100, 100, 10000)
+mu &lt;- 1
+MC &lt;- 500
+
+
+par(mfcol=c(3, length(nVec))) # Set plotting device
+
+walk(nVec, function(n) {
+  X &lt;- rexp(n, rate = 1/mu)
+  hist(X)
+  
+  set.seed(1)
+  means &lt;- map_dbl(seq_len(MC), function(i) {
+    X &lt;- rexp(n, rate = 1/mu)
+    mean(X)
+  })
+  hist(means, xlim=c(0, 5)) # LLN
+  hist(sqrt(n) * (means - mu), xlim=c(-4, 4), freq=FALSE) # CLT
+})
+
+par(mfcol=c(1,1)) # Reset plotting device
+```
+
+---
+
+&lt;img src="03_03_monte_carlo_simulations_files/figure-html/unnamed-chunk-2-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Simulating stochastic processes
+
+- A *stochastic process* `\(X_t\)` is random function in time `\(t\in\mathcal{T}\)`, where the time domain `\(\mathcal{T}\)` can be discrete (e.g., `\(\{0,1,2,\dots\}\)`) or continuous (e.g., `\([0,1]\)`). 
+
+- E.g., 
+  - the Wiener process (or Brownion motion) is a continuous-time continuous-state stochastic process on `\([0, 1]\)`
+  
+  &lt;!-- - similarly, the Brownian bridge is a continuous-time continuous-state stochastic process on `\([0, 1]\)` --&gt;
+  
+  - The Poisson process (e.g., customer arrival) is a continuous-time discrete-state stochastic process 
+  
+  - The Markov chain is a discrete-time discrete-state stochastic process 
+
+
+---
+
+## Wiener process (Brownian motion)
+
+The Wiener process is characterized by the following properties:
+
+1. `\(W_0=0\)`
+1. Independent increments: For any `\(t &gt; 0\)`, the increment `\(W_{t+u}-W_t\)`, `\(u\ge 0\)` are independent of the past values `\(W_s\)`, `\(s\le t\)`.
+1. Normal increament: `\(W_{t+u}-W_t \sim N(0, u)\)`
+1. `\(W_t\)` is continuous in `\(t\)`.
+
+Some implications:
+- `\(W_1 \sim N(0, 1)\)`
+- Disjoint jumps are independent: `\(W_{a} - W_{b}\)` is independent of `\(W_c - W_d\)` if `\([a,b] \cap [c,d] = \varnothing\)`.
+---
+
+To simulate the Wiener process, generate small independent normal jumps
+
+```r
+nStep &lt;- 1000
+n &lt;- 50
+
+simWiener &lt;- function(n, nStep) {
+  t &lt;- seq(0, 1, length.out=nStep + 1)
+  jumpSize &lt;- t[2] - t[1]
+  W &lt;- map(seq_len(n), function(i) {
+    jumps &lt;- rnorm(nStep, 0, sqrt(jumpSize))
+    cumsum(c(0, jumps))
+  })
+  W &lt;- do.call(rbind, W) # each row is a process
+  list(t=t, W=W)
+}
+
+wiener &lt;- simWiener(n, nStep)
+# matplot shows each column in a matrix
+matplot(wiener$t, t(wiener$W[1:10, ]), main="Wiener process", type="l") 
+```
+
+&lt;img src="03_03_monte_carlo_simulations_files/figure-html/unnamed-chunk-3-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+## The Brownian bridge
+
+Roughly speaking, the Brownian bridge is a stochastic process obtained by tying both ends of a Brownian motion at 0. 
+More predicely, the *Brownian bridge* is, for `\(t \in [0, 1]\)`,
+`$$B_t = W_t - tW(1).$$`
+
+
+```r
+simBB &lt;- function(n, nStep) {
+  wiener &lt;- simWiener(n, nStep)
+  B &lt;- wiener$W - matrix(wiener$t, n, nStep + 1, byrow=TRUE) * 
+    matrix(wiener$W[, ncol(wiener$W)], n, nStep + 1)
+  list(t=wiener$t, B=B)
+}
+BB &lt;- simBB(n, nStep)
+matplot(BB$t, t(BB$B[1:10, ]), main="Brownian bridge", type="l")
+```
+
+&lt;img src="03_03_monte_carlo_simulations_files/figure-html/unnamed-chunk-4-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Kolmogorov–Smirnov test
+
+Kolmogorov–Smirnov test (K–S test or KS test) is a nonparametric test for the equality of distributions. 
+For a one sample test, let `\(X_1,\dots,X_n\)` be i.i.d. observations coming from an unknown distribution `\(F\)`. 
+
+1. To test whether `\(X_i\)` follows a given distribution `\(F_0\)`, the hypothesis is 
+`$$H_0: F = F_0 \quad \text{vs} \quad H_A: F \ne F_0.$$`
+
+2. The test statistic is 
+`$$D_n = \sqrt{n}\sup_x|F_n(x) - F_0(x)|,$$`
+where `\(\hat{F}_{n}(x)=n^{-1}\sum _{i=1}^{n}\mathbf{1} \{X_{i}\leq x\}\)` is the empirical cdf.
+
+3. The observed test statistic `\(d_n\)` is compared against the asymptotic null distribution of `\(D\)`, which is the supremum of a Brownian bridge, 
+`$$D = \sup_{t\in[0,1]} |B_t|.$$`
+The p-value is `\(pv=P(D &gt; d_n)\)`.
+
+---
+
+- The distribution of `\(D\)` is not in a closed form, so we cannot calculate the p-value explicitly. Instead, we resort to Monte Carlo method (simulation). The plan is:
+
+  a\. Generate a sample of `\(D_1,\dots,D_{M} \sim D\)`, by first generating a sample of `\(B_t\)`
+  
+  b\. Approximate the p-value `\(P(D &gt; d_n)\)` by the proportion `\(M^{-1}\sum_{j=1}^M \mathbf{1}\{D_j &gt; d_n\}\)`.
+  
+  
+---
+
+## Example
+Test whether the sepal length in the `iris` data follows a normal distribution. Set `\(F_0\)` to be the cdf of `\(N(\bar{X}, s^2)\)`.
+
+```r
+X &lt;- iris$Sepal.Length
+Fn &lt;- ecdf(X)
+grid &lt;- seq(min(X), max(X), length.out=100)
+Fx &lt;- pnorm(grid, mean(X), sd(X)) # the closest normal distribution
+dn &lt;- sqrt(length(X)) * max(abs(Fn(grid) - Fx))
+BB &lt;- simBB(500, 1000)
+D &lt;- apply(BB$B, 1, function(x) max(abs(x)))
+(pv &lt;- mean(D &gt;= dn))
+## [1] 0.156
+```
+
+R has a build-in `ks.test` which has a slightly different implementation:
+
+```r
+ks.test(X, "pnorm", mean=mean(X), sd=sd(X))
+## Warning in ks.test(X, "pnorm", mean = mean(X), sd = sd(X)): ties should not be present
+## for the Kolmogorov-Smirnov test
+## 
+## 	One-sample Kolmogorov-Smirnov test
+## 
+## data:  X
+## D = 0.088654, p-value = 0.1891
+## alternative hypothesis: two-sided
+```
+
+---
+
+## Saving and loading results
+
+- Sometimes a simulation may run for very long time. You may ask system to save the all the results first and then go back and explore
+
+- Use `save(var1, var2, ..., file)` to save variables
+
+- Use `load(file)` to load the variables back into your workspace
+
+- .style[The saving/loading technique should be used very sparingly.] 
+It could make it harder to reproduce the results if you rely on saved objects
+
+---
+
+class: inverse
+
+## Your turn
+
+TODO
+
+&lt;img src="images/green.png" width=20&gt; Generate a random sample of size `\(n=10\)` from the following distributions: (a). Beta(1,2) and (b). Uniform(0,100)
+
+&lt;img src="images/green.png" width=20&gt; Sample 5 random rows from `iris` without replacement
+
+&lt;img src="images/green.png" width=20&gt; Randomly shuffle the 5 rows
+
+&lt;img src="images/green.png" width=20&gt; Sample 10 random rows from `iris` with replacement
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="macros.js"></script>
+<script>var slideshow = remark.create({
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
