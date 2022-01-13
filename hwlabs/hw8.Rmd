@@ -16,10 +16,10 @@ knitr::opts_chunk$set(echo = TRUE)
 1. (Bootstrapping one-sample skewness and kurtosis)
 Let $X_1,\dots,X_n$ be i.i.d. observations. The population and sample skewness are, respectively, 
 $${\tilde {\mu }}_{3}=\operatorname {E} \left[\left({\frac {X-\mu }{\sigma }}\right)^{3}\right]={\frac {\operatorname {E} \left[(X-\mu )^{3}\right]}{(\operatorname {E} \left[(X-\mu )^{2}\right])^{3/2}}}, \quad 
-b_{1}={\frac{{\tfrac{1}{n}}\sum _{i=1}^{n}(X_{i}-{\bar {X}})^{3}}{\left[{\tfrac{1}{n-1}}\sum _{i=1}^{n}(X_{i}-{\bar {X}})^{2}\right]^{3/2}}}.$$
+b_{1}={\frac{\tfrac{1}{n}\sum _{i=1}^{n}(X_{i}-{\bar {X}})^{3}}{\left[{\tfrac{1}{n-1}}\sum _{i=1}^{n}(X_{i}-{\bar {X}})^{2}\right]^{3/2}}}.$$
 The population and sample kurtosis, which measure the heavy-tailedness of the distribution, are respectively
 $${\tilde {\mu }}_{4}=\operatorname {E} \left[\left({\frac {X-\mu }{\sigma }}\right)^{4}\right]={\frac {\operatorname {E} \left[(X-\mu )^{4}\right]}{\left(\operatorname {E} \left[(X-\mu )^{2}\right]\right)^{2}}}, \quad
-b_{2}={\frac{{\tfrac{1}{n}}\sum _{i=1}^{n}(X_{i}-{\overline {X}})^{4}}{\left[{\tfrac{1}{n}}\sum _{i=1}^{n}(X_{i}-{\overline {X}})^{2}\right]^{2}}}.$$
+b_{2}={\frac{\tfrac{1}{n}\sum _{i=1}^{n}(X_{i}-{\overline {X}})^{4}}{\left[{\tfrac{1}{n}}\sum _{i=1}^{n}(X_{i}-{\overline {X}})^{2}\right]^{2}}}.$$
 It is quite hard to write down formulas for the standard errors or to derive confidence intervals for skewness and kurtosis, so we are going to use bootstrap to do so.
 [Hint: It is a great idea to write flexible functions that can be called repetitively for the tasks below]
 
