@@ -9,12 +9,12 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 This homework is more or less a tutorial that helps you set up the environment we use in this course. 
-You will not be able to continue in this class if you do not finish this assignment.
+*You will not be able to continue in this class if you do not finish this assignment.*
 As a pre-requisite, first install R, and then the RStudio (the free version of Rstudio Desktop). 
 
 Please respond to all questions. If the question asks you to do something on your machine and you have finished that, just answer "Done". 
 
-1. Create a folder named `hw1`, and move the provided template into this folder and rename it to ``hw1_FirstName_LastName.Rmd`.
+1. Create a folder named `hw1`, and move the provided template into this folder and rename it to `hw1_FirstName_LastName.Rmd`.
 Replace `FirstName` and `LastName` with your first and last name. 
 `hw1_FirstName_LastName.Rmd` will include your solutions. The file and folder names are *case-sensitive*, which means `hw1.Rmd` and `HW1.rmd` are different. 
 *It is crucial to follow the exact folder structure and file names* in this course, so that your homework can be reproduced. The correct folder structure is
@@ -28,15 +28,19 @@ Replace `FirstName` and `LastName` with your first and last name.
 
     Answer: ...
 
+
 2. Write your name in the YAML of your homework `Rmd` file.
 
     Answer: ...
+
 
 2. Create a new section in your `Rmd` named Introduction
 
     Answer: ...
 
+
 3. Write a paragraph to introduce yourself. Set your name in bold font, and your major and seniority in italic. 
+
 
     Answer: ...
 
@@ -45,13 +49,19 @@ Replace `FirstName` and `LastName` with your first and last name.
 
     Answer: ...
 
+4. Write down the logarithm of the Gamma distribution density. Here is a [quick guide](https://rpruim.github.io/s341/S19/from-class/MathinRmd.html) on how to type math in RMarkdown (which applies more generally, e.g. on Piazza and for writing documents using LaTex).
+
+    Answer: ...
+
 5. Create a second section named Programming Environment
 
     Answer: ...
+
   
 6. To check that your R and Rstudio installation is correct, find the version of R by entering `version` into the R console. *Include this command into an R code trunk* so your R version is automatically printed in the knitted html file. 
 
     Answer: ...
+
 
   
 7. Install git. 
@@ -65,6 +75,7 @@ Replace `FirstName` and `LastName` with your first and last name.
     Answer: ...
 
 
+
 8. What is the version of your Git? To find out, go to the Terminal tab in RStudio (right to the Console tab), and type in the following command. If it works, this shows that the setup of your terminal and Git is correct. 
 <!-- Then explore the bash command line and Git. -->
 
@@ -72,7 +83,6 @@ Replace `FirstName` and `LastName` with your first and last name.
     git --version
     ```
 
-    Answer: ...
 
   
 9. Configure your git username and user email by modifying and entering the following commands into the terminal
@@ -81,5 +91,9 @@ Replace `FirstName` and `LastName` with your first and last name.
     git config --global user.name "your first and last name"
     git config --global user.email "your email"
     ```
+
+    Answer: ...
+
+1. Initiate a git repository within the `hw1` folder (the folder containing the current homework). Add your homework files and create a commit. Show what does `git log` tell you.
 
     Answer: ...
