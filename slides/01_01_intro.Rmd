@@ -26,11 +26,12 @@ xaringanExtra::use_tile_view()
 
 - STAT 486 is your first systematic study of statistical programming
 
+- Cross-listed as STAT 586 for graduate students
+
 - You will learn very important skills to deal with data and analysis. These skills will be repeatedly used in your career!
 
 - You will learn R
 
-- Cross-listed as STAT 586 for graduate students
 
 ---
 
@@ -81,12 +82,16 @@ You will acquire solid programming skills where your statistician/data scientist
 ## R is ...
 
 * One of the most popular statistical/data science programming languages
+
 * __Free__ to use, __open source__ so you can see what code is doing to your data
+
 * __Powerful__ for data analysis
-    * With the right tools, get more work done, faster.
-* __Extensible__: More than 18000 user contributed add-on packages currently on CRAN! Bioconductor more than 2000 packages. Many researchers provide R packages through github.
+    * With the right tools, get more work done, faster
+    
+* __Extensible__: More than 18000 user contributed add-on packages currently on CRAN! Bioconductor more than 2000 packages. Many researchers provide R packages through github
+
 * __Flexible__
-    * Not a question of _can_, but _how_.
+    * Not a question of _can_, but _how_
 
 ```{r, eval = FALSE, echo = FALSE}
 devtools::install_github("metacran/crandb")
@@ -137,9 +142,12 @@ length(pkgs)
 
 ## Getting help
 
-- In class: Raise your hand. 
-- Office hour: Office hour will be held on Zoom [here](https://iastate.zoom.us/j/93009772568?pwd=aWlWWHN0SmN2U011K3BiejhFK3E4Zz09). The phisical location is to be announced.
+- In class: Raise your hand
+
+- Office hour: Office hour will be held on Zoom [here](https://iastate.zoom.us/j/93009772568?pwd=aWlWWHN0SmN2U011K3BiejhFK3E4Zz09). The phisical location is to be announced
+
 - Googling
+
 - We will also use Piazza for other course-related Q & A 
 
 ---
@@ -198,5 +206,5 @@ Have a look at:
 
 ## Syllabus
 
-The [full syllabus](https://canvas.iastate.edu/courses/88184/assignments/syllabus) can be found on Canvas, where you can also find a course schedule.
+The [full syllabus](https://canvas.iastate.edu/courses/88184/assignments/syllabus) can be found on Canvas
 
