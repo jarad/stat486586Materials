@@ -5,6 +5,8 @@
     <meta charset="utf-8" />
     <meta name="author" content="Xiongtao Dai" />
     <script src="libs/header-attrs-2.11/header-attrs.js"></script>
+    <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view-0.2.6/tile-view.js"></script>
     <link rel="stylesheet" href="myslides.css" type="text/css" />
     <link rel="stylesheet" href="myslides-fonts.css" type="text/css" />
   </head>
@@ -69,6 +71,22 @@ class: middle, big
 
 ---
 
+## Writing math in Markdown
+
+- You can type an equation inline. E.g., `$y = \beta_1 x^2$` is rendered as `\(y = \beta_1 x^2\)`
+
+- You can type a displayed equation. E.g., 
+```
+$$y = \beta_1 x^2$$
+``` 
+is rendered as 
+`$$y = \beta_1 x^2$$`
+
+- A quick tutorial and cheatsheet is found in this [quick guide](https://rpruim.github.io/s341/S19/from-class/MathinRmd.html)
+
+- Learn it once, use it in many places: E.g., Piazza, LaTeX, GitHub
+---
+
 ## Built upon Markdown: RMarkdown
 
 - RMarkdown is an authoring format that enables easy creation of dynamic documents, presentations, and reports from R 
@@ -76,8 +94,6 @@ class: middle, big
 - It combines the core syntax of markdown with embedded R code chunks that are run so their output can be included in the final document.
 
 - R Markdown documents are reproducible. They are generated as if you just start up R.
-
-Have a look at RStudio's [cheat sheets](https://www.rstudio.com/resources/cheatsheets/)
 
 
 ---
@@ -94,13 +110,21 @@ Have a look at RStudio's [cheat sheets](https://www.rstudio.com/resources/cheats
 
 ---
 
+## Demo
+
+---
+
 ## Why R Markdown?
 
 - **It's simple.** Focus on writing
 &lt;!-- , rather than debugging silly errors. --&gt;
 
-- **It's flexible.** Markdown was created to simplify HTML writing, but thanks to pandoc, Markdown converts to many different formats such as pdf and Word!
+- **It's flexible.** 
 
+     - Markdown was created to simplify HTML writing, but thanks to pandoc, Markdown converts to many different formats such as pdf and Word!
+
+    - You can fine tune the [code chunks options](https://yihui.org/knitr/options/)
+    
 - **It's dynamic.** Get a new dataset? Regenerate your report without copy/paste hell!
 
 - **Encourages transparency.** Collaborators (including your future self) will thank you for integrating your analysis &amp; report.
@@ -108,14 +132,13 @@ Have a look at RStudio's [cheat sheets](https://www.rstudio.com/resources/cheats
 - **Enables interactivity/reactivity.** Allow your audience to explore the analysis (rather than passively reading it).
 
 ---
-inverse
+class: inverse
 
 ## Your Turn
 
 
 2. &lt;img src="images/green.png" width=20&gt; Open RStudio, create a new RMarkdown file, and knit it.
-
-3. &lt;img src="images/green.png" width=20&gt; Navigate to the RMarkdown cheat sheet and download a copy 
+&lt;!-- 3. &lt;img src="images/green.png" width=20&gt; Navigate to the RMarkdown cheat sheet and download a copy  --&gt;
 
 3. &lt;img src="images/green.png" width=20&gt; Make changes to the markdown formatting (try several) and knit again.
 
@@ -123,15 +146,20 @@ inverse
 
 5. &lt;img src="images/blue.png" width=20&gt; If you feel adventurous, change some of the R code and knit again.
 
-6. &lt;img src="images/blue.png" width=20&gt; If you are all done, you can follow the guideline of HW1 and finish the first few questions.
+6. &lt;img src="images/blue.png" width=20&gt; If you are all done, you can follow the guideline of [HW1](https://canvas.iastate.edu/courses/88184/assignments/1654121?module_item_id=4391334) and finish the first few questions.
 
+---
+
+## Optional reference
+
+- Have a look at RStudio's [cheat sheets](https://www.rstudio.com/resources/cheatsheets/)
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script src="macros.js"></script>
 <script>var slideshow = remark.create({
 "highlightStyle": "github",
-"highlightLines": true,
+"highlightLines": false,
 "countIncrementalSlides": false
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
@@ -198,24 +226,7 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
       links[i].target = '_blank';
     }
   }
-})();
-// adds .remark-code-has-line-highlighted class to <pre> parent elements
-// of code chunks containing highlighted lines with class .remark-code-line-highlighted
-(function(d) {
-  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
-  const preParents = [];
-  const findPreParent = function(line, p = 0) {
-    if (p > 1) return null; // traverse up no further than grandparent
-    const el = line.parentElement;
-    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
-  };
-
-  for (let line of hlines) {
-    let pre = findPreParent(line);
-    if (pre && !preParents.includes(pre)) preParents.push(pre);
-  }
-  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
-})(document);</script>
+})();</script>
 
 <script>
 slideshow._releaseMath = function(el) {

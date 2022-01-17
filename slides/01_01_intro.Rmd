@@ -148,17 +148,19 @@ length(pkgs)
 
 - Googling
 
-- We will also use Piazza for other course-related Q & A 
+- We will use [Piazza](piazza.com/iastate/spring2022/stat486586) for *all* course-related Q & A
+
+- Email is only for personal matters
 
 ---
 
 [Piazza](https://piazza.com/iastate/spring2022/stat486586) will be used as the class' online forum, which is accessible within Canvas. 
 
+![:scale 70%](images/Piazza.png)
+
 We are using a free contribution-supported mode. Making contribution to Piazza is **completely optional**
 
  
-![:scale 70%](images/Piazza.png)
-
 ---
 
 ## Asking a good question
@@ -172,6 +174,8 @@ is a learned and valuable skill! Please
 - When you post a question, please explain the context and give an example of what you have issue
 with. Posting screenshots and asking "What is going wrong?" is unacceptable
 
+- Providing a [reproducible example](https://stackoverflow.com/questions/5963269/how-to-make-a-great-r-reproducible-example) will greatly help others help you
+
 - Posting short snippet of code is fine, but please refrain from posting a complete solution to a question
 
 Have a look at:
@@ -182,11 +186,16 @@ Have a look at:
 
 ## What do you know already?
 
-- excel?
-
-- a programming language?
-
 - SAS? R? R markdown?
+
+- another programming language?
+
+- STAT 301 or STAT 326 or STAT 401 or STAT 587?
+
+- Multiple linear regression?
+
+- Matrix calculation (linear algebra)?
+
 
 
 <!-- ## What data will we look at? -->

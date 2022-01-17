@@ -23,16 +23,19 @@ xaringanExtra::use_tile_view()
 
 ---
 
-
 ## R is ...
 
 * One of the most popular statistical/data science programming languages
+
 * __Free__ to use, __open source__ so you can see what code is doing to your data
+
 * __Powerful__ for data analysis
-    * With the right tools, get more work done, faster.
-* __Extensible__: More than 18000 user contributed add-on packages currently on CRAN! Bioconductor more than 2000 packages. Many researchers provide R packages through github.
+    * With the right tools, get more work done, faster
+    
+* __Extensible__: More than 18000 user contributed add-on packages currently on CRAN! Bioconductor more than 2000 packages. Many researchers provide R packages through github
+
 * __Flexible__
-    * Not a question of _can_, but _how_.
+    * Not a question of _can_, but _how_
 
 ```{r, include=FALSE, cache=TRUE, message=FALSE}
 library(XML)
