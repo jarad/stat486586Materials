@@ -58,9 +58,15 @@ knitr::opts_knit$set(root.dir = '~/Downloads')
 
 - You can also use `setwd()` to set the directory
 
+- Download this file for learning path: ![](input.csv)
+
 ---
 
 ## Absolute and Relative Paths
+
+- We are about to discuss paths in Linux-like operating systems
+    - macOS is linux-like
+    - Windows is not. Please follow [HW1, Q9](https://xdaiisu.github.io/stat486586Materials/hwlabs/hw1_questions.html) to install git for Windows and obtain a linux-like environment for this lecture
 
 - An *absolute path* is the location of a file on the hard disk. An absolute path always starts with an `/`. E.g., `/` (the root folder), `/Users/xdai`, `/c/My Documents`
     - Avoid absolute path in your code because they make the code non-reproducible
