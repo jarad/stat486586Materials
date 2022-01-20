@@ -34,6 +34,8 @@ xaringanExtra::use_tile_view()
 
 - Exactly, which file in folder are we referring to?
 
+- Download this file for learning path: [input.csv](input.csv). Put it somewhere convenient, e.g., your desktop
+
 ---
 
 ## Current working directory
@@ -52,13 +54,13 @@ knitr::opts_knit$set(root.dir = '~/Downloads')
   getwd()
   ```
   
-- So `read.csv('input.csv')` is going to read the file in the previous Downloads folder
+- So `read.csv('input.csv')` is going to read the file in the folder shown above
 
-- Commonly used working directory is at the source file location. To set the working directory there, in RStudio, click Session -- Set Working Directory -- To Source File Location
+- Different programs may have different working directories
+
+- *Very often, we would like to set the working directory at the source file location.* To set the working directory there, in RStudio, click Session -- Set Working Directory -- To Source File Location
 
 - You can also use `setwd()` to set the directory
-
-- Download this file for learning path: ![](input.csv)
 
 ---
 
@@ -74,8 +76,8 @@ knitr::opts_knit$set(root.dir = '~/Downloads')
 - A *relative path* is the location of a file relative to the current working directory. E.g., 
     - `.` (current directory), 
     - `..` (parent directory), 
-    - `demo.R` (`demo.R` in the current directory), and 
-    - `../demo.R` (`demo.R` in the parent directory)
+    - `input.csv` (`input.csv` in the current directory), and 
+    - `../input.csv` (`input.csv` in the parent directory)
     
 ---
 class: middle, big
@@ -168,8 +170,9 @@ class: inverse
 
 Terminology from [github glossary](https://help.github.com/articles/github-glossary/)
 
-- **Repository:** the basic element of `git` - like a project's folder. A repository contains all of the project files, and their __revision history__. 
-- **Commit:** A checkpoint, i.e., snapshot of the codes files at a time point. Every time you commit, git creates a unique ID that allows you to keep record of what changes were made when and by whom.
+- **Repository:** the basic element of `git` - like a project's folder. A repository contains all of the project files, and their __revision history__
+
+- **Commit:** A checkpoint, i.e., snapshot of the codes files at a time point. Every time you commit, git creates a unique ID that allows you to keep record of what changes were made when and by who
 
 `git` commands important to us: `git init`, `git status`, `git log`, `git add`, `git commit`, `git diff`.
 
