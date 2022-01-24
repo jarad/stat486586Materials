@@ -74,4 +74,4 @@ For more details, check out `?penguins`.
     a. Create a barchart to display the number of penguins with different species.
     a. Create a scatterplot for body mass versus flipper length. Use color to indicate sex. Also show a legend. (Note: var1 versus var2 usually means var1 is the y and var2 is the x)
 
-6. [*Optional for STAT 486 students but required for STAT 586 students*] Which island has the largest penguins? Use graphs *and* summary statistics to answer this question. Make sure to explain how you define what does "the largest" mean.
+<!-- 6. [*Optional for STAT 486 students but required for STAT 586 students*] Which island has the largest penguins? Use graphs *and* summary statistics to answer this question. Make sure to explain how you define what does "the largest" mean. -->
