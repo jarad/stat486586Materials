@@ -11,15 +11,10 @@ output:
       highlightLines: true
       countIncrementalSlides: false
 ---
-class: big, middle
 
 ```{r xaringan-tile-view, echo=FALSE}
 xaringanExtra::use_tile_view()
 ```
-
-## Welcome to R
-
----
 
 ## Outline
 
@@ -47,6 +42,8 @@ Functions below take in numeric vector(s) and returns a numeric vector with the 
 - `pmin`, `pmax`, elementwise minimum or maximum
 - `cumsum`, `cummax`, cumulative sum and max
 - `diff`, differences between consecutive elements
+
+
 - In general, look up R functions you want to use by Googling
 - For a quick reminder of the function, use `args(funcName)` or `?funcName` to show the arguments or the full documentation of the function, resp.
 - You can also use `??` to search the documentation as well. E.g., `??choose`
@@ -81,7 +78,9 @@ class: inverse
 
 Continue the last Your turn.
 
-<img src="images/green.png" width=20> Find the mean and median of `x`
+<img src="images/green.png" width=20> Find the mean, median, and maximum of `iris$Sepal.Width`
+
+<img src="images/green.png" width=20> `discoveries` contains the number of discoveries since 1860. Find the difference of the discoveries between consecutive years. Also find the cumulative number of discoveries since the start of the records.
 
 <img src="images/blue.png" width=20>  Use vectorized calculation the Euclidean distance between the two vectors $x$ and $y$, defined as 
 $$
@@ -112,9 +111,15 @@ class: big, middle
 ---
 
 ## Graphical summaries
+
 - `plot(x, y, type, col, pch, lwd, lty, xlim, ylim, main, xlab, ylab, ...)`: Make a scatter plot of `x` vs `y` with various options
-- `lines, points`: Add lines and points to an existing plot, resp.
-- `barplot, hist, boxplot`: Create a barplot,  histogram, and boxplot, resp.
+
+- `lines, points`: Add lines and points to an existing plot, resp
+
+- `abline`: Add a guideline
+
+- `barplot, hist, boxplot`: Create a barplot,  histogram, and boxplot, resp
+
 - `legend`: Add legends
 
 ---
@@ -124,72 +129,12 @@ class: big, middle
 - definition by J.W. Tukey (1960s, EDA 1977)
 <img src="images/boxplots-definition.png" alt="" width=100%>
 
----
-
-## Exploring data
-
-We will play with the crime data `cities`. 
-
-- To show what columns are available, use `names(df)`
-```{r}
-library(classdata) # load the dataset
-names(cities)
-```
-
-- To extract a column, use `df$column`:
-```{r}
-cities$City
-```
-
----
-
-## Missing values in R
-
-- `NA` is the special code for "not available"
-- R consistently handles mising values. Eg. we get 
-```{r}
-NA + 1
-```
-
-```{r}
-NA | TRUE
-```
-- Caution: Direct testing for missing values is resulting in an `NA`:
-```{r}
-x <- c(1, NA)
-x == NA
-```
-<!-- - `NaN` is the code for "not a number", e.g. in 0/0 -->
-
----
-
-## Essential functions 
-
-- Use function `is.na` for testing `NA`s
-```{r}
-x <- c(1, NA)
-is.na(x)
-```
-- `complete.cases(data)` test the existence of `NA`s in the rows of data frames
-<!-- - `drop_na(data, col1, ...)` drops the rows if `NA`s exist in `col1` or additional columns -->
-
----
-
-## Handling missing values
-
-There are a few principles for handing missing values. 
-
-- Errors in the dataset should be removed
-
-- If uncertain whether missing values are due to errors, perform analysis with as little distortion to the data as possible
-
-- Performing a sensitivity analysis is a good idea: One version with missing values, and the other without. Compare the results.
-
-
 
 ---
 
 ## R demo...
+
+Load the `cities` data for this demo (`library(cities)`)
 
 ---
 class: inverse
@@ -205,6 +150,8 @@ class: inverse
 <img src="images/blue.png" width=20> Read `?mean` and `?sd`, and fix missing value problem
 
 ---
+
+
 
 ## (Optional) R Reference Card
 

@@ -23,33 +23,37 @@ xaringanExtra::use_tile_view()
 
 ## Outline
 
-- TODO
 - R language
+
 - Data types
+
+- Inspecting data
+
 - Making vectors
-- Assignment operator `<-`
-- Numerical operators
-- Math/stat funcitons
-- Extract elements
-- A first glimpse at data
+
+- Assignment
+
+- Workspace and reproducibility
+
+- Numerical and logical operations
+
+- Indexing
 
 ---
 
 ## The R language
 
-For someone who had experience with C/C++/Python/etc:
+For someone who had previous programming experience: 
 
 - R is an intuitive high-level programming language
 
-- R has an excellent handling of data, analysis, and graphics. At the same time, it is also general purposed
+- R has an excellent handling of data, analysis, and graphics.
 
 - You will use R interactively
 
 ---
 
 ## Some Specifics
-
-- Each to access to documentation: E.g., type `?cos` in the R console
 
 - R functions are like mathmatical functions. So `cos(x)` means "return me the cosine of the value of the variable `x`". Not going to modify `x` (calling by value but almost never by reference)
 
@@ -59,7 +63,10 @@ For someone who had experience with C/C++/Python/etc:
 
 - R counts from 1 (unlike Python & C++ which counts from 0)
 
+- Easy to access to documentation: E.g., type `?cos` in the R console
+
 ---
+
 ## R Syntax Examples 
 
 |**Math** | **Code**|
@@ -80,7 +87,7 @@ R has different data types:
 
 - Numeric variables, e.g. `3`, `1:20`, `pi`
 
-- Character variables, e.g. `hello world`, `c("cat", "dog")`
+- Character variables, e.g. `"hello world"`, `c("cat", "dog")`
 
 - Logical variables, e.g. `TRUE`, `FALSE`, `c(FALSE, TRUE)`
 
@@ -102,18 +109,14 @@ for an object `x`, we can try out the following commands:
 
 - `x` 
 - `print(x)`
+- `str(x)`
 - `class(x)`
 - `length(x)`
-- `str(x)`
 - `head(x)`
 - `tail(x)`
 - `summary(x)`
 - `dim(x)`
-- `View(x)` (offered by RStudio)
-
----
-
-## Quick demo
+- `View(x)` (offered by RStudio, remove from Rmd before knitting)
 
 ---
 
@@ -148,6 +151,23 @@ str(cities)
 
 ---
 
+## Exploring data
+
+We will play with the crime data `cities`. 
+
+- To show what columns are available, use `names(df)`
+```{r}
+library(classdata) # load the dataset
+names(cities)
+```
+
+- To extract a column, use `df$column`:
+```{r}
+cities$City
+```
+
+---
+
 ## R demo...
 
 ---
@@ -176,7 +196,7 @@ library(classdata)
 
 - `c()`, for combining elements and vectors
 
-- `:`, for creating a simple sequence of numbers
+- `:`, for creating a simple sequence of numbers. E.g., `1:10`
 
 - `seq()`, for creating a sequence of numbers
 
@@ -184,7 +204,7 @@ library(classdata)
 
 - `ifelse()`, for creating a vector where the value of each entry depends on a logical vector
 
-- `vector(mode = "numeric", length=10)`, for initializing a numeric vector of length 10. .style[Initialization can most of the time be avoided in R]
+- `vector(mode = "numeric", length=10)`, for initializing a numeric vector of length 10. .style[We will need it sometimes, but initialization can most of the time be avoided in R]
 
 More details in the demo
 
@@ -192,7 +212,7 @@ More details in the demo
 
 ## Assignment
 
-- `<-` is the assignment operator. `=` also works as an assignment operator, .style[but please avoid it as a matter of style.] E.g., 
+- `<-` is the assignment operator. `=` can also be used as an assignment operator, .style[but avoid it as a matter of style.] E.g., 
   ```{r}
   x <- c(2, 5)
   ```
@@ -206,8 +226,6 @@ More details in the demo
   x
   ```
 
-???
-When R is smart enough to tell how the variable should be typed. You don't need to declare types
 
 ---
 
@@ -234,7 +252,7 @@ ls()
 
 ## Reproducibility
 
-- For reproducibility, you want any meaningful work to be reproducible. Namely, the results should be reproduced by running the **code** you saved, but not by saving the results directly
+- For reproducibility, you want any meaningful work to be reproducible. Namely, the .danger[results should be reproduced by running the **code** you saved, but not by saving the results directly]
 
 - Thus, saving R variables onto your hard disk is not a great idea
 
@@ -273,7 +291,7 @@ class: inverse
 
 - `x %% y`, take the remainder of x integer divided by y (also called modulo or mod)
 
-- Note the operator precedence. See `?Syntax`
+- Note the operator precedence, namely, which operation is calculated before which. See `?Syntax`
 
 ---
 
@@ -331,7 +349,7 @@ x[1]
 x[c(6, 6, 7, 8)]
 x[c(6, 7, 8)] <- "break!"
 x
-x[-1] # What is this?
+x[-1] # What does negative index mean?
 ```
 
 

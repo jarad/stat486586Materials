@@ -62,7 +62,7 @@ For more details, check out `?penguins`.
 
 1. Use three commands to inspect the data frame. Make sure to show the outputs in your `Rmd`.
 
-2. Find the species of the 5 largest penguins in terms of body mass. 
+2. Find the species of the 5 largest penguins in terms of body mass. (Hint: use `order`)
 
 3. Tabulate the species of the 5 largest penguins.
 

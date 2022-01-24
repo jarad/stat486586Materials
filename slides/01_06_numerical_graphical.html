@@ -20,13 +20,8 @@ class: center, middle, inverse, title-slide
 
 ---
 
-class: big, middle
 
 
-
-## Welcome to R
-
----
 
 ## Outline
 
@@ -54,6 +49,8 @@ Functions below take in numeric vector(s) and returns a numeric vector with the 
 - `pmin`, `pmax`, elementwise minimum or maximum
 - `cumsum`, `cummax`, cumulative sum and max
 - `diff`, differences between consecutive elements
+
+
 - In general, look up R functions you want to use by Googling
 - For a quick reminder of the function, use `args(funcName)` or `?funcName` to show the arguments or the full documentation of the function, resp.
 - You can also use `??` to search the documentation as well. E.g., `??choose`
@@ -88,7 +85,9 @@ class: inverse
 
 Continue the last Your turn.
 
-&lt;img src="images/green.png" width=20&gt; Find the mean and median of `x`
+&lt;img src="images/green.png" width=20&gt; Find the mean, median, and maximum of `iris$Sepal.Width`
+
+&lt;img src="images/green.png" width=20&gt; `discoveries` contains the number of discoveries since 1860. Find the difference of the discoveries between consecutive years. Also find the cumulative number of discoveries since the start of the records.
 
 &lt;img src="images/blue.png" width=20&gt;  Use vectorized calculation the Euclidean distance between the two vectors `\(x\)` and `\(y\)`, defined as 
 $$
@@ -119,9 +118,15 @@ class: big, middle
 ---
 
 ## Graphical summaries
+
 - `plot(x, y, type, col, pch, lwd, lty, xlim, ylim, main, xlab, ylab, ...)`: Make a scatter plot of `x` vs `y` with various options
-- `lines, points`: Add lines and points to an existing plot, resp.
-- `barplot, hist, boxplot`: Create a barplot,  histogram, and boxplot, resp.
+
+- `lines, points`: Add lines and points to an existing plot, resp
+
+- `abline`: Add a guideline
+
+- `barplot, hist, boxplot`: Create a barplot,  histogram, and boxplot, resp
+
 - `legend`: Add legends
 
 ---
@@ -131,407 +136,12 @@ class: big, middle
 - definition by J.W. Tukey (1960s, EDA 1977)
 &lt;img src="images/boxplots-definition.png" alt="" width=100%&gt;
 
----
-
-## Exploring data
-
-We will play with the crime data `cities`. 
-
-- To show what columns are available, use `names(df)`
-
-```r
-library(classdata) # load the dataset
-names(cities)
-```
-
-```
-##  [1] "City"                "Population"          "Violent.crime"      
-##  [4] "Murder"              "Rape"                "Robbery"            
-##  [7] "Aggravated.assault"  "Property.crime"      "Burglary"           
-## [10] "Larceny.theft"       "Motor.vehicle.theft" "Arson"              
-## [13] "State"               "Year"
-```
-
-- To extract a column, use `df$column`:
-
-```r
-cities$City
-```
-
-```
-##    [1] "Adel"            "Albia"           "Ames"            "Amosa"          
-##    [5] "Ankeny"          "Belmond"         "Bettendorf"      "Bloomfield"     
-##    [9] "Boone"           "Burlington"      "Camanche"        "Carlisle"       
-##   [13] "Carter Lake"     "Cedar Falls"     "Cedar Rapids"    "Centerville"    
-##   [17] "Chariton"        "Cherokee"        "Clarinda"        "Clarion"        
-##   [21] "Clinton"         "Clive"           "Coralville"      "Council Bluffs" 
-##   [25] "Cresco"          "Creston"         "Decorah"         "Denison"        
-##   [29] "Des Moines"      "De Witt"         "Dubuque"         "Dyersville"     
-##   [33] "Eagle Grove"     "Eldridge"        "Emmetsburg"      "Estherville"    
-##   [37] "Evansdale"       "Fort Dodge"      "Fort Madison"    "Glenwood"       
-##   [41] "Grinnell"        "Hampton"         "Hawarden"        "Humboldt"       
-##   [45] "Independence"    "Indianola"       "Iowa City"       "Iowa Falls"     
-##   [49] "Jefferson"       "Le Mars"         "Leon"            "Manchester"     
-##   [53] "Maquoketa"       "Marion"          "Marshalltown"    "Mason City"     
-##   [57] "Monticello"      "Mount Pleasant"  "Mount Vernon"    "Muscatine"      
-##   [61] "Nevada"          "New Hampton"     "Newton"          "North Liberty"  
-##   [65] "Norwalk"         "Oelwein"         "Ogden"           "Orange City"    
-##   [69] "Osage"           "Osceola"         "Oskaloosa"       "Ottumwa"        
-##   [73] "Perry"           "Pleasant Hill"   "Polk City"       "Red Oak"        
-##   [77] "Sergeant Bluff"  "Sheldon"         "Shendoah"        "Sioux City"     
-##   [81] "Spencer"         "Spirit Lake"     "Story City"      "Urbandale"      
-##   [85] "Vinton"          "Waterloo"        "Waukee"          "Waverly"        
-##   [89] "Webster City"    "West Burlington" "West Des Moines" "West Liberty"   
-##   [93] "West Union"      "Williamsburg"    "Wilton"          "Winterset"      
-##   [97] "Adel"            "Albia"           "Algo"            "Altoo"          
-##  [101] "Ames"            "Amosa"           "Atlantic"        "Bettendorf"     
-##  [105] "Bloomfield"      "Boone"           "Burlington"      "Camanche"       
-##  [109] "Carlisle"        "Carroll"         "Carter Lake"     "Cedar Falls"    
-##  [113] "Cedar Rapids"    "Centerville"     "Chariton"        "Charles City"   
-##  [117] "Cherokee"        "Clarinda"        "Clarion"         "Clinton"        
-##  [121] "Clive"           "Coralville"      "Council Bluffs"  "Cresco"         
-##  [125] "Davenport"       "Decorah"         "Denison"         "Des Moines"     
-##  [129] "De Witt"         "Dubuque"         "Dyersville"      "Eldora"         
-##  [133] "Emmetsburg"      "Estherville"     "Evansdale"       "Fairfield"      
-##  [137] "Forest City"     "Fort Dodge"      "Fort Madison"    "Garner"         
-##  [141] "Glenwood"        "Hampton"         "Hawarden"        "Humboldt"       
-##  [145] "Indianola"       "Iowa City"       "Jefferson"       "Johnston"       
-##  [149] "Le Mars"         "Leon"            "Manchester"      "Maquoketa"      
-##  [153] "Marion"          "Marshalltown"    "Mason City"      "Monticello"     
-##  [157] "Mount Pleasant"  "Mount Vernon"    "Muscatine"       "Nevada"         
-##  [161] "New Hampton"     "Norwalk"         "Oelwein"         "Orange City"    
-##  [165] "Osage"           "Osceola"         "Oskaloosa"       "Ottumwa"        
-##  [169] "Pella"           "Perry"           "Pleasant Hill"   "Polk City"      
-##  [173] "Prairie City"    "Red Oak"         "Sac City"        "Sergeant Bluff" 
-##  [177] "Sheldon"         "Shendoah"        "Sioux City"      "Spencer"        
-##  [181] "Spirit Lake"     "State Center"    "Storm Lake"      "Story City"     
-##  [185] "Urbandale"       "Vinton"          "Waterloo"        "Waukee"         
-##  [189] "Waverly"         "Webster City"    "West Burlington" "West Des Moines"
-##  [193] "West Liberty"    "Williamsburg"    "Wilton"          "Windsor Heights"
-##  [197] "Winterset"       "Adel"            "Algo"            "Altoo"          
-##  [201] "Ames"            "Amosa"           "Ankeny"          "Atlantic"       
-##  [205] "Belmond"         "Bettendorf"      "Bloomfield"      "Boone"          
-##  [209] "Burlington"      "Camanche"        "Carlisle"        "Carroll"        
-##  [213] "Carter Lake"     "Cedar Falls"     "Cedar Rapids"    "Centerville"    
-##  [217] "Chariton"        "Charles City"    "Cherokee"        "Clarinda"       
-##  [221] "Clarion"         "Clinton"         "Clive"           "Coralville"     
-##  [225] "Council Bluffs"  "Cresco"          "Creston"         "Davenport"      
-##  [229] "Decorah"         "Denison"         "Des Moines"      "De Witt"        
-##  [233] "Dubuque"         "Dyersville"      "Eldora"          "Eldridge"       
-##  [237] "Emmetsburg"      "Estherville"     "Evansdale"       "Fairfield"      
-##  [241] "Forest City"     "Fort Dodge"      "Fort Madison"    "Garner"         
-##  [245] "Glenwood"        "Grinnell"        "Grundy Center"   "Hampton"        
-##  [249] "Hawarden"        "Humboldt"        "Independence"    "Indianola"      
-##  [253] "Iowa City"       "Iowa Falls"      "Jefferson"       "Johnston"       
-##  [257] "Keokuk"          "Le Mars"         "Manchester"      "Maquoketa"      
-##  [261] "Marion"          "Marshalltown"    "Mason City"      "Missouri Valley"
-##  [265] "Monticello"      "Mount Pleasant"  "Mount Vernon"    "Muscatine"      
-##  [269] "Nevada"          "New Hampton"     "Newton"          "North Liberty"  
-##  [273] "Norwalk"         "Oelwein"         "Osage"           "Osceola"        
-##  [277] "Oskaloosa"       "Ottumwa"         "Pella"           "Perry"          
-##  [281] "Pleasant Hill"   "Polk City"       "Prairie City"    "Red Oak"        
-##  [285] "Sac City"        "Sergeant Bluff"  "Sheldon"         "Shendoah"       
-##  [289] "Sioux City"      "Spencer"         "Spirit Lake"     "State Center"   
-##  [293] "Storm Lake"      "Story City"      "Urbandale"       "Vinton"         
-##  [297] "Waterloo"        "Waukee"          "Waverly"         "Webster City"   
-##  [301] "West Burlington" "West Des Moines" "West Union"      "Williamsburg"   
-##  [305] "Wilton"          "Windsor Heights" "Winterset"       "Adel"           
-##  [309] "Albia"           "Algo"            "Altoo"           "Ames"           
-##  [313] "Amosa"           "Ankeny"          "Atlantic"        "Audubon"        
-##  [317] "Bettendorf"      "Boone"           "Burlington"      "Camanche"       
-##  [321] "Carlisle"        "Carroll"         "Cedar Falls"     "Cedar Rapids"   
-##  [325] "Centerville"     "Chariton"        "Charles City"    "Cherokee"       
-##  [329] "Clarinda"        "Clarion"         "Clinton"         "Clive"          
-##  [333] "Coralville"      "Council Bluffs"  "Cresco"          "Creston"        
-##  [337] "Davenport"       "Decorah"         "Denison"         "Des Moines"     
-##  [341] "De Witt"         "Dubuque"         "Dyersville"      "Eagle Grove"    
-##  [345] "Eldora"          "Eldridge"        "Emmetsburg"      "Estherville"    
-##  [349] "Evansdale"       "Fairfield"       "Forest City"     "Fort Dodge"     
-##  [353] "Fort Madison"    "Glenwood"        "Grinnell"        "Grundy Center"  
-##  [357] "Hampton"         "Hawarden"        "Humboldt"        "Independence"   
-##  [361] "Indianola"       "Iowa City"       "Iowa Falls"      "Jefferson"      
-##  [365] "Johnston"        "Le Mars"         "Manchester"      "Maquoketa"      
-##  [369] "Marion"          "Marshalltown"    "Mason City"      "Monticello"     
-##  [373] "Mount Pleasant"  "Mount Vernon"    "Muscatine"       "Newton"         
-##  [377] "North Liberty"   "Norwalk"         "Oelwein"         "Ogden"          
-##  [381] "Osage"           "Osceola"         "Oskaloosa"       "Ottumwa"        
-##  [385] "Pella"           "Perry"           "Pleasant Hill"   "Polk City"      
-##  [389] "Prairie City"    "Red Oak"         "Sergeant Bluff"  "Sheldon"        
-##  [393] "Shendoah"        "Sioux City"      "Spencer"         "Spirit Lake"    
-##  [397] "State Center"    "Storm Lake"      "Story City"      "Tipton"         
-##  [401] "Urbandale"       "Vinton"          "Washington"      "Waterloo"       
-##  [405] "Waukee"          "Waverly"         "Webster City"    "West Burlington"
-##  [409] "West Des Moines" "West Liberty"    "West Union"      "Williamsburg"   
-##  [413] "Windsor Heights" "Winterset"       "Adel"            "Albia"          
-##  [417] "Algo"            "Altoo"           "Ames"            "Amosa"          
-##  [421] "Ankeny"          "Atlantic"        "Audubon"         "Bettendorf"     
-##  [425] "Boone"           "Burlington"      "Camanche"        "Carlisle"       
-##  [429] "Carroll"         "Cedar Falls"     "Cedar Rapids"    "Centerville"    
-##  [433] "Chariton"        "Charles City"    "Cherokee"        "Clarinda"       
-##  [437] "Clarion"         "Clinton"         "Clive"           "Coralville"     
-##  [441] "Council Bluffs"  "Cresco"          "Creston"         "Davenport"      
-##  [445] "Decorah"         "Denison"         "Des Moines"      "De Witt"        
-##  [449] "Dubuque"         "Dyersville"      "Eldora"          "Eldridge"       
-##  [453] "Emmetsburg"      "Estherville"     "Evansdale"       "Fairfield"      
-##  [457] "Forest City"     "Fort Dodge"      "Fort Madison"    "Glenwood"       
-##  [461] "Grinnell"        "Hampton"         "Hawarden"        "Hiawatha"       
-##  [465] "Humboldt"        "Independence"    "Indianola"       "Iowa City"      
-##  [469] "Iowa Falls"      "Jefferson"       "Johnston"        "Keokuk"         
-##  [473] "Le Mars"         "Lisbon"          "Manchester"      "Maquoketa"      
-##  [477] "Marion"          "Marshalltown"    "Mason City"      "Monticello"     
-##  [481] "Mount Pleasant"  "Mount Vernon"    "Muscatine"       "Nevada"         
-##  [485] "New Hampton"     "Newton"          "North Liberty"   "Norwalk"        
-##  [489] "Oelwein"         "Ogden"           "Orange City"     "Osage"          
-##  [493] "Osceola"         "Oskaloosa"       "Ottumwa"         "Pella"          
-##  [497] "Perry"           "Pleasant Hill"   "Prairie City"    "Red Oak"        
-##  [501] "Sac City"        "Sergeant Bluff"  "Sheldon"         "Shendoah"       
-##  [505] "Sioux City"      "Spirit Lake"     "St. Ansgar"      "State Center"   
-##  [509] "Storm Lake"      "Story City"      "Tipton"          "Urbandale"      
-##  [513] "Vinton"          "Washington"      "Waterloo"        "Waukee"         
-##  [517] "Webster City"    "West Burlington" "West Des Moines" "West Liberty"   
-##  [521] "West Union"      "Williamsburg"    "Wilton"          "Windsor Heights"
-##  [525] "Winterset"       "Adel"            "Albia"           "Algo"           
-##  [529] "Altoo"           "Ames"            "Amosa"           "Ankeny"         
-##  [533] "Atlantic"        "Audubon"         "Bettendorf"      "Bloomfield"     
-##  [537] "Boone"           "Burlington"      "Carlisle"        "Carroll"        
-##  [541] "Carter Lake"     "Cedar Falls"     "Cedar Rapids"    "Centerville"    
-##  [545] "Chariton"        "Charles City"    "Cherokee"        "Clarinda"       
-##  [549] "Clarion"         "Clear Lake"      "Clinton"         "Coralville"     
-##  [553] "Council Bluffs"  "Cresco"          "Creston"         "Davenport"      
-##  [557] "Decorah"         "Denison"         "Des Moines"      "De Witt"        
-##  [561] "Dubuque"         "Eldora"          "Eldridge"        "Emmetsburg"     
-##  [565] "Estherville"     "Evansdale"       "Fairfield"       "Fort Dodge"     
-##  [569] "Fort Madison"    "Glenwood"        "Grinnell"        "Hampton"        
-##  [573] "Hawarden"        "Hiawatha"        "Humboldt"        "Indianola"      
-##  [577] "Iowa City"       "Iowa Falls"      "Jefferson"       "Keokuk"         
-##  [581] "Le Mars"         "Lisbon"          "Manchester"      "Maquoketa"      
-##  [585] "Marengo"         "Marion"          "Marshalltown"    "Mason City"     
-##  [589] "Missouri Valley" "Monticello"      "Mount Pleasant"  "Mount Vernon"   
-##  [593] "Muscatine"       "Nevada"          "North Liberty"   "Norwalk"        
-##  [597] "Oelwein"         "Ogden"           "Orange City"     "Osage"          
-##  [601] "Osceola"         "Oskaloosa"       "Ottumwa"         "Pella"          
-##  [605] "Perry"           "Pleasant Hill"   "Polk City"       "Prairie City"   
-##  [609] "Red Oak"         "Sergeant Bluff"  "Sheldon"         "Shendoah"       
-##  [613] "Sioux City"      "Spencer"         "Spirit Lake"     "State Center"   
-##  [617] "Storm Lake"      "Story City"      "Tipton"          "Urbandale"      
-##  [621] "Vinton"          "Washington"      "Waterloo"        "Waukee"         
-##  [625] "Waverly"         "Webster City"    "West Burlington" "West Des Moines"
-##  [629] "West Liberty"    "West Union"      "Williamsburg"    "Wilton"         
-##  [633] "Windsor Heights" "Winterset"       "Adel"            "Albia"          
-##  [637] "Algo"            "Altoo"           "Ames"            "Amosa"          
-##  [641] "Ankeny"          "Atlantic"        "Audubon"         "Bettendorf"     
-##  [645] "Bloomfield"      "Blue Grass"      "Boone"           "Buffalo"        
-##  [649] "Burlington"      "Camanche"        "Carlisle"        "Carroll"        
-##  [653] "Carter Lake"     "Cedar Falls"     "Cedar Rapids"    "Centerville"    
-##  [657] "Chariton"        "Charles City"    "Cherokee"        "Clarinda"       
-##  [661] "Clarion"         "Clinton"         "Clive"           "Coralville"     
-##  [665] "Council Bluffs"  "Cresco"          "Davenport"       "Decorah"        
-##  [669] "Denison"         "Des Moines"      "De Witt"         "Dubuque"        
-##  [673] "Eagle Grove"     "Eldora"          "Eldridge"        "Emmetsburg"     
-##  [677] "Estherville"     "Evansdale"       "Forest City"     "Fort Dodge"     
-##  [681] "Fort Madison"    "Glenwood"        "Grinnell"        "Grundy Center"  
-##  [685] "Hampton"         "Hawarden"        "Hiawatha"        "Humboldt"       
-##  [689] "Iowa City"       "Iowa Falls"      "Jefferson"       "Johnston"       
-##  [693] "Keokuk"          "Le Claire"       "Le Mars"         "Leon"           
-##  [697] "Lisbon"          "Manchester"      "Maquoketa"       "Marengo"        
-##  [701] "Marion"          "Marshalltown"    "Mason City"      "Mount Pleasant" 
-##  [705] "Mount Vernon"    "Muscatine"       "Nevada"          "New Hampton"    
-##  [709] "Newton"          "North Liberty"   "Norwalk"         "Ogden"          
-##  [713] "Orange City"     "Osage"           "Osceola"         "Ottumwa"        
-##  [717] "Perry"           "Pleasant Hill"   "Polk City"       "Prairie City"   
-##  [721] "Princeton"       "Red Oak"         "Sergeant Bluff"  "Sioux City"     
-##  [725] "Spencer"         "Spirit Lake"     "State Center"    "Storm Lake"     
-##  [729] "Story City"      "Tipton"          "Toledo"          "Urbandale"      
-##  [733] "Vinton"          "Walcott"         "Washington"      "Waterloo"       
-##  [737] "Waukee"          "Waverly"         "Webster City"    "West Branch"    
-##  [741] "West Burlington" "West Des Moines" "West Union"      "Wilton"         
-##  [745] "Windsor Heights" "Winterset"       "Adel"            "Albia"          
-##  [749] "Algo"            "Altoo"           "Ames"            "Amosa"          
-##  [753] "Ankeny"          "Bettendorf"      "Bloomfield"      "Blue Grass"     
-##  [757] "Boone"           "Buffalo"         "Camanche"        "Carlisle"       
-##  [761] "Carroll"         "Carter Lake"     "Cedar Falls"     "Cedar Rapids"   
-##  [765] "Centerville"     "Chariton"        "Charles City"    "Cherokee"       
-##  [769] "Clarinda"        "Clear Lake"      "Clinton"         "Clive"          
-##  [773] "Coralville"      "Council Bluffs"  "Cresco"          "Davenport"      
-##  [777] "Decorah"         "Denison"         "Des Moines"      "De Witt"        
-##  [781] "Dubuque"         "Dyersville"      "Eagle Grove"     "Eldora"         
-##  [785] "Eldridge"        "Emmetsburg"      "Estherville"     "Evansdale"      
-##  [789] "Fairfield"       "Forest City"     "Fort Dodge"      "Fort Madison"   
-##  [793] "Glenwood"        "Grinnell"        "Grundy Center"   "Hampton"        
-##  [797] "Hawarden"        "Hiawatha"        "Humboldt"        "Indianola"      
-##  [801] "Iowa City"       "Iowa Falls"      "Jefferson"       "Johnston"       
-##  [805] "Keokuk"          "Le Claire"       "Le Mars"         "Leon"           
-##  [809] "Lisbon"          "Manchester"      "Maquoketa"       "Marengo"        
-##  [813] "Marion"          "Marshalltown"    "Mason City"      "Monticello"     
-##  [817] "Mount Vernon"    "Muscatine"       "New Hampton"     "Newton"         
-##  [821] "North Liberty"   "Norwalk"         "Oelwein"         "Orange City"    
-##  [825] "Osage"           "Osceola"         "Oskaloosa"       "Ottumwa"        
-##  [829] "Pella"           "Perry"           "Pleasant Hill"   "Prairie City"   
-##  [833] "Red Oak"         "Sergeant Bluff"  "Sheldon"         "Shendoah"       
-##  [837] "Sioux City"      "Spencer"         "Spirit Lake"     "State Center"   
-##  [841] "Storm Lake"      "Story City"      "Toledo"          "Urbandale"      
-##  [845] "Vinton"          "Walcott"         "Washington"      "Waukee"         
-##  [849] "Waukon"          "Waverly"         "Webster City"    "West Burlington"
-##  [853] "West Des Moines" "West Liberty"    "Williamsburg"    "Wilton"         
-##  [857] "Windsor Heights" "Winterset"       "Adel"            "Albia"          
-##  [861] "Algo"            "Altoo"           "Ames"            "Amosa"          
-##  [865] "Ankeny"          "Atlantic"        "Audubon"         "Bettendorf"     
-##  [869] "Bloomfield"      "Boone"           "Buffalo"         "Burlington"     
-##  [873] "Camanche"        "Carlisle"        "Carroll"         "Carter Lake"    
-##  [877] "Cedar Falls"     "Cedar Rapids"    "Centerville"     "Chariton"       
-##  [881] "Charles City"    "Cherokee"        "Clarinda"        "Clear Lake"     
-##  [885] "Clinton"         "Clive"           "Coralville"      "Council Bluffs" 
-##  [889] "Cresco"          "Creston"         "Davenport"       "Decorah"        
-##  [893] "Des Moines"      "De Witt"         "Dubuque"         "Dyersville"     
-##  [897] "Eagle Grove"     "Eldridge"        "Emmetsburg"      "Estherville"    
-##  [901] "Evansdale"       "Fairfield"       "Forest City"     "Fort Dodge"     
-##  [905] "Fort Madison"    "Glenwood"        "Grinnell"        "Hawarden"       
-##  [909] "Hiawatha"        "Humboldt"        "Independence"    "Indianola"      
-##  [913] "Iowa City"       "Iowa Falls"      "Jefferson"       "Johnston"       
-##  [917] "Keokuk"          "Le Claire"       "Le Mars"         "Manchester"     
-##  [921] "Maquoketa"       "Marengo"         "Marion"          "Marshalltown"   
-##  [925] "Mason City"      "Monticello"      "Mount Pleasant"  "Mount Vernon"   
-##  [929] "Muscatine"       "New Hampton"     "Newton"          "North Liberty"  
-##  [933] "Norwalk"         "Oelwein"         "Ogden"           "Owa"            
-##  [937] "Orange City"     "Osage"           "Osceola"         "Ottumwa"        
-##  [941] "Pella"           "Perry"           "Pleasant Hill"   "Polk City"      
-##  [945] "Prairie City"    "Red Oak"         "Sergeant Bluff"  "Sheldon"        
-##  [949] "Shendoah"        "Sioux City"      "Spencer"         "Spirit Lake"    
-##  [953] "State Center"    "Storm Lake"      "Story City"      "Tipton"         
-##  [957] "Toledo"          "Urbandale"       "Vinton"          "Walcott"        
-##  [961] "Washington"      "Waterloo"        "Waukee"          "Waukon"         
-##  [965] "Waverly"         "Webster City"    "West Burlington" "West Des Moines"
-##  [969] "West Liberty"    "Williamsburg"    "Wilton"          "Windsor Heights"
-##  [973] "Winterset"       "Adel"            "Albia"           "Algo"           
-##  [977] "Altoo"           "Ames"            "Amosa"           "Ankeny"         
-##  [981] "Atlantic"        "Audubon"         "Bettendorf"      "Bloomfield"     
-##  [985] "Blue Grass"      "Boone"           "Buffalo"         "Burlington"     
-##  [989] "Camanche"        "Carlisle"        "Carroll"         "Carter Lake"    
-##  [993] "Cedar Falls"     "Cedar Rapids"    "Centerville"     "Chariton"       
-##  [997] "Charles City"    "Cherokee"        "Clarinda"        "Clarion"        
-## [1001] "Clear Lake"      "Clinton"         "Coralville"      "Council Bluffs" 
-## [1005] "Cresco"          "Creston"         "Davenport"       "Decorah"        
-## [1009] "Des Moines"      "De Witt"         "Dubuque"         "Dyersville"     
-## [1013] "Eldridge"        "Estherville"     "Evansdale"       "Fairfield"      
-## [1017] "Fort Dodge"      "Garner"          "Glenwood"        "Grinnell"       
-## [1021] "Hampton"         "Hawarden"        "Hiawatha"        "Humboldt"       
-## [1025] "Indianola"       "Iowa City"       "Iowa Falls"      "Jefferson"      
-## [1029] "Johnston"        "Keokuk"          "Le Mars"         "Leon"           
-## [1033] "Manchester"      "Maquoketa"       "Marion"          "Marshalltown"   
-## [1037] "Mason City"      "Missouri Valley" "Monticello"      "Mount Pleasant" 
-## [1041] "Mount Vernon"    "Muscatine"       "New Hampton"     "Newton"         
-## [1045] "North Liberty"   "Norwalk"         "Oelwein"         "Ogden"          
-## [1049] "Owa"             "Orange City"     "Osage"           "Osceola"        
-## [1053] "Oskaloosa"       "Ottumwa"         "Pella"           "Perry"          
-## [1057] "Pleasant Hill"   "Prairie City"    "Red Oak"         "Sergeant Bluff" 
-## [1061] "Sheldon"         "Shendoah"        "Sioux City"      "Spencer"        
-## [1065] "Spirit Lake"     "State Center"    "Storm Lake"      "Story City"     
-## [1069] "Tipton"          "Urbandale"       "Vinton"          "Washington"     
-## [1073] "Waterloo"        "Waukon"          "Waverly"         "Webster City"   
-## [1077] "West Burlington" "West Des Moines" "West Liberty"    "Williamsburg"   
-## [1081] "Wilton"          "Windsor Heights" "Winterset"       "Adel"           
-## [1085] "Albia"           "Algo"            "Altoo"           "Ames"           
-## [1089] "Amosa"           "Ankeny"          "Audubon"         "Belmond"        
-## [1093] "Bettendorf"      "Bloomfield"      "Blue Grass"      "Boone"          
-## [1097] "Buffalo"         "Burlington"      "Camanche"        "Carlisle"       
-## [1101] "Carroll"         "Carter Lake"     "Cedar Falls"     "Cedar Rapids"   
-## [1105] "Centerville"     "Chariton"        "Charles City"    "Cherokee"       
-## [1109] "Clarinda"        "Clarion"         "Clear Lake"      "Clinton"        
-## [1113] "Clive"           "Coralville"      "Council Bluffs"  "Cresco"         
-## [1117] "Creston"         "Davenport"       "Decorah"         "Des Moines"     
-## [1121] "De Witt"         "Dubuque"         "Dyersville"      "Eagle Grove"    
-## [1125] "Eldridge"        "Emmetsburg"      "Estherville"     "Evansdale"      
-## [1129] "Fairfield"       "Forest City"     "Fort Dodge"      "Fort Madison"   
-## [1133] "Glenwood"        "Grinnell"        "Grundy Center"   "Hampton"        
-## [1137] "Hawarden"        "Hiawatha"        "Humboldt"        "Indianola"      
-## [1141] "Iowa City"       "Iowa Falls"      "Jefferson"       "Johnston"       
-## [1145] "Keokuk"          "Le Claire"       "Le Mars"         "Leon"           
-## [1149] "Manchester"      "Maquoketa"       "Marengo"         "Marion"         
-## [1153] "Marshalltown"    "Mason City"      "Missouri Valley" "Monticello"     
-## [1157] "Mount Pleasant"  "Mount Vernon"    "Muscatine"       "New Hampton"    
-## [1161] "Newton"          "North Liberty"   "Norwalk"         "Oelwein"        
-## [1165] "Ogden"           "Owa"             "Orange City"     "Osage"          
-## [1169] "Osceola"         "Oskaloosa"       "Ottumwa"         "Pella"          
-## [1173] "Perry"           "Pleasant Hill"   "Prairie City"    "Red Oak"        
-## [1177] "Rock Valley"     "Sergeant Bluff"  "Sheldon"         "Shendoah"       
-## [1181] "Sigourney"       "Sioux Center"    "Sioux City"      "Spencer"        
-## [1185] "Spirit Lake"     "State Center"    "Storm Lake"      "Story City"     
-## [1189] "Tama"            "Tipton"          "Toledo"          "Urbandale"      
-## [1193] "Vinton"          "Walcott"         "Washington"      "Waterloo"       
-## [1197] "Waukon"          "Waverly"         "Webster City"    "West Branch"    
-## [1201] "West Burlington" "West Des Moines" "West Liberty"    "Williamsburg"   
-## [1205] "Wilton"          "Windsor Heights" "Winterset"
-```
-
----
-
-## Missing values in R
-
-- `NA` is the special code for "not available"
-- R consistently handles mising values. Eg. we get 
-
-```r
-NA + 1
-```
-
-```
-## [1] NA
-```
-
-
-```r
-NA | TRUE
-```
-
-```
-## [1] TRUE
-```
-- Caution: Direct testing for missing values is resulting in an `NA`:
-
-```r
-x &lt;- c(1, NA)
-x == NA
-```
-
-```
-## [1] NA NA
-```
-&lt;!-- - `NaN` is the code for "not a number", e.g. in 0/0 --&gt;
-
----
-
-## Essential functions 
-
-- Use function `is.na` for testing `NA`s
-
-```r
-x &lt;- c(1, NA)
-is.na(x)
-```
-
-```
-## [1] FALSE  TRUE
-```
-- `complete.cases(data)` test the existence of `NA`s in the rows of data frames
-&lt;!-- - `drop_na(data, col1, ...)` drops the rows if `NA`s exist in `col1` or additional columns --&gt;
-
----
-
-## Handling missing values
-
-There are a few principles for handing missing values. 
-
-- Errors in the dataset should be removed
-
-- If uncertain whether missing values are due to errors, perform analysis with as little distortion to the data as possible
-
-- Performing a sensitivity analysis is a good idea: One version with missing values, and the other without. Compare the results.
-
-
 
 ---
 
 ## R demo...
+
+Load the `cities` data for this demo (`library(cities)`)
 
 ---
 class: inverse
@@ -547,6 +157,8 @@ class: inverse
 &lt;img src="images/blue.png" width=20&gt; Read `?mean` and `?sd`, and fix missing value problem
 
 ---
+
+
 
 ## (Optional) R Reference Card
 

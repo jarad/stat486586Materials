@@ -113,3 +113,61 @@ Work on the `fbi` dataset
 <img src="images/blue.png" width=20> Change the state name of California to "the Golden State"
 
 <img src="images/black.png" width=20> Get a subset of the data that includes number of murders for the last five years. Find the murder rates, extract all states that have a rate of greater than 90% of the rates across all states, and plot (Hint: `?quantile`).
+
+---
+
+## Missing values in R
+
+- `NA` is the special code for "not available"
+- R consistently handles mising values. Eg. we get 
+```{r}
+NA + 1
+```
+
+```{r}
+NA | TRUE
+```
+- Caution: Direct testing for missing values with `==` will result in an `NA`:
+```{r}
+x <- c(1, NA)
+x == NA
+```
+<!-- - `NaN` is the code for "not a number", e.g. in 0/0 -->
+
+---
+
+## Essential functions 
+
+- Use function `is.na` for testing `NA`s
+```{r}
+x <- c(1, NA)
+is.na(x)
+```
+
+- `complete.cases(data)` test the existence of `NA`s in the rows of data frames
+<!-- - `drop_na(data, col1, ...)` drops the rows if `NA`s exist in `col1` or additional columns -->
+
+---
+
+## Handling missing values
+
+There are a few principles for handing missing values. 
+
+- Errors in the dataset should be removed
+
+- If uncertain whether missing values are due to errors, perform analysis with as little distortion to the data as possible
+
+- Performing a sensitivity analysis is a good idea: One version with missing values, and the other without. Compare the results.
+
+---
+
+## R demo...
+
+---
+class: inverse
+
+## Your turn
+
+<img src="images/green.png" width=20> What does `2 * NA` give you? Why
+
+<img src="images/green.png" width=20> What does `NA & FALSE` give you? Why
