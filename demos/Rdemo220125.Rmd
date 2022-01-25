@@ -1,0 +1,112 @@
+---
+title: "demo"
+author: "Xiongtao Dai"
+date: "1/25/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## data type
+
+```{r}
+3
+str(3)
+"hello world"
+str("hello world")
+class("hello world")
+FALSE
+TRUE
+c(1, 3, 5)
+class(c(1, 3, 5))
+length(c(1, 3, 5))
+1:5
+
+library(classdata)
+cities
+?cities
+str(cities)
+class(cities)
+names(cities)
+head(cities)
+head(cities, 3)
+tail(cities)
+dim(cities)
+summary(cities)
+
+cities$Population
+summary(cities$Population)
+head(cities$Population)
+```
+
+## Making vectors
+
+```{r}
+c(30, 10)
+c(1:3, 30)
+1:5
+seq(1, 5)
+seq(1, 5, length.out=10)
+seq(5, 1)
+seq(1, 6, by=2)
+seq(by=2, 1, 6)
+```
+
+R matches named argument first, and the rest of the arguments are matched by position.
+
+```{r}
+rep(1, 3)
+rep(c(1, 2), 3)
+rep(c(1, 2), each=3)
+c(rep(c(1, 2), 2), 3)
+rep(c(TRUE, FALSE), 3)
+rep(c(TRUE, FALSE), each=3)
+```
+
+```{r}
+ifelse(c(TRUE, TRUE, FALSE),
+       "young",
+       "old")
+ifelse(c(16, 18, 21) <= 20,
+       "young",
+       "old") 
+ifelse(1:10 %% 2 == 0,
+       "even",
+       "odd")
+```
+
+```{r}
+vector("numeric", 10)
+vector("logical", 10)
+```
+
+## Assignment
+
+```{r}
+numGender <- c(20, 15)
+numGender
+names(numGender) <- c("male", "female")
+numGender
+str(numGender)
+numGender1 <- c(male = 20, female = 15)
+numGender1
+```
+
+## workspace
+
+```{r}
+ls()
+a <- 1
+b <- 2
+c <- 3
+ls()
+
+rm(c)
+ls()
+a <- c(a, b)
+a
+```
+
+
