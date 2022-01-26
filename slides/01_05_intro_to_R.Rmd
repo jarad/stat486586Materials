@@ -403,9 +403,9 @@ For a data frame `x`, we can extract parts in the following manner:
 
 ```
 x$variable
-x[, "variable"]
 x$variable[rows]
 
+x[, "variable"]
 x[rows, columns]
 x[1:5, 2:3]
 x[c(1,5,6), c("State", "Year")]
