@@ -96,3 +96,68 @@ str(b)
 
 cities[1, ]
 cities[1:5, ]
+
+
+## Math functions
+b <- 1:4
+sqrt(b)
+b ^ (1 / 2)
+
+d <- seq(-0.5, 1.5, length.out=7)
+d
+abs(d)
+
+d
+ceiling(d)
+floor(d)
+round(d)
+?trunc
+round(d, 2)
+
+log(10)
+log10(10)
+exp(1)
+exp(c(0, 1))
+
+x <- seq(0, 2 * pi, length.out=100)
+plot(x, sin(x))
+
+e <- 1:4
+f <- 4:1
+pmin(e, f)
+pmax(e, f)
+
+max(e, f)
+
+
+g <- c(1, -3, 1, 4, 1)
+cumsum(g)
+cumprod(g)
+
+cummax(g)
+cummin(g)
+
+h <- cumsum(g)
+diff(h)
+?diff
+
+diff(h, lag = 2)
+diff(h, differences = 2)
+diff(diff(h))
+
+# stat functions
+b
+sum(b)
+mean(b)
+min(b)
+max(b)
+sd(b)
+var(b)
+range(b)
+c(min(x), max(x))
+
+quantile(b, c(0.25, 0.75))
+quantile(b, seq(0, 1, by=0.1))
+
+cov(1:4, 4:1)
+cor(1:4, 4:1)
