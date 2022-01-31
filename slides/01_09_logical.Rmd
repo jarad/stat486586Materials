@@ -11,17 +11,27 @@ output:
       highlightLines: true
       countIncrementalSlides: false
 ---
-class: big, middle
 
 ```{r xaringan-tile-view, echo=FALSE}
 xaringanExtra::use_tile_view()
 ```
 
+## Overview
+
+- Logical vectors and operations
+
+- Subsetting data frames
+
+- Missing values
+
+---
+class: big, middle 
+
 ## Logical variables
 
 ---
 
-## Logical vectors
+## Logical vectors and operations
 
 - Vectors consisting of values `TRUE` and `FALSE`
 
@@ -39,9 +49,15 @@ xaringanExtra::use_tile_view()
 
 ---
 
-## Logical Operations
+## Subsetting Data Frames
+```{r}
+library(classdata)
+dat2009 <- cities[cities$City %in% c("Ames", "Ankeny") & 
+                     cities$Year == 2009, ]
+str(dat2009)
+```
 
-<img class="cover" src="images/logical.png" alt="" width=2000>
+<!-- Other useful functions for subsetting data frames are `subset` and `dplyr::filter` (later) -->
 
 ---
 
@@ -63,56 +79,17 @@ Create logical vectors to indicate which entries in  `a` are:
 
 <img src="images/green.png" width=20> equals 1 or 3 or 5<br/>
 
-<img src="images/green.png" width=20> even. 
-  Hint: have a look at the help for the operator `%%`
+
+Work on the `cities` dataset in the `classdata` library
+
+<img src="images/green.png" width=20> Get a subset of all data from 2009 to 2012.
+
+<img src="images/blue.png" width=20> Get a subset of all crimes in 2009 in Ames and 2 of its neighboring cities (say, Ankeny and Huxley).
 
 ---
+class: big, middle 
 
-## Subsetting Data Frames
-```{r}
-library(classdata)
-Iowa2009 <- fbi[fbi$State == 'Iowa' & fbi$Year == 2009, ]
-str(Iowa2009)
-```
-
-<!-- Other useful functions for subsetting data frames are `subset` and `dplyr::filter` (later) -->
-
----
-
-## Updating elements in a data set
-
-Data sets and their parts can be used as the left hand side (LHS) of an assignment:
-
-```{r}
-fbi$State[fbi$State == 'Iowa'] <- 'Our State'
-unique(fbi$State)[10:20]
-```
-
-```{r}
-# Round the population to nearest thousands
-fbi$Population <- signif(fbi$Population, 3)
-str(fbi$Population)
-```
-If that column exists before, it is being over-written/updated. It is a good idea to work on a copy of the data frame in case anything is messed up
-
----
-
-## R demo...
-
----
-class: inverse 
-
-## Your turn
-
-Work on the `fbi` dataset
-
-<img src="images/green.png" width=20> Get a subset of all crimes in Iowa in 2009 and 2010. How many rows do you have?
-
-<img src="images/blue.png" width=20> Get a subset of all violent crimes in 2009 for Iowa and 3 of its neighboring states. Visualize the crime rate for one type of crime. (Hint: Take out the crime rate, name it according to the state, and use `barplot`)
-
-<img src="images/blue.png" width=20> Change the state name of California to "the Golden State"
-
-<img src="images/black.png" width=20> Get a subset of the data that includes number of murders for the last five years. Find the murder rates, extract all states that have a rate of greater than 90% of the rates across all states, and plot (Hint: `?quantile`).
+## Missing values
 
 ---
 
@@ -147,15 +124,21 @@ is.na(x)
 - `complete.cases(data)` test the existence of `NA`s in the rows of data frames
 <!-- - `drop_na(data, col1, ...)` drops the rows if `NA`s exist in `col1` or additional columns -->
 
+```{r}
+x[complete.cases(x)]
+```
+
 ---
 
 ## Handling missing values
 
 There are a few principles for handing missing values. 
 
-- Errors in the dataset should be removed
+- Errors in the dataset should be removed and investigated
+    - E.g., IDs
 
 - If uncertain whether missing values are due to errors, perform analysis with as little distortion to the data as possible
+    - E.g., use all available information in each column to calculate the column means, instead of removing all rows containing missing values
 
 - Performing a sensitivity analysis is a good idea: One version with missing values, and the other without. Compare the results.
 
@@ -168,6 +151,6 @@ class: inverse
 
 ## Your turn
 
-<img src="images/green.png" width=20> What does `2 * NA` give you? Why
+<img src="images/green.png" width=20> What does `2 * NA` give you? Why?
 
-<img src="images/green.png" width=20> What does `NA & FALSE` give you? Why
+<img src="images/green.png" width=20> What does `NA & FALSE` give you? Why?

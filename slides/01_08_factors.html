@@ -20,13 +20,8 @@ class: center, middle, inverse, title-slide
 
 ---
 
-class: big, middle
 
 
-
-## Factor variables
-
----
 
 ## Overview
 
@@ -39,6 +34,11 @@ class: big, middle
 - Type casting
 
 ---
+class: big, middle
+
+## Factor variables
+
+---
 
 ## Factors in R
 
@@ -47,6 +47,8 @@ class: big, middle
 - Stores both *levels* and the *order* of the levels
 
 - It is more than a character vector, which does not store the order information
+
+- The factor levels are going to affect the behavior of downstream functions, e.g., the order of categories to be displayed in a table or a figure
 
 ---
 
@@ -71,7 +73,21 @@ str(fbi)
 
 ---
 
-## Using factors in R
+## Working with factors
+
+
+- `factor` creates a new factor with specified levels
+
+- `table`, `str` inspect a factor
+
+- `levels`, `levels&lt;-` extracts and set the levels
+
+- `reorder(fct, numbers, FUN)` reorders a factor `fct` according to a summary statistic `FUN` of `numbers`.
+    
+
+---
+
+## Factors in R functions
 
 - Many R functions behave nicely when applied on a factor, for example `boxplot(x ~ fct)` creates a side-by-side boxplot of `x` in different groups specified by the levels in `fct`
 
@@ -86,15 +102,15 @@ boxplot(fbi$Count ~ fbi$Type)
 
 ---
 
-## Working with factors
+Reorder the levels according to the mean counts
 
-- `table`, `str` inspect a factor
 
-- `factor` creates a new factor with specified levels
+```r
+type2 &lt;- reorder(fbi$Type, fbi$Count, mean, na.rm=TRUE)
+boxplot(fbi$Count ~ type2)
+```
 
-- `levels`, `levels&lt;-` extracts and set the levels
-
-- `reorder(fct, numbers, FUN)` reorders a factor `fct` according to a summary statistic `FUN` of `numbers`
+![](01_08_factors_files/figure-html/unnamed-chunk-3-1.png)&lt;!-- --&gt;
 
 ---
 
@@ -117,114 +133,61 @@ For this your turn use the `fbi` object from the `classdata` package.
 
 - &lt;img src="images/green.png" width=20&gt; Introduce a rate of the number of reported offenses by population into the `fbi` data. 
 
-- &lt;img src="images/blue.png" width=20&gt; 
-Plot boxplots of crime rates by different types of crime. How can you make axis text legible? 
+- &lt;img src="images/green.png" width=20&gt; 
+Plot boxplots of crime rates by different types of crime. 
 
 - &lt;img src="images/blue.png" width=20&gt; 
 Reorder the boxplots of crime rates, such that the crime types are ordered by the median crime rates. 
 
 ---
-class: big, middle
 
-## Quick summary of demo
+&lt;!-- --- --&gt;
+&lt;!-- class: big, middle --&gt;
 
----
+&lt;!-- ## Quick summary of demo --&gt;
 
-## Reordering factor levels manually
+&lt;!-- --- --&gt;
 
+&lt;!-- ## Reordering factor levels manually --&gt;
 
-```r
-levels(fbi$Type)
-```
+&lt;!-- ```{r} --&gt;
+&lt;!-- levels(fbi$Type) --&gt;
+&lt;!-- ``` --&gt;
 
-```
-## [1] "Aggravated.assault"                  
-## [2] "Burglary"                            
-## [3] "Larceny.theft"                       
-## [4] "Legacy.rape"                         
-## [5] "Motor.vehicle.theft"                 
-## [6] "Murder.and.nonnegligent.Manslaughter"
-## [7] "Rape"                                
-## [8] "Robbery"
-```
+&lt;!-- Reorder so that property crimes come first (extremely sensitive to typos): --&gt;
 
-Reorder so that property crimes come first (extremely sensitive to typos):
+&lt;!-- ```{r} --&gt;
+&lt;!-- levels(factor(fbi$Type, levels=c("Larceny.theft", "Burglary", "Motor.vehicle.theft", "Aggravated.assault", "Robbery", "Legacy.rape", "Murder.and.nonnegligent.Manslaughter", "Rape"))) --&gt;
+&lt;!-- ``` --&gt;
 
+&lt;!-- --- --&gt;
 
-```r
-levels(factor(fbi$Type, levels=c("Larceny.theft", "Burglary", "Motor.vehicle.theft", "Aggravated.assault", "Robbery", "Legacy.rape", "Murder.and.nonnegligent.Manslaughter", "Rape")))
-```
+&lt;!-- ## Reordering factor levels - using another variable --&gt;
 
-```
-## [1] "Larceny.theft"                       
-## [2] "Burglary"                            
-## [3] "Motor.vehicle.theft"                 
-## [4] "Aggravated.assault"                  
-## [5] "Robbery"                             
-## [6] "Legacy.rape"                         
-## [7] "Murder.and.nonnegligent.Manslaughter"
-## [8] "Rape"
-```
+&lt;!-- `reorder(factor, numbers, function)` --&gt;
 
----
+&lt;!-- reorder levels in factor by values in `numbers`. Use `function` to summarize (average is used by default).  --&gt;
 
-## Reordering factor levels - using another variable
+&lt;!-- ```{r} --&gt;
+&lt;!-- levels(reorder(fbi$Type, fbi$Count, mean, na.rm=TRUE)) --&gt;
+&lt;!-- ``` --&gt;
+&lt;!-- Missing values in `numbers`? make sure to use parameter `na.rm=TRUE`! --&gt;
 
-`reorder(factor, numbers, function)`
+&lt;!-- --- --&gt;
 
-reorder levels in factor by values in `numbers`. Use `function` to summarize (average is used by default). 
+&lt;!-- ## Changing levels' names --&gt;
+
+&lt;!-- ```{r} --&gt;
+&lt;!-- levels(fbi$Type) --&gt;
+&lt;!-- ``` --&gt;
+
+&lt;!-- ```{r} --&gt;
+&lt;!-- levels(fbi$Type)[6] &lt;- "Murder" --&gt;
+
+&lt;!-- levels(fbi$Type) --&gt;
+&lt;!-- ``` --&gt;
 
 
-```r
-levels(reorder(fbi$Type, fbi$Count, mean, na.rm=TRUE))
-```
-
-```
-## [1] "Murder.and.nonnegligent.Manslaughter"
-## [2] "Legacy.rape"                         
-## [3] "Rape"                                
-## [4] "Robbery"                             
-## [5] "Aggravated.assault"                  
-## [6] "Motor.vehicle.theft"                 
-## [7] "Burglary"                            
-## [8] "Larceny.theft"
-```
-Missing values in `numbers`? make sure to use parameter `na.rm=TRUE`!
-
----
-
-## Changing levels' names
-
-
-```r
-levels(fbi$Type)
-```
-
-```
-## [1] "Aggravated.assault"                  
-## [2] "Burglary"                            
-## [3] "Larceny.theft"                       
-## [4] "Legacy.rape"                         
-## [5] "Motor.vehicle.theft"                 
-## [6] "Murder.and.nonnegligent.Manslaughter"
-## [7] "Rape"                                
-## [8] "Robbery"
-```
-
-
-```r
-levels(fbi$Type)[6] &lt;- "Murder"
-
-levels(fbi$Type)
-```
-
-```
-## [1] "Aggravated.assault"  "Burglary"            "Larceny.theft"      
-## [4] "Legacy.rape"         "Motor.vehicle.theft" "Murder"             
-## [7] "Rape"                "Robbery"
-```
-
- 
 
 
     </textarea>

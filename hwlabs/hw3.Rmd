@@ -9,7 +9,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## A useful note
-Remove any `str_view()`, `View()` or `install.packages()` commands in your `Rmd` file. These commands will prevent the knitting of your file. 
+Remove any `str_view_all()`, `View()` or `install.packages()` commands in your `Rmd` file. These commands will prevent the knitting of your file. 
 
 ## Strings
 1.  Create a variable storing single string containing the following paragraph exactly including formatting. Display the variable in a reader-friendly manner.
@@ -39,7 +39,7 @@ Remove any `str_view()`, `View()` or `install.packages()` commands in your `Rmd`
 
     ```
 
-4. You will be analyzing the movie script of The Matrix (1999) in this question. The script can be found [here](....). Download the file and put it side by side your source file. Then use `script <- readLines('matrix_script.txt')` to read in the data. [Hint: If the command does not work, you may have a wrong working directory. In RStudio, click Session -- Set Working Directory -- To Source File Location]
+4. You will be analyzing the movie script of The Matrix (1999) in this question. The script can be found [here](....). Download the file and put it side by side your Rmd file. Then use `script <- readLines('matrix_script.txt')` to read in the data. [Hint: If the command does not work, you may have a wrong working directory. In RStudio, click Session -- Set Working Directory -- To Source File Location]
     
     1. Look at the script file and see what it has. Compare it with the `script` variable. This part is for your own understanding and you don't need to answer anything.
     
@@ -52,13 +52,12 @@ Remove any `str_view()`, `View()` or `install.packages()` commands in your `Rmd`
     table(neo)
     ```
     
-    3. [*Optional for STAT 486 students*] How many time did Neo refer to Trinity?
+    3. How many times was Trinity referred to (as either Trinity or Trin)?
     
     
 ## Factors and Logical variables
 
-TODO: post dataset.
-You will be working with an extraction related to happiness from the general social survey (GSS) available [here](happy.csv). The GSS is a yearly survey of Americans. The data you will work on spans 1972 to 2018.
+You will be working with an extraction related to happiness from the general social survey (GSS) available [here](happy.csv). The GSS is a yearly survey of Americans. The data you will work on spans 1972 to 2016.
 Use `happy <- readr::read_csv('happy.csv')` to read in the data.
 
 ```{r, include=FALSE, eval=FALSE}
@@ -67,19 +66,19 @@ write.csv(happy %>% select(-polviews), file='happy.csv', row.names = FALSE)
 happy <- readr::read_csv('happy.csv')
 ```
 
-1. Convert the `happy`, `marital`, `degree`, and `health` columns into factors. Make sure the factor levels are arranged in a meaningful order.
+1. Convert the `happy`, `marital`, `degree`, and `health` columns into factors using `factor()`. Make sure the factor levels are arranged in a meaningful order.
 
 2. Tabulate the status of (i) happiness, (ii) health, and (iii) happiness by health.
 
 3. Create a barchart showing the *proportion* of happy respondents by marital status. The proportion is the ratio of the number of happy respondents over the number of respondents in the marital status group.
 
 4. 
-    1. Create a data frame containing respondents who are married and happy
-    2. Create a data frame containing respondents who are either married or happy (or both)
-    3. Find the number of respondents who are either married or happy, but not both
-    4. Find the number of respondents who are neither married nor happy
+    a. Create a data frame containing respondents who are married and happy
+    a. Create a data frame containing respondents who are either married or happy (or both)
+    a. Find the number of respondents who are either married or happy, but not both
+    a. Find the number of respondents who are neither married nor happy
 
 5. Work with the `partyid` column as follows. 
-    1. Set those who are `ind,near dem`, `not str democrat`, `strong democrat` to `democrat`
-    2. Set those who are `ind,near rep`, `not str republican`, `strong republican` to `republican`
-    3. Finally, tabulate the new `partyid` column
+    a. Set those who are `ind,near dem`, `not str democrat`, `strong democrat` to `democrat`
+    a. Set those who are `ind,near rep`, `not str republican`, `strong republican` to `republican`
+    a. Finally, tabulate the new `partyid` column

@@ -32,6 +32,8 @@ class: big, middle
 
 - What are strings?
 
+- Creating strings
+
 - Showing strings
 
 - Basic string functions
@@ -48,28 +50,30 @@ class: big, middle
 
 - Ultimately, analysts like to deal with numeric using models, so text data need to be converted to numbers
 
-- Thus, we need skills to deal with strings
+- Automatic generation of reports involves string manipulation
 
 - Character vectors in R store strings. A string is made up of zero or more individual characters
 
-- The following are all strings
+---
+
+## Creating strings
+
+- Strings can be created by surrounding texts with a pair of single or double quotes (both are fine)
 
   ```
   ""
   "z"
-  "hello world"
+  'hello world'
   c("hello", "world")
-  "Mary's friend says: \n \t \"Hello!\""
   ```
 
----
-
-## Strings
-```
-x &lt;- "Mary's friend says: \n \t \"Hello!\""
-single &lt;- "'"
-double &lt;- '"'
-```
+- Some more strange examples:
+    
+    ```r
+    single &lt;- "'"
+    double &lt;- '"'
+    x &lt;- "Mary's friend says: \n \t \"Hello!\""
+    ```
 
 - Some characters must be *escaped* using the backslash `\` to be a part of a string
   - `\n`: newline. It is a single character
@@ -77,20 +81,48 @@ double &lt;- '"'
   - `\"`: a double quote
   - `\\`: a single backslash
   
-- Using single and double quotes for strings are both fine. .style[Double quotes are recommended, unless your string has a double quote.]
+---
+
+- .style[Double quotes are recommended for creating strings, unless your string has a double quote]
 
 ---
 
 ## Showing strings
 
-- `print(x)` shows all character contents literally including the escape symbols
+- `print(x)` shows all character contents literally (unformatted) including the escape symbols
 
-- `writeLine(x)` format the string in a reader-friendly manner by interpreting the escaped symbols
+- `writeLines(x)` format the string in a reader-friendly (formatted) manner by interpreting the escaped symbols
+
+
+```r
+writeLines(x)
+```
+
+```
+## Mary's friend says: 
+##  	 "Hello!"
+```
+
+---
+
+## Demo
 
 
 ---
 
-## String functions
+class: inverse
+
+## Your Turn
+
+&lt;img src="images/green.png" width=20&gt; Create a string containing `O'Neal`
+
+&lt;img src="images/blue.png" width=20&gt; Create a string containing a newline, a right slash, and a double quote. Remember to escape. Assign the string to a variable `s`
+
+&lt;img src="images/green.png" width=20&gt; Display `s` both unformatted and formatted 
+
+---
+
+## Basic string functions
 
 R has many string functions built-in, but we will be using the `stringr` library which provides a unified interface to string functions. To load the package, issue
 
@@ -100,9 +132,16 @@ library(stringr) #Does not work? Run install.packages('stringr') first
 ```
 
 - `str_length` tells the number of characters in a (vector of) string
+
 - `str_c` combines two or more strings elementwise. It can also connect all strings together into one
+
 - `str_sub` extracts a part of a string
+
 - `str_to_lower`, `str_to_upper`, `str_to_title` convert cases in a string
+
+---
+
+## Demo
 
 ---
 
@@ -111,15 +150,14 @@ library(stringr) #Does not work? Run install.packages('stringr') first
 - We often need to describe what we need using patterns
 
 - E.g.
-    - which days are in May among `c("May 5", "June 4", "May 8")`
-    - extract the day parts in `c("May 5", "June 4")`
-    - which students have a first name Jacob among &lt;/br&gt; `c("Smith, Jacob", "Jacobi, Neal", "Pearl, Jacob")`
+    - which students have a first name Jacob among &lt;/br&gt; `c("Shaw, Jacob", "Jacobi, Neal", "Pearl, Jacob")`
+    - extract the first and the last names
     
-- `str_view` visualizes the matching process for learning patterns
+- `str_view_all` visualizes the matching process for learning patterns. It highlight all matches (`str_view` highlights only the first match)
 
 ```
-x &lt;- c("May 5", "June 4", "July 8")
-str_view(x, "May")
+x &lt;- c("Shaw, Jacob", "Jacobi, Neal", "Pearl, Jacob")
+str_view_all(x, "Jacob")
 ```
 
 ---
@@ -128,19 +166,20 @@ str_view(x, "May")
 
 Regular expression (Regexp) is a concise and flexible way to describe patterns in strings.
 
-- `.` means any character that is not a newline
 
 - `^` matches the start of the string, and `$` the end of the string
 
 ```
-str_view(c("Smith, Jacob", "Jacobi, Neal", "Pearl, Jacob")`, 
-         "Jacob$")
+str_view_all(x, "Jacob$")
 ```
+
+- `.` means any character that is not a newline
+
+- Quantifiers specify how many instances of a specific pattern must be found for a match. E.g., `.?` matches 0 or 1 character; `.+`, 1 or more characters; `.*`:  0 or more characters
 
 - There are character classes that matches any character within a collection. E.g.,
     - `[:alnum:]`: any alphabetic or numeric characters
     - `\d`: any digit
-    - `\d?`, 0 or 1 digit; `\d+`, 1 or more digits; `\d*`:  0 or more digits
     - `\s`: any whitespace
     - [abc]: a or b or c
     - [^abc]: anything but a, b, or c
@@ -150,6 +189,8 @@ str_view(c("Smith, Jacob", "Jacobi, Neal", "Pearl, Jacob")`,
 ## More string functions
 
 - `str_detect(string, pattern)` detects whether `pattern` occurs in `string`
+
+- `str_count(string, pattern)` counts the number of times `pattern` occurs in `string`
 
 - `str_extract(string, pattern)` extracts the first matched pattern from `string`. `str_extract_all` extracts all matches
 
@@ -161,14 +202,21 @@ str_view(c("Smith, Jacob", "Jacobi, Neal", "Pearl, Jacob")`,
 
 ---
 
+## Demo
+
+---
+
 class: inverse
 
 ## Your Turn
 
-TODO
+Start with a shopping list `fruit &lt;- c("apple", "banana", "pear", "pinapple")`
 
-&lt;img src="images/green.png" width=20&gt; Find the mean and median of `x` 
+&lt;img src="images/green.png" width=20&gt; Find the number of characters in each string in `fruit`
 
+&lt;img src="images/green.png" width=20&gt; Create a character vector in which each entry contains a fruit name and a quantity (say, 4, 2, 1, and 2 for the four types of fruit)
+
+&lt;img src="images/blue.png" width=20&gt; Use `str_detect` to find which fruits have a name containing `apple`
 
 ---
 

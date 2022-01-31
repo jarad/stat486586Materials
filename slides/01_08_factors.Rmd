@@ -10,16 +10,12 @@ output:
       beforeInit: "macros.js"
       highlightLines: true
       countIncrementalSlides: false
+
 ---
-class: big, middle
 
 ```{r xaringan-tile-view, echo=FALSE}
 xaringanExtra::use_tile_view()
 ```
-
-## Factor variables
-
----
 
 ## Overview
 
@@ -32,6 +28,11 @@ xaringanExtra::use_tile_view()
 - Type casting
 
 ---
+class: big, middle
+
+## Factor variables
+
+---
 
 ## Factors in R
 
@@ -40,6 +41,8 @@ xaringanExtra::use_tile_view()
 - Stores both *levels* and the *order* of the levels
 
 - It is more than a character vector, which does not store the order information
+
+- The factor levels are going to affect the behavior of downstream functions, e.g., the order of categories to be displayed in a table or a figure
 
 ---
 
@@ -52,27 +55,38 @@ str(fbi)
 
 ---
 
-## Using factors in R
+## Working with factors
+
+
+- `factor` creates a new factor with specified levels
+
+- `table`, `str` inspect a factor
+
+- `levels`, `levels<-` extracts and set the levels
+
+- `reorder(fct, numbers, FUN)` reorders a factor `fct` according to a summary statistic `FUN` of `numbers`.
+    
+
+---
+
+## Factors in R functions
 
 - Many R functions behave nicely when applied on a factor, for example `boxplot(x ~ fct)` creates a side-by-side boxplot of `x` in different groups specified by the levels in `fct`
 
 - The order of factor levels affects the order of the boxes. It is crucial to arrange them in a meaningful order for presentation!
 
-```{r, fig.width=8, fig.height=3}
+```{r, fig.width=10, fig.height=3}
 boxplot(fbi$Count ~ fbi$Type)
 ```
 
 ---
 
-## Working with factors
+Reorder the levels according to the mean counts
 
-- `table`, `str` inspect a factor
-
-- `factor` creates a new factor with specified levels
-
-- `levels`, `levels<-` extracts and set the levels
-
-- `reorder(fct, numbers, FUN)` reorders a factor `fct` according to a summary statistic `FUN` of `numbers`
+```{r, fig.width=10, fig.height=3}
+type2 <- reorder(fbi$Type, fbi$Count, mean, na.rm=TRUE)
+boxplot(fbi$Count ~ type2)
+```
 
 ---
 
@@ -95,58 +109,60 @@ For this your turn use the `fbi` object from the `classdata` package.
 
 - <img src="images/green.png" width=20> Introduce a rate of the number of reported offenses by population into the `fbi` data. 
 
-- <img src="images/blue.png" width=20> 
-Plot boxplots of crime rates by different types of crime. How can you make axis text legible? 
+- <img src="images/green.png" width=20> 
+Plot boxplots of crime rates by different types of crime. 
 
 - <img src="images/blue.png" width=20> 
 Reorder the boxplots of crime rates, such that the crime types are ordered by the median crime rates. 
 
 ---
-class: big, middle
 
-## Quick summary of demo
+<!-- --- -->
+<!-- class: big, middle -->
 
----
+<!-- ## Quick summary of demo -->
 
-## Reordering factor levels manually
+<!-- --- -->
 
-```{r}
-levels(fbi$Type)
-```
+<!-- ## Reordering factor levels manually -->
 
-Reorder so that property crimes come first (extremely sensitive to typos):
+<!-- ```{r} -->
+<!-- levels(fbi$Type) -->
+<!-- ``` -->
 
-```{r}
-levels(factor(fbi$Type, levels=c("Larceny.theft", "Burglary", "Motor.vehicle.theft", "Aggravated.assault", "Robbery", "Legacy.rape", "Murder.and.nonnegligent.Manslaughter", "Rape")))
-```
+<!-- Reorder so that property crimes come first (extremely sensitive to typos): -->
 
----
+<!-- ```{r} -->
+<!-- levels(factor(fbi$Type, levels=c("Larceny.theft", "Burglary", "Motor.vehicle.theft", "Aggravated.assault", "Robbery", "Legacy.rape", "Murder.and.nonnegligent.Manslaughter", "Rape"))) -->
+<!-- ``` -->
 
-## Reordering factor levels - using another variable
+<!-- --- -->
 
-`reorder(factor, numbers, function)`
+<!-- ## Reordering factor levels - using another variable -->
 
-reorder levels in factor by values in `numbers`. Use `function` to summarize (average is used by default). 
+<!-- `reorder(factor, numbers, function)` -->
 
-```{r}
-levels(reorder(fbi$Type, fbi$Count, mean, na.rm=TRUE))
-```
-Missing values in `numbers`? make sure to use parameter `na.rm=TRUE`!
+<!-- reorder levels in factor by values in `numbers`. Use `function` to summarize (average is used by default).  -->
 
----
+<!-- ```{r} -->
+<!-- levels(reorder(fbi$Type, fbi$Count, mean, na.rm=TRUE)) -->
+<!-- ``` -->
+<!-- Missing values in `numbers`? make sure to use parameter `na.rm=TRUE`! -->
 
-## Changing levels' names
+<!-- --- -->
 
-```{r}
-levels(fbi$Type)
-```
+<!-- ## Changing levels' names -->
 
-```{r}
-levels(fbi$Type)[6] <- "Murder"
+<!-- ```{r} -->
+<!-- levels(fbi$Type) -->
+<!-- ``` -->
 
-levels(fbi$Type)
-```
+<!-- ```{r} -->
+<!-- levels(fbi$Type)[6] <- "Murder" -->
 
- 
+<!-- levels(fbi$Type) -->
+<!-- ``` -->
+
+
 
 

@@ -46,7 +46,7 @@ xaringanExtra::use_tile_view()
 
     ```
     {
-      writeLines("Flash says: What"s the plate")
+      writeLines("Flash says: What's the plate")
       Sys.sleep(2)
       writeLines("number?")
     }
@@ -58,20 +58,20 @@ xaringanExtra::use_tile_view()
 
 - This works:
     ```
-    system.time(writeLines("What"s the plate number?"))
+    system.time(writeLines("What's the plate number?"))
     ```
 - This does not work
 
     ```
     system.time(
-      writeLines("Flash says: What"s the plate")
+      writeLines("Flash says: What's the plate")
       Sys.sleep(2)
       writeLines("number?"))
     ```
 - Grouping the expression works:
     ```
     system.time({
-      writeLines("Flash says: What"s the plate")
+      writeLines("Flash says: What's the plate")
       Sys.sleep(2)
       writeLines("number?")
     })
