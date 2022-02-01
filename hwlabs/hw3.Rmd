@@ -39,7 +39,7 @@ Remove any `str_view_all()`, `View()` or `install.packages()` commands in your `
 
     ```
 
-4. You will be analyzing the movie script of The Matrix (1999) in this question. The script can be found [here](....). Download the file and put it side by side your Rmd file. Then use `script <- readLines('matrix_script.txt')` to read in the data. [Hint: If the command does not work, you may have a wrong working directory. In RStudio, click Session -- Set Working Directory -- To Source File Location]
+4. You will be analyzing the movie script of The Matrix (1999) in this question. The script can be found [here](matrix_script.txt). Download the file and put it side by side your Rmd file. Then use `script <- readLines('matrix_script.txt')` to read in the data. [Hint: If the command does not work, you may have a wrong working directory. In RStudio, click Session -- Set Working Directory -- To Source File Location]
     
     1. Look at the script file and see what it has. Compare it with the `script` variable. This part is for your own understanding and you don't need to answer anything.
     
