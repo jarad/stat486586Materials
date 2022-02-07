@@ -50,7 +50,7 @@ x + 1
 ## Error in x + 1: non-numeric argument to binary operator
 ```
 
-- When comparing a character vector with a vector of another type, the second vector will be converted to a vector. This is call an *implicit conversion*.
+- When comparing a numeric vector and a character vector, the former will be converted to a character vector. This is call an *implicit conversion*. The vectors will then be compared using the dictionary order.
 
 
 ```r
@@ -86,6 +86,8 @@ Functions that look like `is.typexxx(y)` will tell you whether `y` is of type `t
 - `is.data.frame`
 - etc, etc
 
+Useful later for writing code in a function depending on the type of user input
+
 ---
 
 ## Type-casting functions
@@ -100,6 +102,8 @@ Functions that look like `as.typexxx(y)` will convert `y` to an object of type `
 - `as.data.frame`
 - etc, etc
 
+Useful later for converting user inputs to the types you would like
+
 ---
 
 ## Casting a factor variable
@@ -109,6 +113,21 @@ Functions that look like `as.typexxx(y)` will convert `y` to an object of type `
 
 To get the labels of a factor as numbers, first cast to character and then to a number.
 
+
+
+
+---
+class: inverse
+
+## Your turn
+
+Start with the vector `x &lt;- c(1998, 1999, 1998)`
+
+&lt;img src="images/green.png" width=20&gt; Cast `x` to a character vector. Use a type telling function to confirm your result has the right type
+
+&lt;img src="images/green.png" width=20&gt; Cast the previous result into a factor. Use a type telling function to confirm your result has the right type
+
+&lt;img src="images/green.png" width=20&gt; Cast the previous result into a numeric vector. Use a type telling function to confirm your result has the right type. Check the values are the same as the ones you started with
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

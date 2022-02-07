@@ -38,65 +38,89 @@ xaringanExtra::use_tile_view()
 
 - List entries can be of any type and can have mixed types
 ```{r}
-l <- list(1:2, c('ha', 'ma', 'da'))
+l <- list(1:2, c("ha", "ma", "da"))
 l
 ```
 
 - List entries can be named
 ```{r}
-lNamed <- list(foo = 1:2, bar=c('ha', 'ma', 'da'))
+lNamed <- list(foo = 1:2, bar=c("ha", "ma", "da"))
 lNamed
 ```
 
 ---
 
-## Lists
-
-- `[` accesses sub lists
+- Lists can be nested. The following list has two entries, and the second entry is again a list
 ```{r}
-l[2] # `[ ]` extract a sublist
-l[1:2]
-lNamed['bar']
+l2 <- list(TRUE, l)
+str(l2)
 ```
 
 ---
 
 ## Lists
 
-- `[[` accesses an element
+- `[` accesses a sub list *of any length*
+```{r}
+l[2] # `[ ]` extract a sublist
+l[1:2]
+lNamed["bar"]
+```
+
+---
+
+## Lists
+
+- `[[` accesses a *single* element
 ```{r}
 l[[2]] # `[[ ]]` extract an element
-lNamed[['bar']]
+lNamed[["bar"]]
 ```
-- `l[['bar']]` is the same as `l$bar`. The difference is that `$` supports partial matching but `[[` does not. 
+- `l[["bar"]]` is the same as `l$bar`. The difference is that `$` supports partial matching but `[[` does not. 
 `[[` is safer to use 
 
 ```{r}
 lNamed$b
-lNamed[['b']]
+lNamed[["b"]]
 ```
 
 ---
+## R demo
 
-## List operations...
+---
+
+## List is a container
 <img src="images/listSalt.png" width="100%" alt="">
 Courtesy Hadley Wickham
 
 ---
+
+class: inverse
+
+## Your turn
+
+You have a list `x <- list(1, 2, 3)` and a numeric vector `y <- c(1, 2, 3)`
+
+<img src="images/blue.png" width=20> Write down two things in common to the list and the numeric vector
+
+<img src="images/blue.png" width=20> Write down two differences between the list and the numeric vector regarding how `[`, `[[` works on them
+
+---
 ## Expanding lists
 
-- `c` to concatenate lists. Note that a list is a vector
-
-```{r}
-l1 <- c(list(TRUE), l)
-str(l1)
-```
+- `c` to concatenate lists. Note that a list is a vector of lists with length 1
+    ```{r}
+    l1 <- c(list(TRUE), l)
+    str(l1)
+    ```
 
 - `append(x, values, after)` works similarly and could be more handy
-```{r}
-l2 <- append(l, list(TRUE), 0)
-str(l2)
-```
+    ```{r}
+    l2 <- append(l, list(TRUE), 0)
+    str(l2)
+    ```
+
+---
 
 ## Contracting lists
 
@@ -115,10 +139,10 @@ str(l2[-c(2, 3)])
 
 ## Flatterning lists
 
-- `unlist` flatterns a list into a vector
+- `unlist` flatterns a list into a vector. If it contains mixed types, type conversion will be done automatically
 
 ```{r}
-l3 <- list(1, l)
+l3 <- c(list(1), l)
 l3
 unlist(l3)
 ```
@@ -134,8 +158,8 @@ class: inverse
 ## Your turn
 
 <img src="images/green.png" width=20> Build a list containing the following in its entries:
-1. `pi` as a number
-2. `c("pie", "pi")`
+1. A number `pi`
+2. A character vector `c("pie", "pi")`
 3. The vector `letters`
 
 <img src="images/green.png" width=20> Appropriately name the entries
@@ -156,19 +180,21 @@ class: big, middle
 
 ## Data frame in R
 
-- Data frame is a rectangular list. Namely, a list in which the elements are vectors of the same length
+- Data frame is a rectangular list, namely, a list in which the elements are vectors of the same length
 
 - So all list operations apply to a data frame. The following all works
 
     ```
-    df[['col']]
+    df[["col"]]
     df$col
     df$`a strange column%^&` # Use backtick ` to quote (not ' or ")
     df[colIndices]
     ```
-- `df[['col']]` and `df$col` always return a vector
+- `df[["col"]]` and `df$col` always return a vector
 
 - Similar to working on a matrix, 
+
+  - All indexing rules for a matrix applies to a data frame
   - `df[, "col"]` return the column as a vector, and 
   - `df[, "col", drop=FALSE]` returns a data frame containing a single column. 
   - .style[Make sure which version do you need, especially when programming]
@@ -198,18 +224,12 @@ y
 
 ## Operating on a data frame
 
-- Similar to working with matrices
+- `df$newCol <- ...` or `df[["newCol"]] <- ...` adds a new column
 
-  - All indexing rules for a matrix applies to a data frame
-  
-  - `rbind` and `cbind` binds two or more data frames
-
-- `df$newCol <- ...` adds a new column
+- Similar to working with matrices, `rbind` and `cbind` binds two or more data frames
 
 - Similar to working with a list
 
-  - `c`, `append` add new columns
-  
   - setting columns to `NULL` remove columns
   
 - To remove rows, use indexing to create a new (sub)-data frame
@@ -226,7 +246,7 @@ Work on the `iris` dataset
 
 <img src="images/green.png" width=20> Use two ways to extract `Sepal.Length` as a numeric vector
 
-<img src="images/green.png" width=20> Use two ways to extract `Sepal.Length` as a data frame with a single column
+<img src="images/green.png" width=20> Use two ways to extract `Sepal.Length` as a data frame with a single column (use the `drop=FALSE` argument when subsetting)
 
 <img src="images/green.png" width=20> Use two ways to add a new column `Sepal.Length2` to contain the square of the `Sepal.Length` column
 

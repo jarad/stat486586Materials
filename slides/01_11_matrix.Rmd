@@ -28,7 +28,9 @@ xaringanExtra::use_tile_view()
 
 - Indexing
 
-- Matrix operations and functions
+- Matrix functions and operations
+
+- Case study
 
 ---
 
@@ -38,7 +40,9 @@ xaringanExtra::use_tile_view()
 
   ![:scale 80%](images/matrix.jpg) 
     
-- Handy for algebraic operation, and highly efficient for numerical computation
+- Handy for algebraic operation
+
+- Highly efficient for numerical computation
 
 - That said, you could form a matrix of not just numbers but also characters, and more
 
@@ -46,17 +50,20 @@ xaringanExtra::use_tile_view()
 
 ## Creating a matrix
 
+- Basically, a matrix is just a long vector wrapped into some specified numbers of rows and columns
+
 - Create a matrix using `matrix(x, nrow=, ncol=)`. E.g., 
+    ```{r}
+    matrix(1:6, 3, 2)
+    ```
 
-```{r}
-matrix(1:6, 3, 2)
-```
 
-- Basically, `matrix()` wraps a long vector into the specified numbers of rows and columns
-
-- The wrapping is along columns. In other words, an R matrix is *column-major*. So operations based on columns are slightly faster than those based on rows
+- The wrapping is along columns. In other words, an R matrix is *column-major*. 
+Operations based on columns are slightly faster than those based on rows
 
 - `matrix` will recycle the first input until it has `nrow * ncol` elements, following the recycling rule
+
+- `matrix(..., byrow=TRUE)` will create the matrix by row (wrap the vector along the rows)
 
 ---
 
@@ -72,92 +79,180 @@ matrix(1:6, 3, 2)
 
 ---
 
+## R demo
+
+---
+class: inverse
+
+## Your turn
+
+<img src="images/green.png" width=20> Create a matrix
+$$\left(\begin{array}{ccc}
+5 & 7 & 9 \\
+6 & 8 & 10
+\end{array}\right)$$
+and name it `y`
+
+<img src="images/green.png" width=20> Create matrix 
+$$\left(\begin{array}{ccc}
+5 & 7 & 9 \\
+6 & 8 & 10\\
+1 & 2 & 3
+\end{array}\right)$$
+by combining the previous result with a new row. Name the new matrix `y1`
+
+<img src="images/green.png" width=20> Flattern `y1` into a vector
+
+---
+
 ## Indexing a matrix
 
 Indexding a matrix is like indexing a data frame. So you can
 
-- index by integer locations
+- index by integer locations. E.g.,
+    ```{r}
+    z <- matrix(1:9, 3, 3)
+    z[1:2, -3]
+    ```
 
-- index using a logical vector
-
+- index using a logical vector. E.g.,
+    ```{r}
+    z[c(TRUE, FALSE, TRUE), ]
+    ```
+    
 - index using names, if the matrix is named
-
-```{r}
-x <- matrix(1:6, 3, 2)
-x
-```
 
 ---
 
 ## Setting row and column names
 
 - Setting names:
-```{r}
-rownames(x) <- c('orange', 'szechuan', 'brocolli')
-colnames(x) <- c('chicken', 'beef')
-x
-```
+    ```{r}
+    rownames(z) <- c('orange', 'szechuan', 'brocolli')
+    colnames(z) <- c('chicken', 'beef', 'pork')
+    z
+    ```
 
 - Indexing by names:
-
-```{r}
-x[c('orange', 'brocolli'), 'chicken']
-```
+    ```{r}
+    z[c('orange', 'brocolli'), 'chicken']
+    ```
 
 - Removing names: 
-  - `rownames(x) <- NULL`  
-  - `colnames(x) <- NULL`
+  - `rownames(z) <- NULL`  
+  - `colnames(z) <- NULL`
 
-```{r, include=FALSE}
-rownames(x) <- NULL
-colnames(x) <- NULL
-```
+    ```{r, include=FALSE}
+    rownames(z) <- NULL
+    colnames(z) <- NULL
+    ```
 
 ---
 
 ## Dropping dimensions when indexing
 
-- A matrix is returned if there are at least two rows and columns
-```{r}
-x[2:3, 1:2]
-```
+- A matrix is returned if there are at least two rows *and* columns
+    ```{r}
+    z[2:3, ]
+    ```
 
-- A vector/scalar is returned if there is only one row or one column (or both)
-```{r}
-x[3, 1:2]
-```
+- A vector/scalar is returned if there is only one row *or* one column (or both)
+    ```{r}
+    z[3, ]
+    ```
 
 ---
 
 ## Dropping dimensions when indexing
 
 - To ensure the returned value is a matrix, use the `drop=FALSE` argument when indexing. 
-
-```{r}
-x[3, 1:2, drop=FALSE]
-```
+    ```{r}
+    z[3, , drop=FALSE]
+    ```
 
 - .style[When programming with matrix, pay extra attention to whether you want a matrix or a vector]
 
 ---
 
-## Basic matrix operations
+## R demo
 
-- Vector arithmatics like `+`, `-`, `*`, `/` and functions like `sqrt()`, `log()`, etc all applies to a matrix. Operations are done elementwise
+---
 
-- Afterall, matrix is just a wrapped vector
+## Basic matrix functions
 
-- Some matrix-specific operations/functions:
-  - matrix multiplication: `A %*% B`. .danger[Very different from elementwise multiplication]. A review is found [here](http://linear.ups.edu/html/section-MM.html)
-  - identity matrix: `diag(n)`
-  - diagonal matrix: `diag(diagElements)`
-  - transpose: `t(A)`
-- Cont, for a square matrix
-  - determinant: `det(A)`
-  - inversion: `solve(A)`. Recall that $A^{-1}A = AA^{-1} = I$ where $I$ is the identity matrix
-  - spectral decomposition: `eigen(A)` 
-  - condition number: `kappa(A)`
+- `dim(A)`, `nrow(A)`, `ncol(A)`, the dimensions, number of rows, and number of columns of a matrix
+
+- `t(A)`, matrix transpose
+
+- Working with diagonal matrices: `diag` is used to extract the diagonal elements of a matrix or to create a diagonal matrix
+  - extract diagonal: `diag(A)`
+  - identity matrix: `diag(1, n)`
+  - diagonal matrix: `diag(diagVec, length(diagVec))`
   
+- `rowMeans`, `rowSums`, `colMeans`, `colSums`: Find the means or the sums over the rows or the columns, as the function names suggest
+
+---
+
+## Matrix operations
+
+- Vector arithmatics like `+`, `-`, `*`, `/` and functions like `sqrt()`, `log()`, etc all applies to a matrix
+
+  - Afterall, matrix is just a wrapped vector
+  
+  - Operations are done elementwise
+  
+  - Operations follow the recycling rule
+
+---
+
+- Matrix multiplication: `A %*% B`
+
+  - A review is found [here](https://www.mathbootcamps.com/multiplying-matrices/)
+  
+  - This is .danger[very different from elementwise multiplication]
+  
+  - By default, $AB$ means the matrix multiplication for two matrices $A$ and $B$, not the elementwise product
+  
+  - In order for $AB$ to be defined, we must have $A_{n \times p}$ and $B_{p \times m}$, namely, the inner dimensions of the two matrices must match. The result $AB$ will be $n\times m$
+
+---
+
+- Some operations/functions for a square matrix
+
+  - inversion: `solve(A)` calculates the inverse $A^{-1}$ of a square matrix $A$. This is .danger[Very different from elementwise reciprocal]
+    
+  - Recall that $A^{-1}A = AA^{-1} = I$ where $I$ is the identity matrix
+
+  - (Optional) determinant: `det(A)`
+  
+  - (Optional) spectral decomposition: `eigen(A)` 
+  
+  - (Optional) condition number: `kappa(A)`. A very large condition number means the inversion of that matrix is prone to error
+  
+  
+---
+## R demo
+
+---
+class: inverse
+
+## Your turn
+
+
+<img src="images/green.png" width=20> Create a $3\times 3$ diagonal matrix with diagonal elements being 2, 4, and 6
+
+</br>For the next two questions, start with `A <- matrix(5:10, 2, 3)`
+
+<img src="images/green.png" width=20> Find $2A$, i.e., the matrix consisting of 2 times the entries of $A$
+
+<img src="images/blue.png" width=20> Find the matrix product $AA^T$, where $A^T$ denotes the transpose of $A$
+
+
+---
+class: big, middle
+
+## Case study
+
 ---
 
 ## Case study: Multiple linear regression
@@ -200,7 +295,13 @@ Y_{n}
 
 $$\hat{\boldsymbol{\beta}}=[\hat{\beta_{0}}\;\hat{\beta_{1}}\;\dots\;\hat{\beta_{p}}]^{T}=(\mathbf{X}^{T}\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Y}$$
 
-- The fitted values, or our guesses of the average responses corresponding to predictors $\mathbf{X}$, are 
+---
+
+- For a record with covariates $\mathbf{x}_0 = [1\; x_{01}\; \dots\; x_{0p}]$, the predicted average response is 
+
+$$\hat{Y}_0 = \mathbf{x}_0 \hat{\boldsymbol{\beta}} = \mathbf{x}_0 (\mathbf{X}^{T}\mathbf{X})^{-1}\mathbf{X}^{T}\mathbf{Y}$$
+
+- The fitted values, or our guesses of the average responses corresponding to the original predictors $\mathbf{X}$, are 
 
 $$\hat{\mathbf{Y}}=\mathbf{X}\hat{\boldsymbol{\beta}} = \mathbf{X} (\mathbf{X}^{T}\mathbf{X})^{-1}\mathbf{X}^{T}\mathbf{Y}$$
 
@@ -210,7 +311,7 @@ $$\hat{\mathbf{Y}}=\mathbf{X}\hat{\boldsymbol{\beta}} = \mathbf{X} (\mathbf{X}^{
 
 - Data: Auto fuel efficiency dataset `mpg` in package `ggplot2`
 
-- Question: How is the highway milage per gallon related to the model year (`year`) and engine size (`displ`)?
+- Question: How is the highway milage per gallon (`hwy`) related to the model year (`year`) and engine size (`displ`)?
 
 - Load data:
 
@@ -251,7 +352,7 @@ Work on the `mpg` dataset in package `ggplot2`
 
 <img src="images/green.png" width=20> Include an additional predictor, which is the number of cylinders as a predictor. What are the new beta estimates? Note the order of the predictors
 
-<img src="images/blue.png" width=20> There are two new cars for which we do not know their highway milage. These cars were both 2008 models, have displacement 2.5 and 2.0, and 6 and 4 cylinders, respectively. Predict the highway efficiency
+<img src="images/blue.png" width=20> There is a new car for which we do not know its highway milage. The car was a 2008 model, had displacement 2.5, and 6 cylinders. Predict the highway efficiency
 
-- First create a $2 \times 4$ design matrix $X_0$, for which the columns contain the intercept (just 1), year, displacement, and the number of cylinders
-- Obtain the prediction $\hat{Y}_0 = X_0\hat{\boldsymbol{\beta}}$
+- First create a $1 \times 4$ design matrix $\mathbf{x}_0$, for which the columns contain the intercept (just 1), year, displacement, and the number of cylinders
+- Obtain the prediction $\hat{Y}_0 = x_0\hat{\boldsymbol{\beta}}$ 
