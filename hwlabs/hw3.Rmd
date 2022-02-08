@@ -26,7 +26,7 @@ Remove any `str_view_all()`, `View()` or `install.packages()` commands in your `
     c('apple', 'appleapple', 'BananaBanana', 'Banana', 'cherryCherry')
     ```
 
-3. Count the number of words in the following string. [Hint: You can use `str_split` with a well-designed pattern to separate the words. `str_split(x, pattern)[[1]]` extracts the vector of words.]
+3. Count the number of words in the following string. [Hint: You could use `str_split` with a well-designed pattern to separate the words. `str_split(x, pattern)[[1]]` extracts the vector of words.]
 
     ```
     "Dear Friends,
@@ -70,7 +70,7 @@ happy <- readr::read_csv('happy.csv')
 
 2. Tabulate the status of (i) happiness, (ii) health, and (iii) happiness by health.
 
-3. Create a barchart showing the *proportion* of happy respondents by marital status. The proportion is the ratio of the number of happy respondents over the number of respondents in the marital status group.
+3. Create a barchart showing the *proportion* of happy respondents by marital status. The proportion is the ratio of the number of happy respondents over the number of respondents in the marital status group. Feel free to define what is meant by a "happy respondent" (e.g., someone who is not unhappy), but make sure that you state the definition.
 
 4. 
     a. Create a data frame containing respondents who are married and happy
