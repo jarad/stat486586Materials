@@ -36,6 +36,8 @@ class: big, middle
 
 - Data frame as a list
 
+- Some details on data frames
+
 ---
 
 ## Lists
@@ -171,21 +173,15 @@ lNamed[["b"]]
 
 ---
 
-## List is a container
-&lt;img src="images/listSalt.png" width="100%" alt=""&gt;
-Courtesy Hadley Wickham
-
----
-
 class: inverse
 
 ## Your turn
 
 You have a list `x &lt;- list(1, 2, 3)` and a numeric vector `y &lt;- c(1, 2, 3)`
 
-&lt;img src="images/blue.png" width=20&gt; Write down two things in common to the list and the numeric vector
+&lt;img src="images/green.png" width=20&gt; Write down one thing in common to the list and the numeric vector
 
-&lt;img src="images/blue.png" width=20&gt; Write down two differences between the list and the numeric vector regarding how `[`, `[[` works on them
+&lt;img src="images/blue.png" width=20&gt; Write down two differences between the list and the numeric vector regarding how `[` and `[[` work on them
 
 ---
 ## Expanding lists
@@ -319,7 +315,7 @@ class: big, middle
     df$`a strange column%^&amp;` # Use backtick ` to quote (not ' or ")
     df[colIndices]
     ```
-- `df[["col"]]` and `df$col` always return a vector
+- `df[["col"]]` and `df$col` always return a vector, not a data frame
 
 - Similar to working on a matrix, 
 

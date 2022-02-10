@@ -195,9 +195,9 @@ Indexding a matrix is like indexing a data frame. So you can
 
 ## Matrix operations
 
-- Vector arithmatics like `+`, `-`, `*`, `/` and functions like `sqrt()`, `log()`, etc all applies to a matrix
+- Vector arithmatics like `+`, `-`, `*`, `/` and functions like `sqrt()`, `log()`, etc all apply to a matrix
 
-  - Afterall, matrix is just a wrapped vector
+  - Afterall, a matrix is just a wrapped vector, so functions that apply to a vector also apply to a matrix
   
   - Operations are done elementwise
   
@@ -217,9 +217,9 @@ Indexding a matrix is like indexing a data frame. So you can
 
 ---
 
-- Some operations/functions for a square matrix
+- Some operations/functions for a *square* matrix
 
-  - inversion: `solve(A)` calculates the inverse $A^{-1}$ of a square matrix $A$. This is .danger[Very different from elementwise reciprocal]
+  - inversion: `solve(A)` calculates the inverse $A^{-1}$ of a square matrix $A$. This is .danger[very different from elementwise reciprocal]
     
   - Recall that $A^{-1}A = AA^{-1} = I$ where $I$ is the identity matrix
 
@@ -244,6 +244,8 @@ class: inverse
 </br>For the next two questions, start with `A <- matrix(5:10, 2, 3)`
 
 <img src="images/green.png" width=20> Find $2A$, i.e., the matrix consisting of 2 times the entries of $A$
+
+<img src="images/green.png" width=20> Find the elementwise product of $A$ and $A$ itself
 
 <img src="images/blue.png" width=20> Find the matrix product $AA^T$, where $A^T$ denotes the transpose of $A$
 
