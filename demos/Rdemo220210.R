@@ -107,4 +107,58 @@ y[1]
 x[[1]]
 y[[1]]
 
+## Additional demo
+l1 <- c(list(TRUE), l)
+str(l1)
+
+append(l, list(TRUE))
+l2 <- append(l, list(TRUE), 0)
+str(l2)
+
+# What about I want to append 3 TRUE, one in each list entry?
+c(l, list(rep(TRUE, 3))) # doesn't work
+list(rep(TRUE, 3))
+as.list(rep(TRUE, 3))
+c(l, as.list(rep(TRUE, 3)))
+
+l1[2:3] <- NULL
+str(l1)
+
+str(l2[-c(2, 3)])
+
+l3 <- c(list(1), l)
+l3
+unlist(l3[1:2])
+unlist(l3)
+
+# Creating DF
+x <- data.frame(x = 1:2, 
+                y = c("cat", "dog"), 
+                "Can you meow?" = c(TRUE, FALSE),
+                check.names=FALSE) # first without this
+
+y <- as.data.frame(list(x=1:2, y=c("cat", "dog")))
+y
+
+x$Can you meow? # does not work
+x$`Can you meow?`
+
+z <- y
+z$`Can you meow?` <- c(TRUE, FALSE)
+
+z <- cbind(y, `Can you meow?`=c(TRUE, FALSE))
+
+w <- rbind(y, y)
+rbind(y, data.frame(3, "goat")) # names must match
+rbind(y, data.frame(x=3, 4="goat")) # works
+
+q <- z
+q$x <- NULL
+
+q[2, ] <- NULL # doesn't work
+q <- q[-2, ] # works
+
+q
+as.matrix(q) # all character
+
 
