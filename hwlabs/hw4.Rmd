@@ -48,7 +48,7 @@ E^{T}\\
 F
 \end{array}\right]$
     a. Calculate the following matrix calculation. Note that for matrices $X$ and $Y$ and a scalar $c \in \mathbb{R}$, $XY$ means the matrix multiplication of two matrices, and $cX$ means the matrix whose entries are obtained by multiplying each entry of $X$ by $c$.
-        i. $EF$
+        i. $FE$
         i. $D^TD$. Make sure your answer is a scalar but not a matrix
         i. $5B + DD^T$
         i. Add $D$ to each column of $B$
