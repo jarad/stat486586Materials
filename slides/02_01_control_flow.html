@@ -20,13 +20,8 @@ class: center, middle, inverse, title-slide
 
 ---
 
-class: big, middle
 
 
-
-## Control Flow
-
----
 
 ## Outline
 
@@ -36,7 +31,7 @@ class: big, middle
 
 - Short circuiting logical operations `&amp;&amp;` and `||`
 
-- Iterations/loops: `for` and `while`
+- Iterations/loops: `for`, `while`, and `repeat`
 
 - Loop control statements: `break`, and `next`
 
@@ -58,17 +53,19 @@ class: big, middle
     }
     ```
 
+- .style[Indent the code within blocked expressions. Use a consistent indentation rule (e.g., indent by either 2 or 4 spaces, but not both)]
+
 ---
 
-`system.time(expr)` times how long does it take to run a single expression
+`system.time(expr)` times how long a single expression runs
 
 - This works:
     ```
     system.time(writeLines("What's the plate number?"))
     ```
-- This does not work
+- This does not work (`Sys.sleep` pauses R for a given number of seconds)
 
-    ```
+    ```o
     system.time(
       writeLines("Flash says: What's the plate")
       Sys.sleep(2)
@@ -82,10 +79,10 @@ class: big, middle
       writeLines("number?")
     })
     ```
-    
     - user: time used by computation
     - system: time used by input/output, etc
     - elapsed: wall time
+    
 ---
 
 ## Expression values
@@ -95,16 +92,35 @@ class: big, middle
 
 ```r
 x &lt;- {
-  1
+  a &lt;- 1
   # do something else
-  2
+  2 * 3
 }
 x
 ```
 
 ```
-## [1] 2
+## [1] 6
 ```
+
+- `with(data, expr)` evaluates an expression with columns from `data` regarded as variables (so you don't need to extract using `$`)
+
+```r
+with(cars, {
+  a &lt;- mean(speed)
+  b &lt;- max(dist)
+  c(a, b)
+  })
+```
+
+```
+## [1]  15.4 120.0
+```
+
+---
+class: middle, big
+
+## Conditional
 
 ---
 ## The `if` and `else` statements
@@ -127,7 +143,7 @@ x
     }
     ```
 
-- `condition` need to evaluate to a single logical value
+- `condition` need to evaluate to a *single* logical value
 
 ---
 
@@ -152,6 +168,38 @@ if (wantAJoke) {
   writeLines("Go back to work!")
 }
 ## What do you call a three humped camel? Pregnant
+```
+
+---
+Use cases: 
+- Convert potential matrix input to vector
+
+```r
+x &lt;- matrix(c(1, 1))
+if (is.matrix(x)) {
+  x &lt;- c(x)
+} 
+x 
+```
+
+```
+## [1] 1 1
+```
+
+- Convert potential matrix/list input to vector
+
+```r
+x &lt;- list(1, 1)
+if (is.matrix(x)) {
+  x &lt;- c(x)
+} else {
+  x &lt;- unlist(x)
+}
+x # always get a vector
+```
+
+```
+## [1] 1 1
 ```
 
 ---
@@ -180,17 +228,18 @@ if (today == "Monday") {
 
 ## Short-circuiting logical operations
 
-- Recall that previously we learned the vectorized operations `&amp;` and `|`
-
 - We now look at `&amp;&amp;` and `||`, which are *short-circuiting logical operations*
 
-- `&amp;&amp;` and `||` operates on a pair of conditions (not vectors)
+  - `&amp;&amp;` and `||` operate on a pair of logical *scalars* 
+  - Recall that we learned the vectorized operations `&amp;` and `|`
+  - `&amp;` and `|` operate on a pair of logical *vectors* 
+
 
 - For `&amp;&amp;`, if the first condition evaluates to `FALSE` (enough to determine the outcome), then the second condition will not be evaluated
 
 - Similarly, for `||`, if the first condition evaluates to `TRUE`, then the second condition will not be evaluated
 
-- .style[When programming conditions, use `&amp;&amp;` and `||` but not the vectorized versions]
+- .style[When programming conditions for `if`, use `&amp;&amp;` and `||` but not the vectorized versions]
 
 ---
 
@@ -201,7 +250,7 @@ Compare `&amp;&amp;`
 
 ```r
 x &lt;- 1
-*if (length(x) &gt; 1 &amp;&amp; length(optionalInput) &gt; 1) {
+*if (length(x) &gt; 1 &amp;&amp; length(optionalInput) &gt; 0) {
   writeLines("Run vector algorithm")
 } else {
   writeLines("Run scalar algorithm")
@@ -216,7 +265,7 @@ with `&amp;`
 
 ```r
 x &lt;- 1
-*if (length(x) &gt; 1 &amp; length(optionalInput) &gt; 1) {
+*if (length(x) &gt; 1 &amp; length(optionalInput) &gt; 0) {
   writeLines("Run vector algorithm")
 } else {
   writeLines("Run scalar algorithm")
@@ -236,7 +285,7 @@ Compare `||`
 
 ```r
 x &lt;- 1:3
-*if (length(x) &gt; 1 || length(optionalInput) &gt; 1) {
+*if (length(x) &gt; 1 || length(optionalInput) &gt; 0) {
   writeLines("Run vector algorithm")
 } else {
   writeLines("Run scalar algorithm")
@@ -251,7 +300,7 @@ with `|`
 
 ```r
 x &lt;- 1:3
-*if (length(x) &gt; 1 | length(optionalInput) &gt; 1) {
+*if (length(x) &gt; 1 | length(optionalInput) &gt; 0) {
   writeLines("Run vector algorithm")
 } else {
   writeLines("Run scalar algorithm")
@@ -264,9 +313,24 @@ x &lt;- 1:3
 
 ---
 
+class: inverse
+
+## Your turn
+
+Start with `x &lt;- matrix(1:6, 2, 3)`. You are going to change this input
+
+&lt;img src="images/green.png" width=20&gt; Write a chunk of code to do the following: If `x` is a matrix, output the means in each row; otherwise if `x` is a vector, just output the mean
+
+&lt;img src="images/green.png" width=20&gt; Define `i &lt;- 1`. Write a chunk of code to do the following: If `x` is a matrix and `i` is positive, output the mean of the `\(i\)`th row; otherwise just output the overall mean
+
+&lt;img src="images/blue.png" width=20&gt; Now remove variable `i` using `rm(i)` and rerun your code above. See if it behaves as expected
+
+
+---
+
 ## `ifelse`
 
-- Recall the `ifelse` *function*, which is not a control flow statement.
+- Compare with the `ifelse` *function*, which is not a control flow statement
 
 - `ifelse(test, yes, no)` is vectorized. All three arguments can be a vector (but the `condition` for an `if` statement needs to be a scalar)
 
@@ -301,6 +365,11 @@ if (x &gt;= 0) {
 ]
 
 ---
+class: middle, big
+
+## Iterations/loops
+
+---
 
 ## Iterations/loops
 
@@ -311,8 +380,17 @@ if (x &gt;= 0) {
 - R offers some standard control flow statements for iterations/loops:
 
     ```
-    for (i in valuesToLoopOver) {...}
-    while (conditionIsTrue) {...}
+    for (i in valuesToLoopOver) {
+      ...
+    }
+    
+    while (conditionIsTrue) {
+      ...
+    }
+    
+    repeat {
+      ...
+    }
     
     break
     next
@@ -335,7 +413,9 @@ for (i in valuesToBeLoopedOver) {
 
 - `for` loop is great for repeating a statement for a prespecified number of times
 
-- All loops can be nested and mixed with `if` and `else`
+- All loops can be nested
+
+- Loops can be mixed with `if` and `else` statements
 
 ---
 The loop body can depend on `i`
@@ -351,7 +431,7 @@ for (i in 1:3) {
 ## i: 3 sum: 6
 ```
 
-You can loop over strings
+You can loop over not just numbers but also strings
 
 ```r
 for (method in c("mean", "trimmed.mean")) {
@@ -361,7 +441,7 @@ for (method in c("mean", "trimmed.mean")) {
 ## Using method: trimmed.mean
 ```
 
-or even functions
+or entries in a list, in this case functions
 
 ```r
 for (func in list(mean, var)) {
@@ -379,17 +459,31 @@ E.g., calculate the cumulative sum of 1 to 10
 
 ```r
 n &lt;- 10
-sum &lt;- vector("numeric", length=n)
+cusum &lt;- vector("numeric", length=n)
 for (i in 1:n) {
   if (i == 1) {
-    sum[i] &lt;- i
+    cusum[i] &lt;- i
   } else {
-    sum[i] &lt;- sum[i - 1] + i
+    cusum[i] &lt;- cusum[i - 1] + i
   }
 }
-sum
+cusum
 ##  [1]  1  3  6 10 15 21 28 36 45 55
 ```
+
+---
+
+class: inverse
+
+## Your turn
+
+Set `n` to 6 
+
+&lt;img src="images/green.png" width=20&gt; Use a `for` loop to create vectors `\((1,1,\dots,1)\)`, where the length of the vector ranges from 1 to `\(n\)`. Print out the results in each step
+
+&lt;img src="images/blue.png" width=20&gt; Now, modify your code and store all the previous results in a variable. 
+In order to do so, you need to initialize an empty list `y &lt;- vector("list", n)`.
+Store the result in the `\(i\)` step in the `\(i\)`th entry of `y` 
 
 ---
 
@@ -407,12 +501,9 @@ A `while` loop repeatedly runs the loop body until the condition is no longer tr
 
 ```r
 i &lt;- 1
-month &lt;- month.name[i]
-
-while (month != "June") {
+while (month.name[i] != "June") {
   i &lt;- i + 1
-  month &lt;- month.name[i]
-} 
+}
 i
 ```
 
@@ -420,6 +511,14 @@ i
 ## [1] 6
 ```
 
+```r
+month.name[i]
+```
+
+```
+## [1] "June"
+```
+ 
 ---
 
 A `while` loop is used if you do not know when to stop in advance. For example, iterative algorithm where you stop if an error is smaller than the prespecified threshold
@@ -432,6 +531,7 @@ How do we know the approximation is good?
 
 ---
 
+We stop the algorithm if the sum changes by less than `\(10^{-5}\)` as we double the number of terms
 
 ```r
 tolerance &lt;- 1e-5
@@ -472,332 +572,28 @@ total
 
 ```r
 for (i in 1:1e4) {
-  x &lt;- i^2
-  writeLines(stringr::str_c(i, "^2 = ", x))
-  if (x &gt; 99999) {
+  x &lt;- i^3
+  writeLines(stringr::str_c(i, "^3 = ", x))
+  if (x &gt; 2000) {
     break
   }
 }
 ```
 
 ```
-## 1^2 = 1
-## 2^2 = 4
-## 3^2 = 9
-## 4^2 = 16
-## 5^2 = 25
-## 6^2 = 36
-## 7^2 = 49
-## 8^2 = 64
-## 9^2 = 81
-## 10^2 = 100
-## 11^2 = 121
-## 12^2 = 144
-## 13^2 = 169
-## 14^2 = 196
-## 15^2 = 225
-## 16^2 = 256
-## 17^2 = 289
-## 18^2 = 324
-## 19^2 = 361
-## 20^2 = 400
-## 21^2 = 441
-## 22^2 = 484
-## 23^2 = 529
-## 24^2 = 576
-## 25^2 = 625
-## 26^2 = 676
-## 27^2 = 729
-## 28^2 = 784
-## 29^2 = 841
-## 30^2 = 900
-## 31^2 = 961
-## 32^2 = 1024
-## 33^2 = 1089
-## 34^2 = 1156
-## 35^2 = 1225
-## 36^2 = 1296
-## 37^2 = 1369
-## 38^2 = 1444
-## 39^2 = 1521
-## 40^2 = 1600
-## 41^2 = 1681
-## 42^2 = 1764
-## 43^2 = 1849
-## 44^2 = 1936
-## 45^2 = 2025
-## 46^2 = 2116
-## 47^2 = 2209
-## 48^2 = 2304
-## 49^2 = 2401
-## 50^2 = 2500
-## 51^2 = 2601
-## 52^2 = 2704
-## 53^2 = 2809
-## 54^2 = 2916
-## 55^2 = 3025
-## 56^2 = 3136
-## 57^2 = 3249
-## 58^2 = 3364
-## 59^2 = 3481
-## 60^2 = 3600
-## 61^2 = 3721
-## 62^2 = 3844
-## 63^2 = 3969
-## 64^2 = 4096
-## 65^2 = 4225
-## 66^2 = 4356
-## 67^2 = 4489
-## 68^2 = 4624
-## 69^2 = 4761
-## 70^2 = 4900
-## 71^2 = 5041
-## 72^2 = 5184
-## 73^2 = 5329
-## 74^2 = 5476
-## 75^2 = 5625
-## 76^2 = 5776
-## 77^2 = 5929
-## 78^2 = 6084
-## 79^2 = 6241
-## 80^2 = 6400
-## 81^2 = 6561
-## 82^2 = 6724
-## 83^2 = 6889
-## 84^2 = 7056
-## 85^2 = 7225
-## 86^2 = 7396
-## 87^2 = 7569
-## 88^2 = 7744
-## 89^2 = 7921
-## 90^2 = 8100
-## 91^2 = 8281
-## 92^2 = 8464
-## 93^2 = 8649
-## 94^2 = 8836
-## 95^2 = 9025
-## 96^2 = 9216
-## 97^2 = 9409
-## 98^2 = 9604
-## 99^2 = 9801
-## 100^2 = 10000
-## 101^2 = 10201
-## 102^2 = 10404
-## 103^2 = 10609
-## 104^2 = 10816
-## 105^2 = 11025
-## 106^2 = 11236
-## 107^2 = 11449
-## 108^2 = 11664
-## 109^2 = 11881
-## 110^2 = 12100
-## 111^2 = 12321
-## 112^2 = 12544
-## 113^2 = 12769
-## 114^2 = 12996
-## 115^2 = 13225
-## 116^2 = 13456
-## 117^2 = 13689
-## 118^2 = 13924
-## 119^2 = 14161
-## 120^2 = 14400
-## 121^2 = 14641
-## 122^2 = 14884
-## 123^2 = 15129
-## 124^2 = 15376
-## 125^2 = 15625
-## 126^2 = 15876
-## 127^2 = 16129
-## 128^2 = 16384
-## 129^2 = 16641
-## 130^2 = 16900
-## 131^2 = 17161
-## 132^2 = 17424
-## 133^2 = 17689
-## 134^2 = 17956
-## 135^2 = 18225
-## 136^2 = 18496
-## 137^2 = 18769
-## 138^2 = 19044
-## 139^2 = 19321
-## 140^2 = 19600
-## 141^2 = 19881
-## 142^2 = 20164
-## 143^2 = 20449
-## 144^2 = 20736
-## 145^2 = 21025
-## 146^2 = 21316
-## 147^2 = 21609
-## 148^2 = 21904
-## 149^2 = 22201
-## 150^2 = 22500
-## 151^2 = 22801
-## 152^2 = 23104
-## 153^2 = 23409
-## 154^2 = 23716
-## 155^2 = 24025
-## 156^2 = 24336
-## 157^2 = 24649
-## 158^2 = 24964
-## 159^2 = 25281
-## 160^2 = 25600
-## 161^2 = 25921
-## 162^2 = 26244
-## 163^2 = 26569
-## 164^2 = 26896
-## 165^2 = 27225
-## 166^2 = 27556
-## 167^2 = 27889
-## 168^2 = 28224
-## 169^2 = 28561
-## 170^2 = 28900
-## 171^2 = 29241
-## 172^2 = 29584
-## 173^2 = 29929
-## 174^2 = 30276
-## 175^2 = 30625
-## 176^2 = 30976
-## 177^2 = 31329
-## 178^2 = 31684
-## 179^2 = 32041
-## 180^2 = 32400
-## 181^2 = 32761
-## 182^2 = 33124
-## 183^2 = 33489
-## 184^2 = 33856
-## 185^2 = 34225
-## 186^2 = 34596
-## 187^2 = 34969
-## 188^2 = 35344
-## 189^2 = 35721
-## 190^2 = 36100
-## 191^2 = 36481
-## 192^2 = 36864
-## 193^2 = 37249
-## 194^2 = 37636
-## 195^2 = 38025
-## 196^2 = 38416
-## 197^2 = 38809
-## 198^2 = 39204
-## 199^2 = 39601
-## 200^2 = 40000
-## 201^2 = 40401
-## 202^2 = 40804
-## 203^2 = 41209
-## 204^2 = 41616
-## 205^2 = 42025
-## 206^2 = 42436
-## 207^2 = 42849
-## 208^2 = 43264
-## 209^2 = 43681
-## 210^2 = 44100
-## 211^2 = 44521
-## 212^2 = 44944
-## 213^2 = 45369
-## 214^2 = 45796
-## 215^2 = 46225
-## 216^2 = 46656
-## 217^2 = 47089
-## 218^2 = 47524
-## 219^2 = 47961
-## 220^2 = 48400
-## 221^2 = 48841
-## 222^2 = 49284
-## 223^2 = 49729
-## 224^2 = 50176
-## 225^2 = 50625
-## 226^2 = 51076
-## 227^2 = 51529
-## 228^2 = 51984
-## 229^2 = 52441
-## 230^2 = 52900
-## 231^2 = 53361
-## 232^2 = 53824
-## 233^2 = 54289
-## 234^2 = 54756
-## 235^2 = 55225
-## 236^2 = 55696
-## 237^2 = 56169
-## 238^2 = 56644
-## 239^2 = 57121
-## 240^2 = 57600
-## 241^2 = 58081
-## 242^2 = 58564
-## 243^2 = 59049
-## 244^2 = 59536
-## 245^2 = 60025
-## 246^2 = 60516
-## 247^2 = 61009
-## 248^2 = 61504
-## 249^2 = 62001
-## 250^2 = 62500
-## 251^2 = 63001
-## 252^2 = 63504
-## 253^2 = 64009
-## 254^2 = 64516
-## 255^2 = 65025
-## 256^2 = 65536
-## 257^2 = 66049
-## 258^2 = 66564
-## 259^2 = 67081
-## 260^2 = 67600
-## 261^2 = 68121
-## 262^2 = 68644
-## 263^2 = 69169
-## 264^2 = 69696
-## 265^2 = 70225
-## 266^2 = 70756
-## 267^2 = 71289
-## 268^2 = 71824
-## 269^2 = 72361
-## 270^2 = 72900
-## 271^2 = 73441
-## 272^2 = 73984
-## 273^2 = 74529
-## 274^2 = 75076
-## 275^2 = 75625
-## 276^2 = 76176
-## 277^2 = 76729
-## 278^2 = 77284
-## 279^2 = 77841
-## 280^2 = 78400
-## 281^2 = 78961
-## 282^2 = 79524
-## 283^2 = 80089
-## 284^2 = 80656
-## 285^2 = 81225
-## 286^2 = 81796
-## 287^2 = 82369
-## 288^2 = 82944
-## 289^2 = 83521
-## 290^2 = 84100
-## 291^2 = 84681
-## 292^2 = 85264
-## 293^2 = 85849
-## 294^2 = 86436
-## 295^2 = 87025
-## 296^2 = 87616
-## 297^2 = 88209
-## 298^2 = 88804
-## 299^2 = 89401
-## 300^2 = 90000
-## 301^2 = 90601
-## 302^2 = 91204
-## 303^2 = 91809
-## 304^2 = 92416
-## 305^2 = 93025
-## 306^2 = 93636
-## 307^2 = 94249
-## 308^2 = 94864
-## 309^2 = 95481
-## 310^2 = 96100
-## 311^2 = 96721
-## 312^2 = 97344
-## 313^2 = 97969
-## 314^2 = 98596
-## 315^2 = 99225
-## 316^2 = 99856
-## 317^2 = 100489
+## 1^3 = 1
+## 2^3 = 8
+## 3^3 = 27
+## 4^3 = 64
+## 5^3 = 125
+## 6^3 = 216
+## 7^3 = 343
+## 8^3 = 512
+## 9^3 = 729
+## 10^3 = 1000
+## 11^3 = 1331
+## 12^3 = 1728
+## 13^3 = 2197
 ```
 
 ---
@@ -861,13 +657,9 @@ plans
 ---
 ## Wrapping it up
 
-- The `for`, `while`, and `repeat` loops are mostly interchangable. There are always more than one way to perform the task (with the control statements)
+- The `for`, `while`, and `repeat` loops are mostly interchangable. There are always more than one way to perform the task (with the conditional/control flow statements)
 
 - Which loop to use depends on which is the most intuitive to understand
-
----
-
-## R demo...
 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>

@@ -12,15 +12,10 @@ output:
       highlightLines: true
       countIncrementalSlides: false
 ---
-class: big, middle
 
 ```{r xaringan-tile-view, echo=FALSE}
 xaringanExtra::use_tile_view()
 ```
-
-## Control Flow
-
----
 
 ## Outline
 
@@ -30,7 +25,7 @@ xaringanExtra::use_tile_view()
 
 - Short circuiting logical operations `&&` and `||`
 
-- Iterations/loops: `for` and `while`
+- Iterations/loops: `for`, `while`, and `repeat`
 
 - Loop control statements: `break`, and `next`
 
@@ -52,17 +47,19 @@ xaringanExtra::use_tile_view()
     }
     ```
 
+- .style[Indent the code within blocked expressions. Use a consistent indentation rule (e.g., indent by either 2 or 4 spaces, but not both)]
+
 ---
 
-`system.time(expr)` times how long does it take to run a single expression
+`system.time(expr)` times how long a single expression runs
 
 - This works:
     ```
     system.time(writeLines("What's the plate number?"))
     ```
-- This does not work
+- This does not work (`Sys.sleep` pauses R for a given number of seconds)
 
-    ```
+    ```o
     system.time(
       writeLines("Flash says: What's the plate")
       Sys.sleep(2)
@@ -76,10 +73,10 @@ xaringanExtra::use_tile_view()
       writeLines("number?")
     })
     ```
-    
     - user: time used by computation
     - system: time used by input/output, etc
     - elapsed: wall time
+    
 ---
 
 ## Expression values
@@ -88,12 +85,26 @@ xaringanExtra::use_tile_view()
 
 ```{r}
 x <- {
-  1
+  a <- 1
   # do something else
-  2
+  2 * 3
 }
 x
 ```
+
+- `with(data, expr)` evaluates an expression with columns from `data` regarded as variables (so you don't need to extract using `$`)
+```{r}
+with(cars, {
+  a <- mean(speed)
+  b <- max(dist)
+  c(a, b)
+  })
+```
+
+---
+class: middle, big
+
+## Conditional
 
 ---
 ## The `if` and `else` statements
@@ -116,7 +127,7 @@ x
     }
     ```
 
-- `condition` need to evaluate to a single logical value
+- `condition` need to evaluate to a *single* logical value
 
 ---
 
@@ -136,6 +147,28 @@ if (wantAJoke) {
 } else {
   writeLines("Go back to work!")
 }
+```
+
+---
+Use cases: 
+- Convert potential matrix input to vector
+```{r}
+x <- matrix(c(1, 1))
+if (is.matrix(x)) {
+  x <- c(x)
+} 
+x 
+```
+
+- Convert potential matrix/list input to vector
+```{r}
+x <- list(1, 1)
+if (is.matrix(x)) {
+  x <- c(x)
+} else {
+  x <- unlist(x)
+}
+x # always get a vector
 ```
 
 ---
@@ -159,17 +192,18 @@ if (today == "Monday") {
 
 ## Short-circuiting logical operations
 
-- Recall that previously we learned the vectorized operations `&` and `|`
-
 - We now look at `&&` and `||`, which are *short-circuiting logical operations*
 
-- `&&` and `||` operates on a pair of conditions (not vectors)
+  - `&&` and `||` operate on a pair of logical *scalars* 
+  - Recall that we learned the vectorized operations `&` and `|`
+  - `&` and `|` operate on a pair of logical *vectors* 
+
 
 - For `&&`, if the first condition evaluates to `FALSE` (enough to determine the outcome), then the second condition will not be evaluated
 
 - Similarly, for `||`, if the first condition evaluates to `TRUE`, then the second condition will not be evaluated
 
-- .style[When programming conditions, use `&&` and `||` but not the vectorized versions]
+- .style[When programming conditions for `if`, use `&&` and `||` but not the vectorized versions]
 
 ---
 
@@ -179,7 +213,7 @@ Compare `&&`
 
 ```{r}
 x <- 1
-if (length(x) > 1 && length(optionalInput) > 1) { #<<
+if (length(x) > 1 && length(optionalInput) > 0) { #<<
   writeLines("Run vector algorithm")
 } else {
   writeLines("Run scalar algorithm")
@@ -189,7 +223,7 @@ if (length(x) > 1 && length(optionalInput) > 1) { #<<
 with `&`
 ```{r, error=TRUE}
 x <- 1
-if (length(x) > 1 & length(optionalInput) > 1) { #<<
+if (length(x) > 1 & length(optionalInput) > 0) { #<<
   writeLines("Run vector algorithm")
 } else {
   writeLines("Run scalar algorithm")
@@ -204,7 +238,7 @@ Compare `||`
 
 ```{r}
 x <- 1:3
-if (length(x) > 1 || length(optionalInput) > 1) { #<<
+if (length(x) > 1 || length(optionalInput) > 0) { #<<
   writeLines("Run vector algorithm")
 } else {
   writeLines("Run scalar algorithm")
@@ -214,7 +248,7 @@ if (length(x) > 1 || length(optionalInput) > 1) { #<<
 with `|`
 ```{r, error=TRUE}
 x <- 1:3
-if (length(x) > 1 | length(optionalInput) > 1) { #<<
+if (length(x) > 1 | length(optionalInput) > 0) { #<<
   writeLines("Run vector algorithm")
 } else {
   writeLines("Run scalar algorithm")
@@ -223,9 +257,24 @@ if (length(x) > 1 | length(optionalInput) > 1) { #<<
 
 ---
 
+class: inverse
+
+## Your turn
+
+Start with `x <- matrix(1:6, 2, 3)`. You are going to change this input
+
+<img src="images/green.png" width=20> Write a chunk of code to do the following: If `x` is a matrix, output the means in each row; otherwise if `x` is a vector, just output the mean
+
+<img src="images/green.png" width=20> Define `i <- 1`. Write a chunk of code to do the following: If `x` is a matrix and `i` is positive, output the mean of the $i$th row; otherwise just output the overall mean
+
+<img src="images/blue.png" width=20> Now remove variable `i` using `rm(i)` and rerun your code above. See if it behaves as expected
+
+
+---
+
 ## `ifelse`
 
-- Recall the `ifelse` *function*, which is not a control flow statement.
+- Compare with the `ifelse` *function*, which is not a control flow statement
 
 - `ifelse(test, yes, no)` is vectorized. All three arguments can be a vector (but the `condition` for an `if` statement needs to be a scalar)
 
@@ -250,6 +299,11 @@ if (x >= 0) {
 ]
 
 ---
+class: middle, big
+
+## Iterations/loops
+
+---
 
 ## Iterations/loops
 
@@ -260,8 +314,17 @@ if (x >= 0) {
 - R offers some standard control flow statements for iterations/loops:
 
     ```
-    for (i in valuesToLoopOver) {...}
-    while (conditionIsTrue) {...}
+    for (i in valuesToLoopOver) {
+      ...
+    }
+    
+    while (conditionIsTrue) {
+      ...
+    }
+    
+    repeat {
+      ...
+    }
     
     break
     next
@@ -284,7 +347,9 @@ for (i in valuesToBeLoopedOver) {
 
 - `for` loop is great for repeating a statement for a prespecified number of times
 
-- All loops can be nested and mixed with `if` and `else`
+- All loops can be nested
+
+- Loops can be mixed with `if` and `else` statements
 
 ---
 The loop body can depend on `i`
@@ -296,14 +361,14 @@ for (i in 1:3) {
 }
 ```
 
-You can loop over strings
+You can loop over not just numbers but also strings
 ```{r, collapse=TRUE}
 for (method in c("mean", "trimmed.mean")) {
   writeLines(stringr::str_c("Using method: ", method))
 }
 ```
 
-or even functions
+or entries in a list, in this case functions
 ```{r, collapse=TRUE}
 for (func in list(mean, var)) {
   print(func(1:5))
@@ -317,16 +382,30 @@ Initialize a vector to store the value from the for loop is often a good idea fo
 E.g., calculate the cumulative sum of 1 to 10
 ```{r, collapse=TRUE}
 n <- 10
-sum <- vector("numeric", length=n)
+cusum <- vector("numeric", length=n)
 for (i in 1:n) {
   if (i == 1) {
-    sum[i] <- i
+    cusum[i] <- i
   } else {
-    sum[i] <- sum[i - 1] + i
+    cusum[i] <- cusum[i - 1] + i
   }
 }
-sum
+cusum
 ```
+
+---
+
+class: inverse
+
+## Your turn
+
+Set `n` to 6 
+
+<img src="images/green.png" width=20> Use a `for` loop to create vectors $(1,1,\dots,1)$, where the length of the vector ranges from 1 to $n$. Print out the results in each step
+
+<img src="images/blue.png" width=20> Now, modify your code and store all the previous results in a variable. 
+In order to do so, you need to initialize an empty list `y <- vector("list", n)`.
+Store the result in the $i$ step in the $i$th entry of `y` 
 
 ---
 
@@ -343,15 +422,13 @@ A `while` loop repeatedly runs the loop body until the condition is no longer tr
 
 ```{r}
 i <- 1
-month <- month.name[i]
-
-while (month != "June") {
+while (month.name[i] != "June") {
   i <- i + 1
-  month <- month.name[i]
-} 
+}
 i
+month.name[i]
 ```
-
+ 
 ---
 
 A `while` loop is used if you do not know when to stop in advance. For example, iterative algorithm where you stop if an error is smaller than the prespecified threshold
@@ -364,6 +441,7 @@ How do we know the approximation is good?
 
 ---
 
+We stop the algorithm if the sum changes by less than $10^{-5}$ as we double the number of terms
 ```{r}
 tolerance <- 1e-5
 
@@ -391,9 +469,9 @@ total
 
 ```{r}
 for (i in 1:1e4) {
-  x <- i^2
-  writeLines(stringr::str_c(i, "^2 = ", x))
-  if (x > 99999) {
+  x <- i^3
+  writeLines(stringr::str_c(i, "^3 = ", x))
+  if (x > 2000) {
     break
   }
 }
@@ -449,11 +527,7 @@ plans
 ---
 ## Wrapping it up
 
-- The `for`, `while`, and `repeat` loops are mostly interchangable. There are always more than one way to perform the task (with the control statements)
+- The `for`, `while`, and `repeat` loops are mostly interchangable. There are always more than one way to perform the task (with the conditional/control flow statements)
 
 - Which loop to use depends on which is the most intuitive to understand
-
----
-
-## R demo...
 

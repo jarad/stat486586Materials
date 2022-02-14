@@ -12,25 +12,19 @@ output:
       highlightLines: true
       countIncrementalSlides: false
 ---
-class: big, middle
 
 ```{r xaringan-tile-view, echo=FALSE}
 xaringanExtra::use_tile_view()
 ```
 
-## Functions
-
----
-
 ## Outline
 
 - Defining functions
 
-- Environment
+- Documenting functions
 
 - Unit tests
 
-- Documenting functions
 
 ---
 
@@ -51,16 +45,16 @@ xaringanExtra::use_tile_view()
 ## Repetivie code
 
 Suppose we want to standardize a few vectors. Without a function, you would do some copying and pasting: 
-```{r, echo=FALSE}
+```{r, collapse=TRUE}
 x <- 1:5
-y <- c(1:5, 10)
+y <- c(100, 1000)
 z <- c(-1, 1, 3)
 w <- c(1, 3, NA, 5)
 
-(x - mean(x)) / sd(x) 
-(y - mean(y)) / sd(y) 
-(z - mean(y)) / sd(z)
-(w - mean(w)) / sd(w) 
+(x - mean(x, na.rm=TRUE)) / sd(x, na.rm=TRUE) 
+(y - mean(y, na.rm=TRUE)) / sd(y, na.rm=TRUE) 
+(z - mean(y, na.rm=TRUE)) / sd(z, na.rm=TRUE)
+(w - mean(w, na.rm=TRUE)) / sd(w, na.rm=TRUE) 
 ```
 
 In fact, there is an error. Did you spot it?
@@ -76,8 +70,11 @@ standardize <- function(x) {
 }
 ```
 
-```{r}
+```{r, collapse=TRUE}
 standardize(x)
+standardize(y)
+standardize(z)
+standardize(w)
 ```
 
 ---
@@ -115,23 +112,19 @@ standardize(w, na.rm=TRUE)
 
 ## A first function (3)
 
-Return a list in order to return multiple objects:
+If you want to return multiple objects, return a list:
 
 ```{r}
 standardize <- function(x, na.rm=FALSE) {
   m <- mean(x, na.rm=na.rm)
-  s <- sd(x, na.rm=na.rm)
-	list(standardized = (x - m) / s,
-	     mean = m,
-	     sd = s)
+  s <- sd(x, na.rm=na.rm) 
+  list(standardized = (x - m) / s,
+	  mean = m,
+	  sd = s)
 }
 
 standardize(x)
 ```
-
----
-
-## R demo...
 
 ---
 class: inverse
@@ -172,7 +165,7 @@ mymean <- function(x, na.rm=FALSE) {
 A typical procedure for writing a function:
 
 1. Think about what the function should and should not do
-    - One function should do one task nicely. A large task could be separated into multiple functions
+    - One function should do *one task* nicely. A large task could be separated into multiple functions
     
 1. Decide what information are needed as inputs. Think about the arguments to write
 
@@ -186,10 +179,103 @@ A typical procedure for writing a function:
 
 ## A more extended example
 
-The function should calculate different location estimates for a vector. 
-It should support the mean, median, and trimmed mean
+Write a function to calculate different location estimates for a vector. 
+The function should support the mean, median, and trimmed mean. 
+It should also support the `na.rm` argument for excluding missing values in the calculation.
 
-TODO
+The $\alpha\times 100\%$ *trimmed mean* is the mean of the data after discarding the most extreme $\alpha/2 \times 100\%$ observations on each end
+
+---
+```{r}
+
+estLocation <- function(x, method, trim=0, na.rm=FALSE) {
+  
+  # deal with NA
+  if (na.rm == TRUE) {
+    x <- x[!is.na(x)]
+  }
+  
+  if (method == "mean") {
+    # implement mean
+    res <- myTrimmedMean(x, trim=0)
+  } else if (method == "median") {
+    res <- median(x)
+    # implement median
+  } else if (method == "trimmed mean") {
+    # implement trimmed mean
+    res <- myTrimmedMean(x, trim=trim)
+  }
+  
+  res
+}
+```
+
+---
+```{r}
+myTrimmedMean <- function(x, trim) {
+  
+  # trim out obs
+  thresh <- quantile(x, c(trim / 2, 1 - trim / 2))
+  trimmed <- x[x >= thresh[1] & x <= thresh[2]]
+  
+  sum(trimmed) / length(trimmed)
+  
+}
+```
+
+---
+Test that the function is correct
+```{r}
+x <- c(1:10, 100)
+estLocation(x, "mean")
+estLocation(x, "median")
+estLocation(x, "trimmed mean")
+estLocation(x, "trimmed mean", trim=0.1)
+```
+---
+
+## Documenting functions
+
+- Documentation is one of the fundamental part of a piece of software
+
+- It helps the users of your code, which include your future self!
+
+- Writing documentation also help you better think about the function. If you can neatly and concisely describe it, your function is probably logically sound
+
+- The documentation of a function has the following most important parts
+
+    1. A quick overview of the purpose of the function
+    1. Description of the inputs. This should include argument names and the expected formats of the inputs.
+    1. Description of the outputs. What do you return?
+    1. Optionally, include some details of the implementation/algorithm and list some example usages
+    
+- R documentations are good examples. See, e.g., `?diff`
+
+---
+
+## An example
+The documentation of the `mymean` function is included as comments (lines starting with `#`) before the definition of the function.
+```
+# Calculate the mean of a vector, without using the mean() function
+# 
+# x: A numerical vector 
+# na.rm: A flag to indicate whether missing values should be removed 
+#        before the mean calculation
+# 
+# Returns the mean value of the vector as a scalar
+mymean <- function(x, na.rm=FALSE) {
+  if (na.rm) {
+    x <- x[!is.na(x)]
+  }
+  
+  sum(x) / length(x)
+}
+```
+
+---
+class:big, middle
+
+## Testing functions
 
 ---
 
@@ -199,15 +285,13 @@ TODO
 
 - *Unit testing* is a procedure of testing a small unit of code in a software. A unit is often a function
 
-- Writing a unit test is not difficult at all. After you finish a freshly written function, you must have written some code to see whether it works or not. *Do not discard the code*, but rather make it a formal unit test
+- Writing a unit test is not difficult at all. After you finish a freshly written function, you must have written some code to see whether it works or not. *Do not discard the code*, but rather make it formal unit tests
 
 ---
 
 ## The `testthat` package
 
-- `testthat` is a package for unit testing your code
-
-- `testthat` tries to make testing as fun as possible
+- `testthat` is a package for unit testing your code. It tries to make testing as fun as possible
 
 - Issue `install.packages("testthat")` in your R console if you haven't installed it
 
@@ -216,7 +300,7 @@ TODO
     library(testthat)
     ```
 
-- The main workhorses is the expectation/assertion function
+- The main workhorse is the expectation/assertion function
 
     ```
     expect_equal(object, expected, ..., tolerance)
@@ -239,21 +323,37 @@ expect_equal(object, expected, ..., tolerance)
 
 ---
 
-A very basic example:
+- A very basic example:
+    ```{r}
+    x <- 1:3
+    expect_equal(mean(x), 2)
+    ```
+
+- By default, differences below a small threhold will be regarded OK. This is very useful when comparing floating point numbers or numerical algorithms
+    ```{r, error=TRUE}
+    y <- seq(-100, 100, by=0.1)
+    mean(y) == 0
+    expect_equal(mean(y), 0)
+    ```
+
+- Set the tolerance threshold using `tolerance=`
+    ```{r, error=TRUE}
+    expect_equal(mean(y), 0, tolerance = 1e-16)
+    ```
+
+---
+
+- Finally, group related unit tests using `test_that(desc, code)`:
+
 ```{r}
-expect_equal(mean(1:3), 2)
+test_that("mymean works", {
+  x <- 1:3
+  y <- seq(-100, 100, by=0.1)
+  expect_equal(mymean(x), mean(x))
+  expect_equal(mymean(y), mean(y))
+})
 ```
-
-By default, differences below a small threhold will be regarded OK. This is very useful when comparing floating point numbers or numerical algorithms
-```{r, error=TRUE}
-expect_equal(mean(1:3), 2 + 1e-8)
-```
-
-`tolerance=` sets the threshold
-```{r, error=TRUE}
-expect_equal(mean(1:3), 2 + 1e-8, tolerance = 1e-10)
-```
-
+ 
 ---
 ## Writing good tests
 
@@ -289,41 +389,3 @@ expect_equal(is.na(mymean(z)), TRUE)
 expect_equal(is.na(mymean(z, na.rm=TRUE)), FALSE)
 ```
 
----
-
-## Documenting functions
-
-- Documentation is one of the fundamental part of a piece of software
-
-- It helps the users of your code, which include your future self!
-
-- Writing documentation also help you better think about the function. If you can neatly and concisely describe it, your function is probably logically sound
-
-- The documentation of a function has the following most important parts
-
-    1. A quick overview of the purpose of the function
-    1. Description of the inputs. This should include argument names and the expected formats of the inputs.
-    1. Description of the outputs. What do you return?
-    1. Optionally, include some details of the implementation/algorithm and list some example usages
-    
-- R documentations are good examples. See, e.g., `?diff`
-
----
-
-## An example
-The documentation of the `mymean` function is included as comments (lines starting with `#`) before the definition of the function.
-```
-# Calculate the mean of a vector, without using the mean() function
-# x: A numerical vector 
-# na.rm: A flag to indicate whether missing values should be removed 
-#        before the mean calculation
-# 
-# Returns the scalar mean of the vector
-mymean <- function(x, na.rm=FALSE) {
-  if (na.rm) {
-    x <- x[!is.na(x)]
-  }
-  
-  sum(x) / length(x)
-}
-```
