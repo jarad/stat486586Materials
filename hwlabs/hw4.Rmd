@@ -62,7 +62,7 @@ F
     a. Create a response variable $Y$ which should be `1` if the corresponding row in `dat` is setosa, and `0` if the species is versicolor. Make it a matrix with one column. [Hint: You can use `ifelse`]
     a. We are going to predict $Y$ using 4 predictors, which are `Sepal.Length`, `Sepal.Width`, `Petal.Length`, and `Petal.Width`. Create the design matrix $X$ containing the intercept and these four predictors in its columns. Make sure it is a matrix but not a data frame.
     a. (Optional) Calculate the condition number of $X^TX$. A very large condition number means the matrix is non-invertible.
-    a. Add a column that equals to the average of the sepal length and sepal width to the design matrix $X$. 
+    a. Add a column to the design matrix $X$ where each entry equals the average of the sepal length and sepal width of the iris. 
     a. (Optional) Now, realculate the condition number of $X^TX$.
     a. Can you calculate the least squares estimate $\hat{\boldsymbol{\beta}}=({X}^{T}{X})^{-1}{X}^T{Y}$ for the multiple linear regression model, and why?
     a. We now calculate the ridge regression coefficient estimate $\hat{\boldsymbol{\beta}}_\lambda=({X}^{T}{X} + \lambda I)^{-1}{X}^T{Y}$, where $\lambda > 0$ is a scalar and $I$ is the identity matrix. Feel free to set the $\lambda$ to any positive number as you wish (say $\lambda=1$) (Note: This is a slightly difference version of ridge regression as we will cover later)
@@ -93,15 +93,15 @@ F
     f. Remove entry `A`
     g. Add a single entry `D` containing the data frame `iris`. Show the structure of the updated `l`
 
-1. Work on a barley yield data. The dataset is named `barley`, available to you after loading the package `lattice`. It is a good idea to make a copy of the original data frame in case anything is messed up. 
+1. Work on a barley yield data. The dataset is named `barley`, available to you after loading the package `lattice`. Work on a copy `barley1 <- barley` of the dataset to prevent messing up the original data.
 
-    a. Find the dimensions of the data frame.
+    a. Find the dimensions of the data frame
     a. Find the number of variables.
-    a. Remove the first row in `barley`. 
-    a. Add a row to the end of `barley` containing a new record with yield 50, variety Svansota, year 1931, and site Duluth.
-    a. Shows the first 3 rows of `barley` using `head()` (Hint: check out `?head`), and last 6 rows using `tail()`.
+    a. Remove the first row in `barley1`
+    a. Add a row to the end of `barley1` containing a new record with yield 50, variety Svansota, year 1931, and site Duluth.
+    a. Shows the first 3 rows of `barley1` using `head()` (Hint: check out `?head`), and last 6 rows using `tail()`.
     a. Convert the year column to a numeric. (Check your results!) Show the structure of the data frame
     a. Add a new column `newYield` containing the yield in bushels/hectare. 1 acre is 0.4047 hectares. (Read `?barley`) Show the structure of the data frame
-    a. Remove the `yield` column.
-    a. Create a data frame containing only variety with a name starting with `No. `. Retain only the yield, variety, and site columns. Show the structure of the data frame
+    a. Remove the `yield` column
+    a. Create a data frame containing only variety with a name starting with `No. `. Retain only the newYield, variety, and site columns. Show the structure of the data frame
     

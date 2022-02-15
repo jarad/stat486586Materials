@@ -225,7 +225,7 @@ pre code {
 <li>Create a response variable <span class="math inline">\(Y\)</span> which should be <code>1</code> if the corresponding row in <code>dat</code> is setosa, and <code>0</code> if the species is versicolor. Make it a matrix with one column. [Hint: You can use <code>ifelse</code>]</li>
 <li>We are going to predict <span class="math inline">\(Y\)</span> using 4 predictors, which are <code>Sepal.Length</code>, <code>Sepal.Width</code>, <code>Petal.Length</code>, and <code>Petal.Width</code>. Create the design matrix <span class="math inline">\(X\)</span> containing the intercept and these four predictors in its columns. Make sure it is a matrix but not a data frame.</li>
 <li>(Optional) Calculate the condition number of <span class="math inline">\(X^TX\)</span>. A very large condition number means the matrix is non-invertible.</li>
-<li>Add a column that equals to the average of the sepal length and sepal width to the design matrix <span class="math inline">\(X\)</span>.</li>
+<li>Add a column to the design matrix <span class="math inline">\(X\)</span> where each entry equals the average of the sepal length and sepal width of the iris.</li>
 <li>(Optional) Now, realculate the condition number of <span class="math inline">\(X^TX\)</span>.</li>
 <li>Can you calculate the least squares estimate <span class="math inline">\(\hat{\boldsymbol{\beta}}=({X}^{T}{X})^{-1}{X}^T{Y}\)</span> for the multiple linear regression model, and why?</li>
 <li>We now calculate the ridge regression coefficient estimate <span class="math inline">\(\hat{\boldsymbol{\beta}}_\lambda=({X}^{T}{X} + \lambda I)^{-1}{X}^T{Y}\)</span>, where <span class="math inline">\(\lambda &gt; 0\)</span> is a scalar and <span class="math inline">\(I\)</span> is the identity matrix. Feel free to set the <span class="math inline">\(\lambda\)</span> to any positive number as you wish (say <span class="math inline">\(\lambda=1\)</span>) (Note: This is a slightly difference version of ridge regression as we will cover later)</li>
@@ -252,17 +252,17 @@ pre code {
 <li>Remove entry <code>A</code></li>
 <li>Add a single entry <code>D</code> containing the data frame <code>iris</code>. Show the structure of the updated <code>l</code></li>
 </ol></li>
-<li><p>Work on a barley yield data. The dataset is named <code>barley</code>, available to you after loading the package <code>lattice</code>. It is a good idea to make a copy of the original data frame in case anything is messed up.</p>
+<li><p>Work on a barley yield data. The dataset is named <code>barley</code>, available to you after loading the package <code>lattice</code>. Work on a copy <code>barley1 &lt;- barley</code> of the dataset to prevent messing up the original data.</p>
 <ol style="list-style-type: lower-alpha">
-<li>Find the dimensions of the data frame.</li>
+<li>Find the dimensions of the data frame</li>
 <li>Find the number of variables.</li>
-<li>Remove the first row in <code>barley</code>.</li>
-<li>Add a row to the end of <code>barley</code> containing a new record with yield 50, variety Svansota, year 1931, and site Duluth.</li>
-<li>Shows the first 3 rows of <code>barley</code> using <code>head()</code> (Hint: check out <code>?head</code>), and last 6 rows using <code>tail()</code>.</li>
+<li>Remove the first row in <code>barley1</code></li>
+<li>Add a row to the end of <code>barley1</code> containing a new record with yield 50, variety Svansota, year 1931, and site Duluth.</li>
+<li>Shows the first 3 rows of <code>barley1</code> using <code>head()</code> (Hint: check out <code>?head</code>), and last 6 rows using <code>tail()</code>.</li>
 <li>Convert the year column to a numeric. (Check your results!) Show the structure of the data frame</li>
 <li>Add a new column <code>newYield</code> containing the yield in bushels/hectare. 1 acre is 0.4047 hectares. (Read <code>?barley</code>) Show the structure of the data frame</li>
-<li>Remove the <code>yield</code> column.</li>
-<li>Create a data frame containing only variety with a name starting with <code>No.</code>. Retain only the yield, variety, and site columns. Show the structure of the data frame</li>
+<li>Remove the <code>yield</code> column</li>
+<li>Create a data frame containing only variety with a name starting with <code>No.</code>. Retain only the newYield, variety, and site columns. Show the structure of the data frame</li>
 </ol></li>
 </ol>
 </div>
