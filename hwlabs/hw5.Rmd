@@ -29,7 +29,7 @@ Remove any `View()` or `install.packages()` commands in your `Rmd` file. These c
         
         Use a `while` or `repeat` loop and `break` to find the location of the first "great" in terms of the number of characters. The only string function you can use is `str_sub`.
 
-1. Calculate the following continued fraction, which you probably have to use a loop but not any vectorized operations. A continued fraction is an expression of the form
+1. (Optional) Calculate the following continued fraction, which you probably have to use a loop but not any vectorized operations. A continued fraction is an expression of the form
 $$b_0 + \cfrac{a_1}{b_1 + \cfrac{a_2}{b_2 + \cfrac{a_3}{b_3 + \cfrac{a_4}{b_4 + \ddots\,}}}}.$$
 
     Now, approximate the following continued fraction
