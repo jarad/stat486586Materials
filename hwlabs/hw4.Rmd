@@ -63,7 +63,7 @@ F
     a. We are going to predict $Y$ using 4 predictors, which are `Sepal.Length`, `Sepal.Width`, `Petal.Length`, and `Petal.Width`. Create the design matrix $X$ containing the intercept and these four predictors in its columns. Make sure it is a matrix but not a data frame.
     a. (Optional) Calculate the condition number of $X^TX$. A very large condition number means the matrix is non-invertible.
     a. Add a column to the design matrix $X$ where each entry equals the average of the sepal length and sepal width of the iris. 
-    a. (Optional) Now, realculate the condition number of $X^TX$.
+    a. (Optional) Now, recalculate the condition number of $X^TX$.
     a. Can you calculate the least squares estimate $\hat{\boldsymbol{\beta}}=({X}^{T}{X})^{-1}{X}^T{Y}$ for the multiple linear regression model, and why?
     a. We now calculate the ridge regression coefficient estimate $\hat{\boldsymbol{\beta}}_\lambda=({X}^{T}{X} + \lambda I)^{-1}{X}^T{Y}$, where $\lambda > 0$ is a scalar and $I$ is the identity matrix. Feel free to set the $\lambda$ to any positive number as you wish (say $\lambda=1$) (Note: This is a slightly difference version of ridge regression as we will cover later)
     a. Calculate the fitted values $\hat{Y}_\lambda = X\hat{\boldsymbol{\beta}}_\lambda$ and the residual sum of squares (RSS) $(Y - \hat{Y}_\lambda)^T(Y - \hat{Y}_\lambda)$. Store $\hat{\boldsymbol{\beta}}_\lambda$, $\hat{Y}_\lambda$, and the RSS in a list. Name the entries of the list appropriately.
