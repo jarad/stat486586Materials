@@ -62,7 +62,7 @@ F
     a. Create a response variable $Y$ which should be `1` if the corresponding row in `dat` is setosa, and `0` if the species is versicolor. Make it a matrix with one column. [Hint: You can use `ifelse`]
     a. We are going to predict $Y$ using 4 predictors, which are `Sepal.Length`, `Sepal.Width`, `Petal.Length`, and `Petal.Width`. Create the design matrix $X$ containing the intercept and these four predictors in its columns. Make sure it is a matrix but not a data frame.
     a. (Optional) Calculate the condition number of $X^TX$. A very large condition number means the matrix is non-invertible.
-    a. Add a column to the design matrix $X$ where each entry equals the average of the sepal length and sepal width of the iris. 
+    a. Add a column to the design matrix $X$ where each entry equals the average of the sepal length and sepal width of the corresponding iris. 
     a. (Optional) Now, recalculate the condition number of $X^TX$.
     a. Can you calculate the least squares estimate $\hat{\boldsymbol{\beta}}=({X}^{T}{X})^{-1}{X}^T{Y}$ for the multiple linear regression model, and why?
     a. We now calculate the ridge regression coefficient estimate $\hat{\boldsymbol{\beta}}_\lambda=({X}^{T}{X} + \lambda I)^{-1}{X}^T{Y}$, where $\lambda > 0$ is a scalar and $I$ is the identity matrix. Feel free to set the $\lambda$ to any positive number as you wish (say $\lambda=1$) (Note: This is a slightly difference version of ridge regression as we will cover later)
