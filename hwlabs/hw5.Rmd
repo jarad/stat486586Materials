@@ -49,7 +49,7 @@ $$b_0 + \cfrac{a_1}{b_1 + \cfrac{a_2}{b_2 + \cfrac{a_3}{b_3 + \cfrac{a_4}{b_4 + 
     res <- res + b0
     ```
 
-1. Implement a function `mymedian` with a single vector input `x` that outputs the median of `x`, without using the `median` function. Recall how to find the median [here](https://en.wikipedia.org/wiki/Median#/media/File:Finding_the_median.png).
+1. Implement a function `mymedian` without using the `median` function. The function should take a single vector input `x` and output the median of `x`,  Recall how to find the median [here](https://en.wikipedia.org/wiki/Median#/media/File:Finding_the_median.png).
 
 ```{r, include=FALSE, eval=FALSE}
 mymedian <- function(x) {
@@ -92,29 +92,32 @@ where $|x|$ is the absolute value of $x$. The function should satisfy the follow
         i. When $p=2$, the derivative is 2 times $x$
         i. When $p=1$, the derivative equals the sign of $x$
         i. The function is works if `x` is an empty vector `numeric(length=0)`
-        i. Group your tests together using `testthat::test_that`
+    a. Group your tests together using `testthat::test_that`
 
-1. The mean of a dataset $\{X_1,\dots, X_n\}$ can be cast as the solution to the following minimization problem
-$$  \min_{x \in \mathbb{R}} g(x),$$ 
-where $g(x) = n^{-1}\sum_{i=1}^n (x - X_i)^2$.
-To minimize $g(x)$, the gradient descent algorithm is as follows.
+1. We are going to reformulate the problem of finding the mean and implement the gradient descent algorithm in this question.
+Let $\{X_1,\dots, X_n\}$ be a dataset and $g(x) = n^{-1}\sum_{i=1}^n (x - X_i)^2$.
+It is known that the mean of the dataset is the solution to the following minimization problem
+$$  \min_{x \in \mathbb{R}} g(x).$$ 
+To minimize $g(x)$, you are going to use a `while` loop to implement the gradient descent algorithm, as follows.
 
-    *Step 0*. Initialize $x_0 = 0$</br>
-    *Step 1*. In the $k$th step, set
-    $$x_{k+1} = x_{k} - (0.99^{k})g'(x_{k}).$$
-    *Step 2*. Repeat Step 1 until $|g'(x_{k})|$ exceeds a small tolerance level $tol$ (e.g., `1e-5`) or $k$ exceeds the maximum number of iterations $K_\max$ (e.g., 1000).
+    - *Step 0*. Initialize $x_0 = 0$</br>
+    - *Step 1*. In the $k$th step, where $k=1,2,\dots$, set
+    $$x_{k+1} = x_{k} - 0.99^{k} \times g'(x_{k}).$$
+    - *Step 2*. Repeat Step 1 until $|g'(x_{k})|$ is smaller than a small tolerance level $tol$ (e.g., set it to `1e-5`) or if $k$ exceeds the maximum number of iterations $K_\max$ (e.g., set it to 1000).
     
-    Use the dataset `cars$speed` for $\{X_1,\dots, X_n\}$. Implement the gradient descent algorithm to find the median. You don't have to write the algorithm into a function in this question; you are going to do this in the next.
+     You are going to implement the gradient descent algorithm to find the mean. Use the dataset `cars$speed` for $\{X_1,\dots, X_n\}$.You don't have to write the algorithm into a function in this question; you are going to do this in the next.
     
-    [Hint: This question is closely related to the last question.]
+    [Hint: This question and Question 7 are closely related to the last question.]
 
-1. Wrap the gradient descent algorithm into a function. The function should take three arguments: A data vector, a small value for the tolerance level, and a large value for $K_\max$. Write at least three unit tests for your function and appropriately group them.
+1. Wrap the gradient descent algorithm into a function. The function should take three arguments: A data vector, a small value for the tolerance level, and a large value for $K_\max$. 
+    a. Implement the function
+    b. Write at least three unit tests for your function and appropriately group the unit tests.
 
-1. In the last question, your function minimizes the sum of squared errors. 
+1. (Optional) In the last question, your function minimizes $n^{-1}\sum_{i=1}^n (x - X_i)^2$ over $x$. 
 Now modify your function to solve 
 $$ \min_{x \in \mathbb{R}} n^{-1}\sum_{i=1}^n |x - X_i|^p$$ 
 using the gradient descent algorithm.
 Your function should take in an additional argument `p`. By math, when $p=1$, the minimizer should be the median (strictly speaking, if the sample size is odd), and when $p=2$, the minimizer should be the mean. Test your function for the case $p=2$ and $p=1$ using dataset `dat <- c(1, 2, 3, 5, 10000)`. 
 
-1. Document the function you created in the last question, following the steps as in the lecture slides [here](../slides/02_02_functions.html#16).
+1. Document the function you created in the last question, following the steps as in the lecture slides [here](../slides/02_02_functions.html#16). If you did not finish Question 7, then document a function you wrote for a previous question in this homework.
 
