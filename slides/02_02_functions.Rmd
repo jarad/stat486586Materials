@@ -30,13 +30,13 @@ xaringanExtra::use_tile_view()
 
 ## Functions in R
 
-- Often times we need to perform a task repeatedly. E.g., run a linear regression on different datasets
+- Often times we need to perform a task repeatedly. E.g., standardize a dataset
 
-- Like data structures which put related data together, functions put related code together
+- Like data structures which put related data together, functions package related code together. In other words, functions *modularize* code, making code more manageable
 
 - Instead of copying and pasting code, you would write a function which contains the common core code
 
-- Functions are *reusable*, so this avoid repetitive coding (errors will creep in)
+- Functions are *reusable*, so this avoid repetitive coding
 
 - Functions are *more maintainable*. As the requirements evolve, you only need to modify code in one place if you write a function, instead of looking into many places
 
@@ -44,7 +44,7 @@ xaringanExtra::use_tile_view()
 
 ## Repetivie code
 
-Suppose we want to standardize a few vectors. Without a function, you would do some copying and pasting: 
+Suppose we want to standardize a few vectors. Without a function, you would do some copies and pastes: 
 ```{r, collapse=TRUE}
 x <- 1:5
 y <- c(100, 1000)
@@ -70,16 +70,7 @@ standardize <- function(x) {
 }
 ```
 
-```{r, collapse=TRUE}
-standardize(x)
-standardize(y)
-standardize(z)
-standardize(w)
-```
-
----
-
-## Structure of functions
+Structure of functions:
 
 - Function name
     - Should be intuitive. Usually a verb
@@ -92,6 +83,18 @@ standardize(w)
 - Output values
     - the `return()` statement is optional
 
+---
+
+```{r, collapse=TRUE}
+standardize <- function(x) {
+	return((x - mean(x)) / sd(x))
+}
+
+standardize(x)
+standardize(y)
+standardize(z)
+standardize(w)
+```
 ---
 
 ## A first function (2)
@@ -131,7 +134,7 @@ class: inverse
 
 ## Your turn
 
-<img src="images/blue.png" width=20> Implement a function `mymean` with a single vector input `x` that outputs the mean of `x`, without using the `mean` function
+<img src="images/green.png" width=20> Implement a function `mymean` with a single vector input `x` that outputs the mean of `x`, without using the `mean` function
 
 <img src="images/green.png" width=20> Call your function on `c(1, 3, 4)` and `c(1, 3, 4, 5)`. Make sure your function has the same output as `mean()`
 
@@ -167,7 +170,7 @@ A typical procedure for writing a function:
 1. Think about what the function should and should not do
     - One function should do *one task* nicely. A large task could be separated into multiple functions
     
-1. Decide what information are needed as inputs. Think about the arguments to write
+1. Decide what information are needed as inputs (data, and options)
 
 1. Determine the output (one object, or more?)
 
@@ -180,10 +183,10 @@ A typical procedure for writing a function:
 ## A more extended example
 
 Write a function to calculate different location estimates for a vector. 
-The function should support the mean, median, and trimmed mean. 
-It should also support the `na.rm` argument for excluding missing values in the calculation.
+- The function should support the mean, median, and trimmed mean. 
+- It should also support the `na.rm` argument for excluding missing values in the calculation.
 
-The $\alpha\times 100\%$ *trimmed mean* is the mean of the data after discarding the most extreme $\alpha/2 \times 100\%$ observations on each end
+The $\alpha\times 100\%$ *trimmed mean* is the mean of the data after discarding the most extreme $\alpha/2 \times 100\%$ observations on either end
 
 ---
 ```{r}

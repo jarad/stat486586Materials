@@ -531,7 +531,7 @@ How do we know the approximation is good?
 
 ---
 
-We stop the algorithm if the sum changes by less than `\(10^{-5}\)` as we double the number of terms
+We double the number of terms in each iteration. Stop the algorithm if the sum changes by less than `\(10^{-5}\)` 
 
 ```r
 tolerance &lt;- 1e-5
@@ -612,7 +612,7 @@ month
 ## [1] "June"
 ```
 
-`while (TRUE)` is the same as the *`repeat` statement*. This must be used with a `break`, or you will have an infinite loop (in which case, you must press `Ctrl-C` in the R console to interrupt R)
+`while (TRUE)` is the same as the *`repeat` statement*. `repeat` must be used with a `break`, or you will have an infinite loop (in which case, you must press `Ctrl-C` in the R console to interrupt R)
 
 ```r
 i &lt;- 1
@@ -657,9 +657,26 @@ plans
 ---
 ## Wrapping it up
 
-- The `for`, `while`, and `repeat` loops are mostly interchangable. There are always more than one way to perform the task (with the conditional/control flow statements)
+- `for` loop is for iterating a given number of times
+
+- `while`, and `repeat` loops are used when you do not know the number of iterations ahead of time
+
+&lt;!-- - `for` , `while`, and `repeat` loops are often interchangable. There are always more than one way to perform the task (with the conditional/control flow statements) --&gt;
 
 - Which loop to use depends on which is the most intuitive to understand
+
+
+---
+
+class: inverse
+
+## Your turn
+
+&lt;img src="images/green.png" width=20&gt; Use a `while` loop to print out `\(\sqrt{1},\, \sqrt{2},\, \dots,\, \sqrt{10}\)`
+
+&lt;img src="images/green.png" width=20&gt; Use a `repeat` loop with `break` to print out `\(\sqrt{1},\, \sqrt{2},\, \dots,\, \sqrt{10}\)`
+
+&lt;img src="images/blue.png" width=20&gt; Modify your answer to the last question and use `next` to skip printing out `\(\sqrt{5}\)`
 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
