@@ -175,21 +175,22 @@ pre code {
 <div id="applying-functions" class="section level2">
 <h2>Applying functions</h2>
 <ol style="list-style-type: decimal">
-<li><p>Repeat Homework 5 Question 1a and 1b, but this time using functions in <code>purrr</code>.</p></li>
+<li><p>Repeat <a href="hw5.html">Homework 5</a> Question 1a and 1b, but this time using only <code>purrr</code> functions instead of loops or vectorized operations (<code>map_dbl</code>, etc. You may also use <code>sum</code>). Compare the run times with your previous results using loops and vectorized operations and state what you find (e.g., which approach is the fastest, which is the slowest).</p></li>
 <li><p>Perform the following using <code>purrr</code> functions as much as possible.</p>
 <ol style="list-style-type: lower-alpha">
 <li>Compute the median of every variable in <code>mtcars</code>. The result should be a vector.</li>
 <li>Find the means of all columns in <code>mtcars</code> by the number of cylinders.</li>
-<li>Find the class of each column in <code>classdata::cities</code>. The result should be a vector.</li>
+<li>Find the variable type (using <code>class</code>) of each column in <code>classdata::cities</code>. The result should be a vector.</li>
 <li>Compute the number of unique values in each column of <code>iris</code>.</li>
-<li>Use <code>map2_dbl</code> to calculate the product of the sepal length and sepal width in <code>iris</code>.</li>
-<li>Use <code>pmap_dbl</code> to calculate the sum of the sepal length, sepal width, petal length, and petal width columns in <code>iris</code>.</li>
+<li>Use <code>map2_dbl</code> to calculate, for each record in <code>iris</code>, the product of the sepal length and sepal width.</li>
+<li>Use <code>pmap_dbl</code> to calculate, for each record in <code>iris</code>, the sum of the sepal length, sepal width, petal length, and petal width columns in <code>iris</code>.</li>
 </ol></li>
-<li><p>Work on a list containing information of Game of Thrones characters. Install <code>repurrrsive</code> using <code>install.packages(&quot;repurrrsive&quot;)</code>, and load it. The list <code>got_chars</code> is what you will use. Check out what does it contain before you start.</p>
+<li><p>Work on a list containing information of Game of Thrones characters. Install <code>repurrrsive</code> using <code>install.packages(&quot;repurrrsive&quot;)</code>, and load it using <code>library(repurrrsive)</code>. The list <code>got_chars</code> is what you will use. Check out what does it contain before you start.</p>
 <ol style="list-style-type: lower-alpha">
 <li><p>Extract all the character names (the <code>name</code> field) and the corresponding actor names (the <code>playedBy</code> field) as two separate character vectors</p></li>
-<li><p>Create a new file for each character. The file name should be <code>characterName.txt</code>, replacing the corresponding character name, and the content should be just the name of the actor.</p></li>
-<li><p>Create a new file containing all the information for each character. The file name should be <code>characterNameAll.txt</code>, replacing the corresponding character name. Here is an example content for the first character:</p>
+<li><p>Create a new file for each character. The file name should be <code>characterName.txt</code>, replacing the corresponding character name, and the content should be just the name of the actor. Use <code>writeLines(charVec, fileName)</code> to write the contents of a character vector <code>charVec</code> into a file <code>fileName</code>.</p></li>
+<li><p>Create a new file containing all the information for each character. The file name should be <code>characterNameAll.txt</code>, replacing the corresponding character name. [Hint: You can use RStudio to open the <code>.txt</code> files and check your results. Click File – Open File]</p>
+<p>Here is an example content for the first character:</p>
 <pre><code>url: https://www.anapioficeandfire.com/api/characters/1022
 id: 1022
 name: Theon Greyjoy
@@ -217,7 +218,7 @@ playedBy: Alfie Allen</code></pre></li>
   diag(c(-2, 1))
 )</code></pre>
 <ol style="list-style-type: lower-alpha">
-<li>Use <code>purrr::reduce</code> to find the <em>matrix product</em> of all matrices in <code>l</code>. (The order of the matrices should follow their order in <code>l</code>.)</li>
+<li>Use <code>purrr::reduce</code> to find the product of all matrices in <code>l</code>. The order of the matrices should follow their order in <code>l</code>. (We are finding the matrix product but not scalar product.)</li>
 <li>Use <code>purrr::accumulate</code> to find the cumulative sum of all matrices in <code>l</code>.</li>
 </ol></li>
 </ol>
@@ -225,7 +226,7 @@ playedBy: Alfie Allen</code></pre></li>
 <div id="advanced-functions" class="section level2">
 <h2>Advanced functions</h2>
 <ol style="list-style-type: decimal">
-<li><p>What does the following code output? Make a prediction before running the code. Use the principles (could be more than 1) covered in <a href="../slides/02_03_functional_programming.html">the lecture</a> to explain.</p>
+<li><p>Reason with each of the following code (run them in your head). Make a prediction of the output before running the code. Use the principles (could be more than 1) covered in <a href="../slides/02_04_advanced_functions.html">the lecture</a> to explain why the output makes sense.</p>
 <ol style="list-style-type: lower-alpha">
 <li><pre class="r"><code>x &lt;- 10
 f1 &lt;- function(x) {
@@ -249,13 +250,29 @@ g(y)</code></pre></li>
 <li><pre class="r"><code>f &lt;- function(x) print(&quot;ha&quot;)
 g &lt;- function(y) print(&quot;hello&quot;)
 g(y = f())</code></pre></li>
+</ol></li>
+<li><p>Write a function to calculate the definite integral <span class="math display">\[\int_l^u f(x) dx\]</span> of an arbitrary polynomial <span class="math display">\[f(x) = a_0 + a_1 x + a_2 x^2 + \dots + a_n x^n, \quad x\in \mathbb{R}\]</span> for <span class="math inline">\(n \ge 0\)</span>. The user will input a vector <code>a</code> specifying the coefficients (<code>a[1]</code>=<span class="math inline">\(a_0\)</span>, <code>a[2]</code>=<span class="math inline">\(a_1\)</span>, etc), a lower bound <code>lower</code> (<span class="math inline">\(l\)</span>), and an upper bound <code>upper</code> (<span class="math inline">\(u\)</span>).</p>
+<p>You function should perform the integral <em>numerically</em> using the following steps (instead of applying integral rules learned in Calculus):</p>
+<ol style="list-style-type: lower-alpha">
+<li>create a function factory, namely, a function that takes in the coefficients <code>a</code> and outputs a polynomial function. If you input a vector to a manufactured function, it should output a vector with the same length</li>
+<li>apply the <code>integrate</code> function on the manufactured polynomial function</li>
 </ol>
-<p><!-- a.  --> <!--     ```{r, eval=FALSE} --> <!--     f <- function(x) print("ha") --> <!--     g <- function(y) print("hello") --> <!--     g(f()) --> <!--     ``` --></p></li>
-<li><p>Write a function to calculate the definite integral <span class="math display">\[\int_l^u f(x) dx\]</span> of an arbitrary polynomial <span class="math display">\[f(x) = a_0 + a_1 x + a_2 x^2 + \dots + a_n x^n, \quad x\in \mathbb{R}\]</span> for <span class="math inline">\(n \ge 0\)</span>. The user will input a vector <code>a</code> specifying the coefficients (<code>a[1]</code>=<span class="math inline">\(a_0\)</span>, <code>a[2]</code>=<span class="math inline">\(a_1\)</span>, etc), a lower bound <code>lower</code> (<span class="math inline">\(l\)</span>), and an upper bound <code>upper</code> (<span class="math inline">\(u\)</span>). You function should perform the integral <em>numerically</em>, so do not apply integral rules learned in Calculus for this question. Test that TODO</p>
-<p>[Hint: First create a function factory, and then apply <code>integrate</code>]</p></li>
-<li><p>Write a function factory to obtain the log-likelihood function of a Gamma<span class="math inline">\((\alpha,\beta)\)</span> distribution, where <span class="math inline">\(\alpha &gt; 0\)</span> and <span class="math inline">\(\beta &gt; 0\)</span>. The pdf is <span class="math display">\[f(x;\,\alpha,\beta)={\frac {\beta ^{\alpha }}{\Gamma (\alpha )}}x^{\alpha -1}e^{-\beta x}, \quad x &gt; 0\]</span> where <span class="math inline">\(\Gamma (\alpha)=\int _{0}^{\infty }x^{\alpha-1}e^{-x}\,dx\)</span> is the gamma function. Given dataset <span class="math inline">\(\{X_1, \dots, X_n\}\)</span>, the log-likelihood function is <span class="math display">\[l(\alpha, \beta) = \sum_{i=1} \log f(x;\,\alpha,\beta).\]</span> You can use <code>lgamma</code> to find the log of the gamma function, but do not use <code>dgamma</code> to find the Gamma density for this question. Test that TODO</p>
-<p>Note: The reason to always operate on the log scale when solving optimization involving likelihood is that when dataset becomes large, the likelihood function can get very large or small, so calculation can lose considerable precision.</p></li>
-<li><p>Use the <code>optim</code> function to find the maximum likehood estimation for the following dataset TODO, assuming they come from a gamma distribution.</p>
+<p>After you are done writing the function, test that it … TODO</p>
+<p>[Hint: This is an extensive question, so break in down into multiple steps. Use some unit tests to make sure a step is completely correct <em>before</em> moving onto the next. ]</p></li>
+<li><p>(Optional) In this question, you will write a function factory to obtain the log-likelihood function of a Gamma<span class="math inline">\((\alpha,\beta)\)</span> distribution. The probability density function (pdf) of a Gamma<span class="math inline">\((\alpha,\beta)\)</span> distribution is, for <span class="math inline">\(\alpha &gt; 0\)</span> and <span class="math inline">\(\beta &gt; 0\)</span> <span class="math display">\[f(x;\,\alpha,\beta)={\frac {\beta ^{\alpha }}{\Gamma (\alpha )}}x^{\alpha -1}e^{-\beta x}, \quad x &gt; 0\]</span> where <span class="math inline">\(\Gamma (\alpha)=\int _{0}^{\infty }x^{\alpha-1}e^{-x}\,dx\)</span> is the gamma function. Given dataset <span class="math inline">\(\{X_1, \dots, X_n\}\)</span>, the log-likelihood function, is <span class="math display">\[l(\alpha, \beta) = \sum_{i=1} \log f(X_i;\,\alpha,\beta).\]</span></p>
+<p>Implement a function factory to manufacture the log-likelihood function. The function factor should take a vector <code>x</code> input for the dataset and output the log-likelihood function corresponding to <code>x</code>. The manufactured function should take a single input <code>par</code>, which is a vector of length 2 where the first entry stands for <code>gamma</code> and the second entry stands for <code>beta</code>.</p>
+<ol style="list-style-type: lower-alpha">
+<li>Implement the function factory</li>
+<li>Manufacture a log-likelihood function using input <code>c(0.289, 0.468, 0.035, 2.114, 0.281)</code></li>
+<li>Plot the log-likihood function you manufactured, fixing <span class="math inline">\(\alpha=1\)</span> and let <span class="math inline">\(\beta\)</span> range from 0.1 to 2</li>
+</ol>
+<p>[Hint: You can use <code>lgamma</code> to find the log of the gamma function. The reason to always operate on the log scale when solving optimization involving likelihood is that when dataset becomes large, the likelihood function can get very large or small, so calculation can lose considerable precision. ]</p></li>
+<li><p>(Optional) Use the <code>optim</code> function to find the maximum likehood estimation for the following dataset</p>
+<pre><code>x &lt;- c(0.104, 0.069, 0.034, 0.906, 0.75, 
+       0.484, 0.574, 1.747, 0.254, 0.591, 
+       0.088, 0.643, 0.754, 0.004, 0.495, 
+       1.499, 0.802, 0.495, 0.105, 0.64)</code></pre>
+<p>assuming they come from a gamma distribution.</p>
 <p>[Hint: Check out <code>?optim</code> to learn how to use it, especially the examples. You will be needing only the very basic usage involving just the first two arguments, namely <code>par</code> and <code>fn</code>. Set the initial value <code>par</code> to be <code>c(1, 1)</code> should give you a reasonable starting value. Also set <code>control = list(fnscale = -1)</code> to ask <code>optim</code> to perform a maximization instead of minimization.]</p></li>
 </ol>
 </div>

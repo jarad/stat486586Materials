@@ -84,9 +84,9 @@ where $|x|$ is the absolute value of $x$. The function should satisfy the follow
     -1 & \text{if } x < 0. 
     \end{cases}$$
 
-    a. Write the function. You may write helper functions as deemed necessary.
+    a. Write the function. 
     a. Write at least one unit test for each of the following aspects using `testthat::expect_equal`. [Hint: Choose your own input in each case, and use some variation in the inputs]
-        i. The function is vectorized in `x`, so a vector input works well
+        i. The function is vectorized in `x`, so that that your function works with a vector input
         i. When $p=2$, the result is the squared numbers
         i. When $p=1$, the result is the absolute numbers
         i. When $p=2$, the derivative is 2 times $x$
@@ -100,7 +100,7 @@ It is known that the mean of the dataset is the solution to the following minimi
 $$  \min_{x \in \mathbb{R}} g(x).$$ 
 To minimize $g(x)$, you are going to use a `while` loop to implement the gradient descent algorithm, as follows.
 
-    - *Step 0*. Initialize $x_0 = 0$</br>
+    - *Step 0*. Initialize $x_1 = 0$</br>
     - *Step 1*. In the $k$th step, where $k=1,2,\dots$, set
     $$x_{k+1} = x_{k} - 0.99^{k} \times g'(x_{k}).$$
     - *Step 2*. Repeat Step 1 until $|g'(x_{k})|$ is smaller than a small tolerance level $tol$ (e.g., set it to `1e-5`) or if $k$ exceeds the maximum number of iterations $K_\max$ (e.g., set it to 1000).
@@ -111,7 +111,7 @@ To minimize $g(x)$, you are going to use a `while` loop to implement the gradien
 
 1. Wrap the gradient descent algorithm into a function. The function should take three arguments: A data vector, a small value for the tolerance level, and a large value for $K_\max$. 
     a. Implement the function
-    b. Write at least three unit tests for your function and appropriately group the unit tests.
+    b. Write at least three unit tests for your function and appropriately group the unit tests. Each test should test a different aspect.
 
 1. (Optional) In the last question, your function minimizes $n^{-1}\sum_{i=1}^n (x - X_i)^2$ over $x$. 
 Now modify your function to solve 
@@ -119,5 +119,5 @@ $$ \min_{x \in \mathbb{R}} n^{-1}\sum_{i=1}^n |x - X_i|^p$$
 using the gradient descent algorithm.
 Your function should take in an additional argument `p`. By math, when $p=1$, the minimizer should be the median (strictly speaking, if the sample size is odd), and when $p=2$, the minimizer should be the mean. Test your function for the case $p=2$ and $p=1$ using dataset `dat <- c(1, 2, 3, 5, 10000)`. 
 
-1. Document the function you created in the last question, following the steps as in the lecture slides [here](../slides/02_02_functions.html#16). If you did not finish Question 7, then document a function you wrote for a previous question in this homework.
+1. Document the function you created in the last question, following the steps as in the lecture slides [here](../slides/02_02_functions.html#20). If you did not finish Question 7, then document a function you wrote for a previous question in this homework.
 

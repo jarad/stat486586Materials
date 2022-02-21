@@ -211,10 +211,10 @@ pre code {
  \end{cases}\]</span></li>
 </ul>
 <ol style="list-style-type: lower-alpha">
-<li>Write the function. You may write helper functions as deemed necessary.</li>
+<li>Write the function.</li>
 <li>Write at least one unit test for each of the following aspects using <code>testthat::expect_equal</code>. [Hint: Choose your own input in each case, and use some variation in the inputs]
 <ol style="list-style-type: lower-roman">
-<li>The function is vectorized in <code>x</code>, so a vector input works well</li>
+<li>The function is vectorized in <code>x</code>, so that that your function works with a vector input</li>
 <li>When <span class="math inline">\(p=2\)</span>, the result is the squared numbers</li>
 <li>When <span class="math inline">\(p=1\)</span>, the result is the absolute numbers</li>
 <li>When <span class="math inline">\(p=2\)</span>, the derivative is 2 times <span class="math inline">\(x\)</span></li>
@@ -225,7 +225,7 @@ pre code {
 </ol></li>
 <li><p>We are going to reformulate the problem of finding the mean and implement the gradient descent algorithm in this question. Let <span class="math inline">\(\{X_1,\dots, X_n\}\)</span> be a dataset and <span class="math inline">\(g(x) = n^{-1}\sum_{i=1}^n (x - X_i)^2\)</span>. It is known that the mean of the dataset is the solution to the following minimization problem <span class="math display">\[  \min_{x \in \mathbb{R}} g(x).\]</span> To minimize <span class="math inline">\(g(x)\)</span>, you are going to use a <code>while</code> loop to implement the gradient descent algorithm, as follows.</p>
 <ul>
-<li><em>Step 0</em>. Initialize <span class="math inline">\(x_0 = 0\)</span></br></li>
+<li><em>Step 0</em>. Initialize <span class="math inline">\(x_1 = 0\)</span></br></li>
 <li><em>Step 1</em>. In the <span class="math inline">\(k\)</span>th step, where <span class="math inline">\(k=1,2,\dots\)</span>, set <span class="math display">\[x_{k+1} = x_{k} - 0.99^{k} \times g&#39;(x_{k}).\]</span></li>
 <li><em>Step 2</em>. Repeat Step 1 until <span class="math inline">\(|g&#39;(x_{k})|\)</span> is smaller than a small tolerance level <span class="math inline">\(tol\)</span> (e.g., set it to <code>1e-5</code>) or if <span class="math inline">\(k\)</span> exceeds the maximum number of iterations <span class="math inline">\(K_\max\)</span> (e.g., set it to 1000).</li>
 </ul>
@@ -234,10 +234,10 @@ pre code {
 <li><p>Wrap the gradient descent algorithm into a function. The function should take three arguments: A data vector, a small value for the tolerance level, and a large value for <span class="math inline">\(K_\max\)</span>.</p>
 <ol style="list-style-type: lower-alpha">
 <li>Implement the function</li>
-<li>Write at least three unit tests for your function and appropriately group the unit tests.</li>
+<li>Write at least three unit tests for your function and appropriately group the unit tests. Each test should test a different aspect.</li>
 </ol></li>
 <li><p>(Optional) In the last question, your function minimizes <span class="math inline">\(n^{-1}\sum_{i=1}^n (x - X_i)^2\)</span> over <span class="math inline">\(x\)</span>. Now modify your function to solve <span class="math display">\[ \min_{x \in \mathbb{R}} n^{-1}\sum_{i=1}^n |x - X_i|^p\]</span> using the gradient descent algorithm. Your function should take in an additional argument <code>p</code>. By math, when <span class="math inline">\(p=1\)</span>, the minimizer should be the median (strictly speaking, if the sample size is odd), and when <span class="math inline">\(p=2\)</span>, the minimizer should be the mean. Test your function for the case <span class="math inline">\(p=2\)</span> and <span class="math inline">\(p=1\)</span> using dataset <code>dat &lt;- c(1, 2, 3, 5, 10000)</code>.</p></li>
-<li><p>Document the function you created in the last question, following the steps as in the lecture slides <a href="../slides/02_02_functions.html#16">here</a>. If you did not finish Question 7, then document a function you wrote for a previous question in this homework.</p></li>
+<li><p>Document the function you created in the last question, following the steps as in the lecture slides <a href="../slides/02_02_functions.html#20">here</a>. If you did not finish Question 7, then document a function you wrote for a previous question in this homework.</p></li>
 </ol>
 </div>
 
