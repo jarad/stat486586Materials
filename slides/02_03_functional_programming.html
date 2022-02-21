@@ -60,13 +60,22 @@ f(1:5)
 ## [1] 3
 ```
 
-- Most R functions are *pure functions*, of which the outputs depends on only the inputs without side-effects (e.g., no modification of the inputs in-place)
+- Most R functions are *pure functions*. For a pure function,
+    1. identical inputs will result in identical outputs (no local states)
+    1. the function does not have side-effects (e.g., no modification of the inputs in-place or any global variables)
 
 ---
 
 ## Why functional programming
 
-- Functional programming is clear and concise. E.g., to read in several files in `files &lt;- c("1.csv", "2.csv", "3.csv")`:
+- For the following code to run, download the files [1.csv](1.csv), [2.csv](2.csv), and [3.csv](3.csv) and put them side-by-side your R script. Remember to set the working directory to the source file location 
+
+- Functional programming is clear and concise. E.g., to read in several files in 
+```
+files &lt;- c("1.csv", "2.csv", "3.csv")
+```
+
+
 
 .pull-left[
 Functional style
@@ -88,7 +97,7 @@ for (i in seq_along(files)) {
 
 - A functional programming style is great to use for programming statistical/mathematical methods
 
-- .danger[You may think you can do everything using loops, but this will prevent you to build big things. Using functional programming, you will gain much more mileage as we learn more ]
+- .style[You may think you can do everything using loops, but this will prevent you to build big things. Using functional programming, you will gain much more mileage as we learn more ]
 
 ---
 class: big, middle
@@ -114,14 +123,16 @@ library(purrr)
 
 ## Applying a function to different inputs
 
-`map(.x, .f,)` applies the function `.f` to each entry in `.x`, which may be a list or a vector
+`map(.x, .f,)` applies the function `.f` to each entry in `.x`
 
 .center[
 ![:scale 30%](https://d33wubrfki0l68.cloudfront.net/f0494d020aa517ae7b1011cea4c4a9f21702df8b/2577b/diagrams/functionals/map.png)
 &lt;/br&gt;Figures are due to [Hadley Wickham](https://adv-r.hadley.nz/functionals.html)
 ]
 
-- `map` always returns a list, so it is very general
+- The input `.x` may be a list or a vector
+- The output of `.f` can be anything, so `map` is very general
+- `map` always returns a list
 
 
 ```r
@@ -171,31 +182,6 @@ map(x, function(v) { # calculate the 2nd moment
 
 ---
 
-```
-map(.x, .f, ...)
-```
-
-You can specify common optional arguments to your function using `...`
-
-.center[
-![:scale 50%](https://d33wubrfki0l68.cloudfront.net/e1b3536a7556aef348f546a79277125c419a5fdc/0c0a1/diagrams/functionals/map-arg.png)
-]
-
-```r
-y &lt;- list(c(NA, 1:5), 2:3)
-map(y, mean, na.rm=TRUE)
-```
-
-```
-## [[1]]
-## [1] 3
-## 
-## [[2]]
-## [1] 2.5
-```
-
----
-
 ## Returning atomic vectors
 
 - You can convert a list of scalars to a vector using `unlist`
@@ -203,18 +189,20 @@ map(y, mean, na.rm=TRUE)
 - Better yet, use `purrr` functions that returns a *scalar* of specific types:
 
     ```
-    map_dbl()
-    map_int()
-    map_lgl()
-    map_chr()
+    map_dbl(.x, .f) # double-precision floating number
+    map_int(.x, .f) # integer
+    map_lgl(.x, .f) # logical
+    map_chr(.x, .f) # character
     ```
+
+- The usages of these functions are the same as `map()`, except that when using `map_***`, the output of your function `.f` must be a scalar of type `***`
+
+- The output of `map_***` is guaranteed to be a vector of type `***`
 
 - These functions are more specific, and thus more rigorous and easier to reason with. They help you check that your output is as you expected, so you can discover any issues early
 
 ---
 
-
-The usages of these functions are the same as `map()`, except that the output of your function `.f` must be a scalar. The output of `map_***` is guaranteed to be a vector.  
 
 
 ```r
@@ -253,29 +241,93 @@ str(map(x, summary))
 
 What if the results from calling `.f` are vectors of the same length, and I want to combine the results?
 
+- `do.call(f, aList)` is the same as calling `f` using the entries of `aList` as arguments
+
+- So `do.call(cbind, list(a=1, b=2))` is the same as `cbind(a=1, b=2)`
+
 - `do.call(rbind, res)` combines the results by row
 
 
 ```r
 res &lt;- map(x, summary)
-names(res) &lt;- c("first", "second")
 do.call(rbind, res)
 ```
 
 ```
-##        Min. 1st Qu. Median Mean 3rd Qu. Max.
-## first     1    1.75    2.5  4.0    4.75   10
-## second    2    2.25    2.5  2.5    2.75    3
+##      Min. 1st Qu. Median Mean 3rd Qu. Max.
+## [1,]    1    1.75    2.5  4.0    4.75   10
+## [2,]    2    2.25    2.5  2.5    2.75    3
 ```
 
 - `do.call(cbind, res)` combines the results by column
 
-- `do.call(f, aList)` is the same as calling `f` using the entries of `aList` as arguments
+---
+## Passing optional arguments
 
-- So `do.call(cbind, list(a=1, b=2))` is the same as `cbind(a=1, b=2)`
+```
+map(.x, .f, ...)
+map_dbl(.x, .f, ...) # and so on
+```
+
+You can specify common optional arguments to your function using `...`
+
+.center[
+![:scale 50%](https://d33wubrfki0l68.cloudfront.net/e1b3536a7556aef348f546a79277125c419a5fdc/0c0a1/diagrams/functionals/map-arg.png)
+]
+
+```r
+y &lt;- list(c(NA, 1:5), 2:3)
+map(y, mean, na.rm=TRUE)
+```
+
+```
+## [[1]]
+## [1] 3
+## 
+## [[2]]
+## [1] 2.5
+```
+
+---
+class: inverse
+
+## Your turn
+
+Start with a list
+```
+l &lt;- list(c(1, 3, 5, 100),
+          c(NA, 3, 5, 100),
+          c(NA, 1:10, 100))
+```
+
+&lt;img src="images/green.png" width=20&gt; Find the sum of the values in each entry of `l` using `map`
+
+&lt;img src="images/green.png" width=20&gt; Find the sum of the values in each entry of `l`. The returned value should be a numeric vector (but not a list) this time
+
+&lt;img src="images/green.png" width=20&gt; Redo the last question, but this time remove missing values
 
 ---
 
+## Nested maps
+Suppose that we want to find the trimmed means of entries x, and try either no trimming or 30% trimming.
+
+
+```r
+map(x, function(xx) {
+  map_dbl(c(0, 0.3), mean, x=xx)
+  # same as: map_dbl(c(0, 0.3), function(trim) mean(xx, trim=trim))
+})
+```
+
+```
+## [[1]]
+## [1] 4.0 2.5
+## 
+## [[2]]
+## [1] 2.5 2.5
+```
+
+---
 ## Calling special functions
 
 - Most of the times, functions are in the *prefix form* like `f(x)`
@@ -283,17 +335,17 @@ do.call(rbind, res)
 - You have used some operators that are written down a bit specially. E.g., `x + y` and `z[["field"]]`
 
 - These operators are actually all functions
-  - `+` is an *infix function*. The equivalent prefix form is 
+  - `+` is an *infix function*. The infix form is `x + y`. The equivalent prefix form is 
       ```
       `+`(x, y)
       ```
-  - `[[` is an *extraction function*. The prefix form is
+  - `[[` is an *extraction function*. The infix form is `x[[name]]`. The prefix form is
       ```
       `[[`(x, name)
       ```
-  - Remember to use backtick to quote these functions when calling them and searching the documentations for them
+  - Remember to use backtick to quote these functions when calling them or searching the documentations for them
   
-- Other infix operators `*, /, %in%` and extractors `[` etc are similar
+- Other infix operators `*, /, %in%` and extractors `[` are similar
 
 ---
 
@@ -340,13 +392,15 @@ map(x, 2) # shorthand for extracting the 2nd entry
 
 ## Other variants of `map`
 
-- `walk(.x, .f)` calls `.f` for its side-effect but not for returning new results
+- `walk(.x, .f)` calls `.f` for its side-effect (making plots, save files, etc) but not for returning new results
 
-- `imap(.x, .f)` iterates over `.x` with an index (either an integer position or a name, depending on whether `.x` is named). E.g.,
-
+- `imap(.x, .f)`, `imap_dbl`, `imap_chr`, `iwalk`, etc 
+  - iterate over `.x` with an index (either an integer position or a name, depending on whether `.x` is named). E.g.,
     
     ```r
-    imap(x, function(x, i) stringr::str_c("Field ", i, " has mean ", mean(x)))
+    imap(x, function(x, i) {
+      stringr::str_c("Field ", i, " has mean ", mean(x))
+    })
     ```
     
     ```
@@ -388,7 +442,7 @@ map2(x,
 ## Other variants of `map`: Varying `\(p\)` inputs
 
 
-`map2(.l, .f)` applies `.f` to each parallel collection of entries in `.l`
+`pmap(.l, .f)` applies `.f` to each parallel collection of entries in `.l`
 
 
 .center[
@@ -403,7 +457,9 @@ record &lt;- data.frame(
   score = c(92, 69, 87)
 )
 pmap(record, 
-     function(student, id, score) stringr::str_c(student, id, ": ", score, sep=" "))
+     function(student, id, score) {
+       stringr::str_c(student, id, ": ", score, sep=" ")
+     })
 ## [[1]]
 ## [1] "Mary 312 :  92"
 ## 
@@ -413,6 +469,31 @@ pmap(record,
 ## [[3]]
 ## [1] "Jenny 291 :  87"
 ```
+
+---
+## More variants with &gt;1 inputs
+
+- `map2_dbl`, `map2_chr`, `map2_lgl`, `walk2` etc are also available
+
+- `pmap_dbl`, `pmap_chr`, `pmap_lgl`, `pwalk` etc are also available
+
+---
+class: inverse
+
+## Your turn
+
+Start with a list
+```
+l &lt;- list(c(1, 3, 5, 100),
+          c(NA, 3, 5, 100),
+          c(NA, 1:10, 100))
+```
+
+&lt;img src="images/green.png" width=20&gt; Add 1 to the first entry of `l`, 2 to the second entry, and 3 to the third entry using `imap`
+
+&lt;img src="images/green.png" width=20&gt; Add 1 to the first entry of `l`, 2 to the second entry, and 3 to the third entry using `map2`
+
+&lt;img src="images/green.png" width=20&gt; Add 1 to the first entry of `l`, 2 to the second entry, and 3 to the third entry using `pmap`
 
 ---
 class: big, middle
@@ -525,15 +606,15 @@ accumulate(l, `+`)
 ## R demo...
 
 ---
-class: inverse
 
-## Your turn (TODO)
+## Base R apply functions
 
-&lt;img src="images/blue.png" width=20&gt; Implement a function `mymean` with a single vector input `x` that outputs the mean of `x`, without using the `mean` function
+- `apply`: map functions over margins of a matrix or array
 
-&lt;img src="images/green.png" width=20&gt; Call your function on `c(1, 3, 4)` and `c(1, 3, 4, 5)`. Make sure your function has the same output as `mean()`
+- `lapply`, `sapply`, `vapply`: map functions over a vector or a list; the manners of the return differs
 
-&lt;img src="images/blue.png" width=20&gt; Now, add a second optional argument to `mymean`, which is a flag `na.rm` that defaults to `FALSE` to indicate whether to remove missing values before the mean calculation. You may use `is.na()`. Again, compare the results from your function and `mean()` to make sure your implementation is correct
+- `tapply`, `by`, `aggregate`: map functions for each group
+
 
 ---
 

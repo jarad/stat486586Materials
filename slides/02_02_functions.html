@@ -72,6 +72,24 @@ In fact, there is an error. Did you spot it?
 
 ---
 
+## Messy
+
+.center[
+![:scale 90%](https://live.staticflickr.com/2056/1741289268_00b137f6f9_3k.jpg)
+&lt;/br&gt;Source: [Jason Whittaker](https://www.flickr.com/photos/jason_whittaker/1741289268/in/photostream/)
+]
+
+---
+
+## Organized
+
+.center[
+![:scale 90%](https://live.staticflickr.com/65535/49955606957_b63e9b18a8_3k.jpg)
+&lt;/br&gt;Source: [Neil Cummings](https://www.flickr.com/photos/chanceprojects/49955606957/)
+]
+
+---
+
 ## A first function
 So we are going to write a function to avoid repetitive code
 
@@ -182,11 +200,11 @@ class: inverse
 
 ## Your turn
 
-&lt;img src="images/green.png" width=20&gt; Implement a function `mymean` with a single vector input `x` that outputs the mean of `x`, without using the `mean` function
+&lt;img src="images/green.png" width=20&gt; Implement a function `myMean` that takes a single vector `x` as input and outputs the mean of `x`, without using the `mean` function
 
 &lt;img src="images/green.png" width=20&gt; Call your function on `c(1, 3, 4)` and `c(1, 3, 4, 5)`. Make sure your function has the same output as `mean()`
 
-&lt;img src="images/blue.png" width=20&gt; Now, add a second optional argument to `mymean`, which is a flag `na.rm` that defaults to `FALSE` to indicate whether to remove missing values before the mean calculation. You may use `is.na()`. Again, compare the results from your function and `mean()` to make sure your implementation is correct
+&lt;img src="images/blue.png" width=20&gt; Now, add a second optional argument to `myMean`, which is a flag `na.rm` that defaults to `FALSE` to indicate whether to remove missing values before the mean calculation. You may use `is.na()`. Again, compare the results from your function and `mean()` to make sure your implementation is correct
 
 
 ---
@@ -195,7 +213,7 @@ class: inverse
 
 
 ```r
-mymean &lt;- function(x, na.rm=FALSE) {
+myMean &lt;- function(x, na.rm=FALSE) {
   if (na.rm) {
     x &lt;- x[!is.na(x)]
   }
@@ -217,22 +235,32 @@ mymean &lt;- function(x, na.rm=FALSE) {
 A typical procedure for writing a function:
 
 1. Think about what the function should and should not do
-    - One function should do *one task* nicely. A large task could be separated into multiple functions
+    - One function should do *one task* nicely
+    - When writing a function for a large task, you should separate the task into *managable* pieces. Write a smaller helper function for each piece, and the main function will utilize the helper functions
     
 1. Decide what information are needed as inputs (data, and options)
 
 1. Determine the output (one object, or more?)
 
 1. Write the body
-    - Again, break a large task into smaller parts
+    - Figure out the parts
     - Figure out how to fit the parts together
+    - Write each part
+
+---
+## Carve up large pieces
+
+.center[
+![:scale 100%](https://live.staticflickr.com/2522/4003359098_5b53930111_3k.jpg)
+&lt;/br&gt;Source: [tuchodi](https://www.flickr.com/photos/tuchodi/4003359098)
+]
 
 ---
 
 ## A more extended example
 
-Write a function to calculate different location estimates for a vector. 
-- The function should support the mean, median, and trimmed mean. 
+**Example**: Write a function to calculate different location estimates for a vector of numbers. 
+- The function should support three methods: mean, median, and trimmed mean. 
 - It should also support the `na.rm` argument for excluding missing values in the calculation.
 
 The `\(\alpha\times 100\%\)` *trimmed mean* is the mean of the data after discarding the most extreme `\(\alpha/2 \times 100\%\)` observations on either end
@@ -247,9 +275,10 @@ estLocation &lt;- function(x, method, trim=0, na.rm=FALSE) {
     x &lt;- x[!is.na(x)]
   }
   
+  # Calculate statistics
   if (method == "mean") {
     # implement mean
-    res &lt;- myTrimmedMean(x, trim=0)
+    res &lt;- myMean(x)
   } else if (method == "median") {
     res &lt;- median(x)
     # implement median
@@ -317,7 +346,7 @@ estLocation(x, "trimmed mean", trim=0.1)
 
 - Documentation is one of the fundamental part of a piece of software
 
-- It helps the users of your code, which include your future self!
+- It helps the users, which include your future self!
 
 - Writing documentation also help you better think about the function. If you can neatly and concisely describe it, your function is probably logically sound
 
@@ -333,16 +362,16 @@ estLocation(x, "trimmed mean", trim=0.1)
 ---
 
 ## An example
-The documentation of the `mymean` function is included as comments (lines starting with `#`) before the definition of the function.
+The documentation of the `myMean` function is included as comments (lines starting with `#`) before the definition of the function.
 ```
-# Calculate the mean of a vector, without using the mean() function
+# Calculate the mean of a vector, *without* using the mean() function
 # 
 # x: A numerical vector 
 # na.rm: A flag to indicate whether missing values should be removed 
 #        before the mean calculation
 # 
 # Returns the mean value of the vector as a scalar
-mymean &lt;- function(x, na.rm=FALSE) {
+myMean &lt;- function(x, na.rm=FALSE) {
   if (na.rm) {
     x &lt;- x[!is.na(x)]
   }
@@ -362,7 +391,7 @@ class:big, middle
 
 - Making sure your code and results are correct is the #1 priority (then readablity, stability, speed, etc)
 
-- *Unit testing* is a procedure of testing a small unit of code in a software. A unit is often a function
+- *Unit testing* is the procedure of testing a small unit of code in a software. A unit is often a function
 
 - Writing a unit test is not difficult at all. After you finish a freshly written function, you must have written some code to see whether it works or not. *Do not discard the code*, but rather make it formal unit tests
 
@@ -410,7 +439,7 @@ expect_equal(object, expected, ..., tolerance)
     expect_equal(mean(x), 2)
     ```
 
-- By default, differences below a small threhold will be regarded OK. This is very useful when comparing floating point numbers or numerical algorithms
+- By default, differences below a small threhold will be regarded OK. This is very useful when comparing floating point numbers produced in numerical algorithms
     
     ```r
     y &lt;- seq(-100, 100, by=0.1)
@@ -443,22 +472,22 @@ expect_equal(object, expected, ..., tolerance)
 
 
 ```r
-test_that("mymean works", {
+test_that("myMean works", {
   x &lt;- 1:3
   y &lt;- seq(-100, 100, by=0.1)
-  expect_equal(mymean(x), mean(x))
-  expect_equal(mymean(y), mean(y))
+  expect_equal(myMean(x), mean(x))
+  expect_equal(myMean(y), mean(y))
 })
 ```
 
 ```
-## Test passed 😸
+## Test passed 😀
 ```
  
 ---
 ## Writing good tests
 
-A unit test tests whether a specific aspect of your code meets your expectation. For example,
+A good unit test checks whether a *specific aspect* of your code meets your expectation. For example,
 
 - the output has the same length or dimensions as the input
 
@@ -478,21 +507,35 @@ x &lt;- c(NA, 1:3)
 expect_equal(length(standardize(x)$standardized), length(x))
 ```
 
-- Benchmark your function against an existing function to make sure yours is correct:
+- Benchmark your function against an existing function to make sure yours is correct in a simple case:
 
 ```r
 y &lt;- c(1, 3, 5, 10)
-expect_equal(mymean(y), mean(y))
+expect_equal(myMean(y), mean(y))
 ```
 
-- Test the corner case with missing values
+- Test the corner case (here, mean with missing values)
 
 ```r
 z &lt;- c(1, NA)
-expect_equal(is.na(mymean(z)), TRUE)
-expect_equal(is.na(mymean(z, na.rm=TRUE)), FALSE)
+expect_equal(is.na(myMean(z)), TRUE)
+expect_equal(is.na(myMean(z, na.rm=TRUE)), FALSE)
 ```
 
+
+---
+class: inverse
+
+## Your turn
+
+Test the `myMean` function you implemented. Load `library(testthat)`
+
+&lt;img src="images/green.png" width=20&gt; Use `expect_equal` to write a unit test to check the output of `myMean` with input `c(1, 3, 4, 5)` matches what you expect.
+
+&lt;img src="images/green.png" width=20&gt; Write two unit tests for 1. that if the `na.rm` argument is unspecified, the function is not going to remove missing value, and 2. if `na.rm` is set to `TRUE`, the function is going to remove missing values. 
+Use an input that contains a missing value
+
+&lt;img src="images/green.png" width=20&gt; Group your tests using the `test_that` function. Give your group of tests a meaningful description
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
