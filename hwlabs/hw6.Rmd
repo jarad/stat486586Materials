@@ -13,24 +13,24 @@ Remove any `View()` or `install.packages()` commands in your `Rmd` file. These c
 
 ## Applying functions
 
-1. Repeat [Homework 5](hw5.html) Question 1a and 1b, but this time using only `purrr` functions instead of loops or vectorized operations (`map_dbl`, etc. You may also use `sum`). Compare the run times with your previous results using loops and vectorized operations and state what you find (e.g., which approach is the fastest, which is the slowest).
+1. Repeat [Homework 5](hw5.html) Question 1a and 1b, but this time using only `purrr` functions (`map_dbl`, etc. You may also use `sum`) instead of loops or vectorized operations. Compare the run times with your previous results using loops and vectorized operations and state what you find (e.g., which approach is the fastest, which is the slowest).
 
 1. Perform the following using `purrr` functions as much as possible.
 
-    a. Compute the median of every variable in `mtcars`. The result should be a vector.
-    a. Find the means of all columns in `mtcars` by the number of cylinders.
-    a. Find the variable type (using `class`) of each column in `classdata::cities`. The result should be a vector.
-    a. Compute the number of unique values in each column of `iris`.
+    a. Compute the medians of all variables in `mtcars`. The result should be a vector.
+    a. Find the means of all columns in `mtcars` grouped by the number of cylinders. Arrange the results in a matrix or table, and make sure the rows and columns are named.
+    a. Find the variable type (using `class`) of each column in `classdata::cities`. The result should be a character vector.
+    a. Compute the number of unique values in each column of `iris`. The result should be a numeric vector.
     a. Use `map2_dbl` to calculate, for each record in `iris`, the product of the sepal length and sepal width.
     a. Use `pmap_dbl` to calculate, for each record in `iris`, the sum of the sepal length, sepal width, petal length, and petal width columns in `iris`.
 
 1. Work on a list containing information of Game of Thrones characters. Install `repurrrsive` using `install.packages("repurrrsive")`, and load it using `library(repurrrsive)`. The list `got_chars` is what you will use. Check out what does it contain before you start.
     a. Extract all the character names (the `name` field) and the corresponding actor names (the `playedBy` field) as two separate character vectors
-    a. Create a new file for each character. The file name should be `characterName.txt`, replacing the corresponding character name, and the content should be just the name of the actor. Use `writeLines(charVec, fileName)` to write the contents of a character vector `charVec` into a file `fileName`.
+    a. Create a new file for each character. The file name should be `characterName.txt` (replace the placeholder by the corresponding character name), and the content should be just the name of the actor. Use `writeLines(charVec, fileName)` to write the contents of a character vector `charVec` into a file `fileName`.
     a. Create a new file containing all the information for each character. 
-    The file name should be `characterNameAll.txt`, replacing the corresponding character name. [Hint: You can use RStudio to open the `.txt` files and check your results. Click File -- Open File] 
+    The file name should be `characterNameAll.txt` (replace the placeholder by the corresponding character name). [Hint: You can use RStudio to open the `.txt` files and check your results. Click File -- Open File] 
     
-        Here is an example content for the first character:
+        Here is an example content for the file `Theon Greyjoy.txt` for the first character:
     
         ```{r, echo=FALSE, comment=''}
         library(repurrrsive)
@@ -106,27 +106,27 @@ for $n \ge 0$. The user will input a vector `a` specifying the coefficients (`a[
     You function should perform the integral *numerically* using the following steps (instead of applying integral rules learned in Calculus):
 
     a. create a function factory, namely, a function that takes in the coefficients `a` and outputs a polynomial function. If you input a vector to a manufactured function, it should output a vector with the same length
-    b. apply the `integrate` function on the manufactured polynomial function
-    
-    After you are done writing the function, test that it ...  TODO
-    
-    [Hint: This is an extensive question, so break in down into multiple steps. Use some unit tests to make sure a step is completely correct *before* moving onto the next. ]
+    a. Test that your function factory behaves as expected, by writing at least a unit test for each of the following aspects:
+        i. The output of your function factory is a function
+        i. Manufacture a function with $a_0 = 2$. Given a vector input `x`, the manufactured function returns a vector of all `2` with the same length as `x`
+        i. Manufacture a function with $a_0 = 1$ and $a_1 = -1$. The manufactured function works well given a vector input `x`
+    a. Manufacture a polynomial function with $a_0 = 1$, $a_1 = 0$, and $a_2 = 1$, and apply the `integrate` function to evaluate the definite integral of the manufactured function from 0 to 10.
     
     
 1. (Optional)  In this question, you will write a function factory to obtain the log-likelihood function of a Gamma$(\alpha,\beta)$ distribution.
-The probability density function (pdf) of a Gamma$(\alpha,\beta)$ distribution is, for $\alpha > 0$ and $\beta > 0$
+The probability density function (pdf) of a Gamma$(\alpha,\beta)$ distribution is, for $\alpha > 0$ and $\beta > 0$,
 $$f(x;\,\alpha,\beta)={\frac {\beta ^{\alpha }}{\Gamma (\alpha )}}x^{\alpha -1}e^{-\beta x}, \quad x > 0$$
 where $\Gamma (\alpha)=\int _{0}^{\infty }x^{\alpha-1}e^{-x}\,dx$ is the gamma function. 
 Given dataset $\{X_1, \dots, X_n\}$, the log-likelihood function, is 
 $$l(\alpha, \beta) = \sum_{i=1} \log f(X_i;\,\alpha,\beta).$$
 
-    Implement a function factory to manufacture the log-likelihood function. The function factor should take a vector `x` input for the dataset and output the log-likelihood function corresponding to `x`. The manufactured function should take a single input `par`, which is a vector of length 2 where the first entry stands for `gamma` and the second entry stands for `beta`.
+    Implement a function factory to manufacture the log-likelihood function. The function factory should take a vector `x` input for the dataset and output the log-likelihood function corresponding to `x`. The manufactured function should take a single input `par`, which is a vector of length 2 where the first entry stands for `gamma` and the second entry stands for `beta`.
     
     a. Implement the function factory
     b. Manufacture a log-likelihood function using input `c(0.289, 0.468, 0.035, 2.114, 0.281)`
-    c. Plot the log-likihood function you manufactured, fixing $\alpha=1$ and let $\beta$ range from 0.1 to 2
+    c. Plot the log-likihood function you manufactured, fixing $\alpha=1$ and let $\beta$ vary from 0.1 to 2
 
-    [Hint: You can use `lgamma` to find the log of the gamma function. The reason to always operate on the log scale when solving optimization involving likelihood is that when dataset becomes large, the likelihood function can get very large or small, so calculation can lose considerable precision. ]
+    [Hint: You can use `lgamma` to find the log of the gamma function. The reason to always operate on the log-likelihood instead of just the likelihood is that when dataset becomes large, the likelihood function defined through multiplication can get very large or small, so calculation can lose considerable precision. ]
 
 1. (Optional) Use the `optim` function to find the maximum likehood estimation for the following dataset
 
@@ -136,7 +136,7 @@ $$l(\alpha, \beta) = \sum_{i=1} \log f(X_i;\,\alpha,\beta).$$
            0.088, 0.643, 0.754, 0.004, 0.495, 
            1.499, 0.802, 0.495, 0.105, 0.64)
     ```
-assuming they come from a gamma distribution.
+assuming the data are independent and identical observations from a gamma distribution.
 
     [Hint: Check out `?optim` to learn how to use it, especially the examples. You will be needing only the very basic usage involving just the first two arguments, namely `par` and `fn`. Set the initial value `par` to be `c(1, 1)` should give you a reasonable starting value. Also set `control = list(fnscale = -1)` to ask `optim` to perform a maximization instead of minimization.]
     

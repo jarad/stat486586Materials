@@ -175,22 +175,22 @@ pre code {
 <div id="applying-functions" class="section level2">
 <h2>Applying functions</h2>
 <ol style="list-style-type: decimal">
-<li><p>Repeat <a href="hw5.html">Homework 5</a> Question 1a and 1b, but this time using only <code>purrr</code> functions instead of loops or vectorized operations (<code>map_dbl</code>, etc. You may also use <code>sum</code>). Compare the run times with your previous results using loops and vectorized operations and state what you find (e.g., which approach is the fastest, which is the slowest).</p></li>
+<li><p>Repeat <a href="hw5.html">Homework 5</a> Question 1a and 1b, but this time using only <code>purrr</code> functions (<code>map_dbl</code>, etc. You may also use <code>sum</code>) instead of loops or vectorized operations. Compare the run times with your previous results using loops and vectorized operations and state what you find (e.g., which approach is the fastest, which is the slowest).</p></li>
 <li><p>Perform the following using <code>purrr</code> functions as much as possible.</p>
 <ol style="list-style-type: lower-alpha">
-<li>Compute the median of every variable in <code>mtcars</code>. The result should be a vector.</li>
-<li>Find the means of all columns in <code>mtcars</code> by the number of cylinders.</li>
-<li>Find the variable type (using <code>class</code>) of each column in <code>classdata::cities</code>. The result should be a vector.</li>
-<li>Compute the number of unique values in each column of <code>iris</code>.</li>
+<li>Compute the medians of all variables in <code>mtcars</code>. The result should be a vector.</li>
+<li>Find the means of all columns in <code>mtcars</code> grouped by the number of cylinders. Arrange the results in a matrix or table, and make sure the rows and columns are named.</li>
+<li>Find the variable type (using <code>class</code>) of each column in <code>classdata::cities</code>. The result should be a character vector.</li>
+<li>Compute the number of unique values in each column of <code>iris</code>. The result should be a numeric vector.</li>
 <li>Use <code>map2_dbl</code> to calculate, for each record in <code>iris</code>, the product of the sepal length and sepal width.</li>
 <li>Use <code>pmap_dbl</code> to calculate, for each record in <code>iris</code>, the sum of the sepal length, sepal width, petal length, and petal width columns in <code>iris</code>.</li>
 </ol></li>
 <li><p>Work on a list containing information of Game of Thrones characters. Install <code>repurrrsive</code> using <code>install.packages(&quot;repurrrsive&quot;)</code>, and load it using <code>library(repurrrsive)</code>. The list <code>got_chars</code> is what you will use. Check out what does it contain before you start.</p>
 <ol style="list-style-type: lower-alpha">
 <li><p>Extract all the character names (the <code>name</code> field) and the corresponding actor names (the <code>playedBy</code> field) as two separate character vectors</p></li>
-<li><p>Create a new file for each character. The file name should be <code>characterName.txt</code>, replacing the corresponding character name, and the content should be just the name of the actor. Use <code>writeLines(charVec, fileName)</code> to write the contents of a character vector <code>charVec</code> into a file <code>fileName</code>.</p></li>
-<li><p>Create a new file containing all the information for each character. The file name should be <code>characterNameAll.txt</code>, replacing the corresponding character name. [Hint: You can use RStudio to open the <code>.txt</code> files and check your results. Click File – Open File]</p>
-<p>Here is an example content for the first character:</p>
+<li><p>Create a new file for each character. The file name should be <code>characterName.txt</code> (replace the placeholder by the corresponding character name), and the content should be just the name of the actor. Use <code>writeLines(charVec, fileName)</code> to write the contents of a character vector <code>charVec</code> into a file <code>fileName</code>.</p></li>
+<li><p>Create a new file containing all the information for each character. The file name should be <code>characterNameAll.txt</code> (replace the placeholder by the corresponding character name). [Hint: You can use RStudio to open the <code>.txt</code> files and check your results. Click File – Open File]</p>
+<p>Here is an example content for the file <code>Theon Greyjoy.txt</code> for the first character:</p>
 <pre><code>url: https://www.anapioficeandfire.com/api/characters/1022
 id: 1022
 name: Theon Greyjoy
@@ -255,24 +255,28 @@ g(y = f())</code></pre></li>
 <p>You function should perform the integral <em>numerically</em> using the following steps (instead of applying integral rules learned in Calculus):</p>
 <ol style="list-style-type: lower-alpha">
 <li>create a function factory, namely, a function that takes in the coefficients <code>a</code> and outputs a polynomial function. If you input a vector to a manufactured function, it should output a vector with the same length</li>
-<li>apply the <code>integrate</code> function on the manufactured polynomial function</li>
-</ol>
-<p>After you are done writing the function, test that it … TODO</p>
-<p>[Hint: This is an extensive question, so break in down into multiple steps. Use some unit tests to make sure a step is completely correct <em>before</em> moving onto the next. ]</p></li>
-<li><p>(Optional) In this question, you will write a function factory to obtain the log-likelihood function of a Gamma<span class="math inline">\((\alpha,\beta)\)</span> distribution. The probability density function (pdf) of a Gamma<span class="math inline">\((\alpha,\beta)\)</span> distribution is, for <span class="math inline">\(\alpha &gt; 0\)</span> and <span class="math inline">\(\beta &gt; 0\)</span> <span class="math display">\[f(x;\,\alpha,\beta)={\frac {\beta ^{\alpha }}{\Gamma (\alpha )}}x^{\alpha -1}e^{-\beta x}, \quad x &gt; 0\]</span> where <span class="math inline">\(\Gamma (\alpha)=\int _{0}^{\infty }x^{\alpha-1}e^{-x}\,dx\)</span> is the gamma function. Given dataset <span class="math inline">\(\{X_1, \dots, X_n\}\)</span>, the log-likelihood function, is <span class="math display">\[l(\alpha, \beta) = \sum_{i=1} \log f(X_i;\,\alpha,\beta).\]</span></p>
-<p>Implement a function factory to manufacture the log-likelihood function. The function factor should take a vector <code>x</code> input for the dataset and output the log-likelihood function corresponding to <code>x</code>. The manufactured function should take a single input <code>par</code>, which is a vector of length 2 where the first entry stands for <code>gamma</code> and the second entry stands for <code>beta</code>.</p>
+<li>Test that your function factory behaves as expected, by writing at least a unit test for each of the following aspects:
+<ol style="list-style-type: lower-roman">
+<li>The output of your function factory is a function</li>
+<li>Manufacture a function with <span class="math inline">\(a_0 = 2\)</span>. Given a vector input <code>x</code>, the manufactured function returns a vector of all <code>2</code> with the same length as <code>x</code></li>
+<li>Manufacture a function with <span class="math inline">\(a_0 = 1\)</span> and <span class="math inline">\(a_1 = -1\)</span>. The manufactured function works well given a vector input <code>x</code></li>
+</ol></li>
+<li>Manufacture a polynomial function with <span class="math inline">\(a_0 = 1\)</span>, <span class="math inline">\(a_1 = 0\)</span>, and <span class="math inline">\(a_2 = 1\)</span>, and apply the <code>integrate</code> function to evaluate the definite integral of the manufactured function from 0 to 10.</li>
+</ol></li>
+<li><p>(Optional) In this question, you will write a function factory to obtain the log-likelihood function of a Gamma<span class="math inline">\((\alpha,\beta)\)</span> distribution. The probability density function (pdf) of a Gamma<span class="math inline">\((\alpha,\beta)\)</span> distribution is, for <span class="math inline">\(\alpha &gt; 0\)</span> and <span class="math inline">\(\beta &gt; 0\)</span>, <span class="math display">\[f(x;\,\alpha,\beta)={\frac {\beta ^{\alpha }}{\Gamma (\alpha )}}x^{\alpha -1}e^{-\beta x}, \quad x &gt; 0\]</span> where <span class="math inline">\(\Gamma (\alpha)=\int _{0}^{\infty }x^{\alpha-1}e^{-x}\,dx\)</span> is the gamma function. Given dataset <span class="math inline">\(\{X_1, \dots, X_n\}\)</span>, the log-likelihood function, is <span class="math display">\[l(\alpha, \beta) = \sum_{i=1} \log f(X_i;\,\alpha,\beta).\]</span></p>
+<p>Implement a function factory to manufacture the log-likelihood function. The function factory should take a vector <code>x</code> input for the dataset and output the log-likelihood function corresponding to <code>x</code>. The manufactured function should take a single input <code>par</code>, which is a vector of length 2 where the first entry stands for <code>gamma</code> and the second entry stands for <code>beta</code>.</p>
 <ol style="list-style-type: lower-alpha">
 <li>Implement the function factory</li>
 <li>Manufacture a log-likelihood function using input <code>c(0.289, 0.468, 0.035, 2.114, 0.281)</code></li>
-<li>Plot the log-likihood function you manufactured, fixing <span class="math inline">\(\alpha=1\)</span> and let <span class="math inline">\(\beta\)</span> range from 0.1 to 2</li>
+<li>Plot the log-likihood function you manufactured, fixing <span class="math inline">\(\alpha=1\)</span> and let <span class="math inline">\(\beta\)</span> vary from 0.1 to 2</li>
 </ol>
-<p>[Hint: You can use <code>lgamma</code> to find the log of the gamma function. The reason to always operate on the log scale when solving optimization involving likelihood is that when dataset becomes large, the likelihood function can get very large or small, so calculation can lose considerable precision. ]</p></li>
+<p>[Hint: You can use <code>lgamma</code> to find the log of the gamma function. The reason to always operate on the log-likelihood instead of just the likelihood is that when dataset becomes large, the likelihood function defined through multiplication can get very large or small, so calculation can lose considerable precision. ]</p></li>
 <li><p>(Optional) Use the <code>optim</code> function to find the maximum likehood estimation for the following dataset</p>
 <pre><code>x &lt;- c(0.104, 0.069, 0.034, 0.906, 0.75, 
        0.484, 0.574, 1.747, 0.254, 0.591, 
        0.088, 0.643, 0.754, 0.004, 0.495, 
        1.499, 0.802, 0.495, 0.105, 0.64)</code></pre>
-<p>assuming they come from a gamma distribution.</p>
+<p>assuming the data are independent and identical observations from a gamma distribution.</p>
 <p>[Hint: Check out <code>?optim</code> to learn how to use it, especially the examples. You will be needing only the very basic usage involving just the first two arguments, namely <code>par</code> and <code>fn</code>. Set the initial value <code>par</code> to be <code>c(1, 1)</code> should give you a reasonable starting value. Also set <code>control = list(fnscale = -1)</code> to ask <code>optim</code> to perform a maximization instead of minimization.]</p></li>
 </ol>
 </div>
