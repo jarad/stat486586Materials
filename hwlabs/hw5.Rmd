@@ -20,7 +20,7 @@ Remove any `View()` or `install.packages()` commands in your `Rmd` file. These c
     a. Calculate $\sum_{i=1}^n \sum_{j=1}^m 2^{-ij}$ in two ways, one using a nested `for` loop and another using vectorized operations (on matrices). 
         i. Find the value for $n=100$ and $m=50$.
         i. Use `system.time` to time how long did the code run. Set a large enough $n$ so that the speed difference between the two methods is distinguishable.     
-    b. Find for which $n$ will $\sum_{i=1}^n 1/i$ exceed 11.5 in two ways, one using a `while` loop and another without a loop (but you probably need some trial and error).
+    b. Find for which $n$ will $\sum_{i=1}^n 1/i$ exceed 11.5 in two ways, one using a `while` loop and another without a loop (The approach without using a loop involves some trial and error; an approximate $n$ will do).
     c. Work on the following speech by Trump, as a text string
         
         ```
