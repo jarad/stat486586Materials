@@ -1,0 +1,152 @@
+---
+title: "Factors in R"
+subtitle: "STAT486/586"
+author: "Xiongtao Dai"
+output:
+  xaringan::moon_reader:
+    css: [myslides.css, myslides-fonts.css]
+    lib_dir: libs
+    nature:
+      beforeInit: "macros.js"
+      highlightLines: true
+      countIncrementalSlides: false
+---
+class: big, middle
+
+```{r xaringan-tile-view, echo=FALSE}
+xaringanExtra::use_tile_view()
+```
+
+## Factor variables
+
+---
+
+## Overview
+
+- What is a factor variable
+
+- Why is it important
+
+- Inspecting, creating, and using factor variables
+
+- Type casting
+
+---
+
+## Factors in R
+
+- A type of variable to indicate *categories*
+
+- Stores both *levels* and the *order* of the levels
+
+- It is more than a character vector, which does not store the order information
+
+---
+
+## The `fbi` data
+
+```{r}
+library(classdata)
+str(fbi)
+```
+
+---
+
+## Using factors in R
+
+- Many R functions behave nicely when applied on a factor, for example `boxplot(x ~ fct)` creates a side-by-side boxplot of `x` in different groups specified by the levels in `fct`
+
+- The order of factor levels affects the order of the boxes. It is crucial to arrange them in a meaningful order for presentation!
+
+```{r, fig.width=8, fig.height=3}
+boxplot(fbi$Count ~ fbi$Type)
+```
+
+---
+
+## Working with factors
+
+- `table`, `str` inspect a factor
+
+- `factor` creates a new factor with specified levels
+
+- `levels`, `levels<-` extracts and set the levels
+
+- `reorder(fct, numbers, FUN)` reorders a factor `fct` according to a summary statistic `FUN` of `numbers`
+
+---
+
+## R demo...
+
+---
+
+## Additional notes
+
+- Sometimes text variables are stored in factors during input by default
+
+- Numeric variables and factors are treated differently in R, and they have to be converted manually
+
+---
+class: inverse
+
+## Your turn
+
+For this your turn use the `fbi` object from the `classdata` package. 
+
+- <img src="images/green.png" width=20> Introduce a rate of the number of reported offenses by population into the `fbi` data. 
+
+- <img src="images/blue.png" width=20> 
+Plot boxplots of crime rates by different types of crime. How can you make axis text legible? 
+
+- <img src="images/blue.png" width=20> 
+Reorder the boxplots of crime rates, such that the crime types are ordered by the median crime rates. 
+
+---
+class: big, middle
+
+## Quick summary of demo
+
+---
+
+## Reordering factor levels manually
+
+```{r}
+levels(fbi$Type)
+```
+
+Reorder so that property crimes come first (extremely sensitive to typos):
+
+```{r}
+levels(factor(fbi$Type, levels=c("Larceny.theft", "Burglary", "Motor.vehicle.theft", "Aggravated.assault", "Robbery", "Legacy.rape", "Murder.and.nonnegligent.Manslaughter", "Rape")))
+```
+
+---
+
+## Reordering factor levels - using another variable
+
+`reorder(factor, numbers, function)`
+
+reorder levels in factor by values in `numbers`. Use `function` to summarize (average is used by default). 
+
+```{r}
+levels(reorder(fbi$Type, fbi$Count, mean, na.rm=TRUE))
+```
+Missing values in `numbers`? make sure to use parameter `na.rm=TRUE`!
+
+---
+
+## Changing levels' names
+
+```{r}
+levels(fbi$Type)
+```
+
+```{r}
+levels(fbi$Type)[6] <- "Murder"
+
+levels(fbi$Type)
+```
+
+ 
+
+

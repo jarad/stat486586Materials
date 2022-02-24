@@ -12,15 +12,10 @@ output:
       highlightLines: true
       countIncrementalSlides: false
 ---
-class: big, middle
 
 ```{r xaringan-tile-view, echo=FALSE}
 xaringanExtra::use_tile_view()
 ```
-
-## Functional Programming
-
----
 
 ## Outline
 
@@ -36,7 +31,7 @@ xaringanExtra::use_tile_view()
 
 ## Functional programming
 
-- *functional programming* is a programming paradigm where programs are constructed by applying and composing functions
+- *functional programming* is a programming paradigm where programs are constructed by applying and combining functions
 
 - This is as opposed to the *procedural programming* paradigm, where one specifies the series of computational steps to be carried out
 
@@ -88,7 +83,7 @@ for (i in seq_along(files)) {
 
 - A functional programming style is great to use for programming statistical/mathematical methods
 
-- .style[You may think you can do everything using loops, but this will prevent you to build big things. Using functional programming, you will gain much more mileage as we learn more ]
+- .style[You may think you can do everything using loops, but the complexity will prevent you to build big things. Using functional programming, you will gain much more mileage as we learn more ]
 
 ---
 class: big, middle
@@ -181,11 +176,12 @@ map(x, function(v) { # calculate the 2nd moment
 map_dbl(x, mean)
 ```
 
+If the result of `.f` is not a scalar, you will have an error
 ```{r, error=TRUE}
 map_dbl(x, summary)
 ```
 
-Use `map` if `.f` outputs vectors of different types or with length>1
+Use `map` if `.f` outputs vectors of different types or with length > 1
 ```{r, error=TRUE}
 str(map(x, summary))
 ```
@@ -238,7 +234,7 @@ l <- list(c(1, 3, 5, 100),
           c(NA, 1:10, 100))
 ```
 
-<img src="images/green.png" width=20> Find the sum of the values in each entry of `l` using `map`
+<img src="images/green.png" width=20> Find the sum of the values in each entry of `l` using `map`. It is OK to have `NA` values in your result
 
 <img src="images/green.png" width=20> Find the sum of the values in each entry of `l`. The returned value should be a numeric vector (but not a list) this time
 
@@ -251,8 +247,8 @@ Suppose that we want to find the trimmed means of entries x, and try either no t
 
 ```{r}
 map(x, function(xx) {
-  map_dbl(c(0, 0.3), mean, x=xx)
-  # same as: map_dbl(c(0, 0.3), function(trim) mean(xx, trim=trim))
+  map_dbl(c(0, 0.3), function(trim) mean(xx, trim=trim))
+  # same as: map_dbl(c(0, 0.3), mean, x=xx)
 })
 ```
 
@@ -330,23 +326,20 @@ map2(x,
 ]
 
 ```{r, collapse=TRUE}
-record <- data.frame(
-  student = c("Mary", "John", "Jenny"), 
-  id = c(312, 983, 291),
-  score = c(92, 69, 87)
+l <- list(
+  c(1, 3, 5),
+  c(4, 6, 8),
+  c(1, 1, 2)
 )
-pmap(record, 
-     function(student, id, score) {
-       stringr::str_c(student, id, ": ", score, sep=" ")
-     })
+pmap(l, function(a, b, c) seq(from=a, to=b, by=c))
 ```
 
 ---
 ## More variants with >1 inputs
 
-- `map2_dbl`, `map2_chr`, `map2_lgl`, `walk2` etc are also available
+- `map2_dbl`, `map2_chr`, `map2_lgl`, `walk2` etc are also available to map over 2 arguments
 
-- `pmap_dbl`, `pmap_chr`, `pmap_lgl`, `pwalk` etc are also available
+- `pmap_dbl`, `pmap_chr`, `pmap_lgl`, `pwalk` etc are also available to map over multiple arguments
 
 ---
 class: inverse
@@ -384,6 +377,46 @@ summary(sLenBySpecies)
 - We can then apply the `map` function and friends to the grouped data
 ```{r}
 map(sLenBySpecies, summary)
+```
+
+---
+
+## Base R apply functions (optional)
+
+- `apply`: map functions over margins of a matrix or array
+
+- `lapply`, `sapply`, `vapply`: map functions over a vector or a list; the manners of the return differs
+
+- `tapply`, `by`, `aggregate`: map functions for each group
+
+```{r, include=FALSE, eval=FALSE}
+library(microbenchmark)
+set.seed(1)
+n <- 1e3
+X <- matrix(rnorm(n^2), n, n)
+microbenchmark(
+  rowMeans(X),
+  colMeans(X),
+  apply(X, 1, mean),
+  apply(X, 2, mean),
+  map_dbl(seq_len(n), function(i) mean(X[i, ])),
+  map_dbl(seq_len(n), function(i) mean(X[, i]))
+)
+# Unit: microseconds
+#                                           expr       min        lq       mean    median
+#                                    rowMeans(X)  1397.949  1524.102  1690.7947  1595.580
+#                                    colMeans(X)   745.218   806.956   854.2799   828.432
+#                              apply(X, 1, mean) 13412.448 14822.433 20478.4389 21986.129
+#                              apply(X, 2, mean) 12068.028 13477.265 20184.9867 19323.789
+#  map_dbl(seq_len(n), function(i) mean(X[i, ])) 11164.280 12423.541 17435.2968 13180.915
+#  map_dbl(seq_len(n), function(i) mean(X[, i]))  7485.218  8149.587 13420.5289  8606.652
+#         uq        max neval cld
+#   1646.617  11304.899   100 a  
+#    880.786   1646.151   100 a  
+#  24648.008  35631.512   100   c
+#  22166.638 203217.200   100   c
+#  18827.545 215246.010   100  bc
+#  16198.564 201337.073   100  b 
 ```
 
 ---
@@ -437,45 +470,6 @@ accumulate(l, `+`)
 
 ## R demo...
 
----
-
-## Base R apply functions
-
-- `apply`: map functions over margins of a matrix or array
-
-- `lapply`, `sapply`, `vapply`: map functions over a vector or a list; the manners of the return differs
-
-- `tapply`, `by`, `aggregate`: map functions for each group
-
-```{r, include=FALSE, eval=FALSE}
-library(microbenchmark)
-set.seed(1)
-n <- 1e3
-X <- matrix(rnorm(n^2), n, n)
-microbenchmark(
-  rowMeans(X),
-  colMeans(X),
-  apply(X, 1, mean),
-  apply(X, 2, mean),
-  map_dbl(seq_len(n), function(i) mean(X[i, ])),
-  map_dbl(seq_len(n), function(i) mean(X[, i]))
-)
-# Unit: microseconds
-#                                           expr       min        lq       mean    median
-#                                    rowMeans(X)  1397.949  1524.102  1690.7947  1595.580
-#                                    colMeans(X)   745.218   806.956   854.2799   828.432
-#                              apply(X, 1, mean) 13412.448 14822.433 20478.4389 21986.129
-#                              apply(X, 2, mean) 12068.028 13477.265 20184.9867 19323.789
-#  map_dbl(seq_len(n), function(i) mean(X[i, ])) 11164.280 12423.541 17435.2968 13180.915
-#  map_dbl(seq_len(n), function(i) mean(X[, i]))  7485.218  8149.587 13420.5289  8606.652
-#         uq        max neval cld
-#   1646.617  11304.899   100 a  
-#    880.786   1646.151   100 a  
-#  24648.008  35631.512   100   c
-#  22166.638 203217.200   100   c
-#  18827.545 215246.010   100  bc
-#  16198.564 201337.073   100  b 
-```
 ---
 
 ## References

@@ -1,0 +1,116 @@
+---
+title: 'Homework #5'
+output: html_document
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## A useful note
+Remove any `View()` or `install.packages()` commands in your `Rmd` file. These commands will prevent the knitting of your file. 
+
+## Loops and functions
+
+1. Perform some exercises for the loops. You are going to see that although loops are useful, they can be slower and harder to read than vectorized operations, if the latter is available.
+    a. Calculate $\sum_{i=0}^n 1/i$ in two ways, one using a `for` loop and another without a loop. 
+        i. Find the value for $n=100$
+        i. Use `system.time` to time how long did the code run. Set a large enough $n$ so that the speed difference between the two method is distinguishable. 
+    a. Calculate $\sum_{i=1}^n \sum_{j=1}^m 2^{-ij}$ in two ways, one using a nested `for` loop and another without a loop. 
+        i. Find the value for $n=100$ and $m=50$.
+        i. Use `system.time` to time how long did the code run. Set a large enough $n$ so that the speed difference between the two method is distinguishable.     
+    b. Find for which $n$ will $\sum_{i=0}^n 1/i$ exceed 11.5 in two ways, one using a `while` loop and another without a loop (but you probably need some trial and error).
+    c. Work on the following speech by Trump, as a text string
+        
+        ```
+        "Hello, Iowa. Congratulations to the Iowa hawkers. That was a big win today. I’m thrilled to be back. That was a big win. But I am thrilled to be back especially on such great news as that, that was a big one. You’ve been a great school, a great team, a great tradition, really an amazing job and it all started right here and we’re going to keep it here. Number one, right? We’re going to keep it here. The fairgrounds so they broke the record tonight in the history of the fairgrounds. I don’t know how old it is, but in the history of the fairgrounds, this is the most people they’ve had. So thank you very much."
+        ```
+        
+        Use a `while` or `repeat` loop and `break` to find the location of the first "great" in terms of the number of characters (you may need `str_sub`). Then use `str_locate` to find the location again.
+
+1. Calculate the following continued fraction, which you probably have to use a loop but not any vectorized operations. A continued fraction is an expression of the form
+$$b_0 + \cfrac{a_1}{b_1 + \cfrac{a_2}{b_2 + \cfrac{a_3}{b_3 + \cfrac{a_4}{b_4 + \ddots\,}}}}.$$
+
+    Now, approximate the following continued fraction
+    $$3 + \cfrac{1^2}{6 + \cfrac{3^2}{6 + \cfrac{5^2}{6 + \cfrac{7^2}{6 + \cfrac{9^2}{6 + \ddots\,}}}}}.$$
+    
+    [Hint: Calculate from the inside out. Set `...` to 0. The limit equals π]
+    
+    ```{r, include=FALSE, eval=FALSE}
+    n <- 100
+    b0 <- 3
+    b <- rep(6, n)
+    a <- seq(1, length.out = n, by=2)^2
+    res <- 0
+    for (i in n:1) {
+        res <- a[i] / (b[i] + res)
+    }
+    res <- res + b0
+    ```
+
+1. Implement a function `mymedian` with a single vector input `x` that outputs the median of `x`, without using the `median` function. Recall how to find the median [here](https://en.wikipedia.org/wiki/Median#/media/File:Finding_the_median.png).
+
+```{r, include=FALSE, eval=FALSE}
+mymedian <- function(x) {
+  y <- sort(x)
+  n <- length(y)
+
+  if (n %% 2 == 1) {
+    res <- y[(n + 1) / 2]
+  } else {
+    res <- (y[n / 2] + y[n / 2 + 1]) / 2
+  }
+  res
+}
+```
+
+1. Create a function `fp` that calculates the $p$th power of a vector of numbers (or the $L^p$), namely
+$$f_p(x) = |x|^p.$$
+The function should satisfy the following specifics:
+
+    - The function should have two arguments `x` and `p`. It should be vectorized in `x` (take in a vector argument and return a vector of the same length). 
+    - The argument `p` should have a default value of 2. You can assume the input values for `p` is at least 1.
+    - The function should also include an argument `deriv` to indicate whether you want to calculate the value of the first derivative (if `deriv=TRUE`) or the original function (`deriv=FALSE`). 
+    The first derivative is
+    $$f_p'(x) = \begin{cases} 
+                 p |x|^{p - 1}\text{sign}(x) & \text{if } p > 1 \\
+                 \text{sign}(x) & \text{if } p = 1,
+                 \end{cases}$$
+    where
+    $$\text{sign}(x)=\begin{cases}
+    1 & \text{if } x > 0 \\
+    0 & \text{if } x = 0 \\
+    -1 & \text{if } x < 0. 
+    \end{cases}$$
+
+    a. Write the function.
+    a. Write at least one unit test for each of the following aspects using `testthat::expect_equal`:
+        i. The function is vectorized in `x`, so a vector input works well
+        i. When $p=2$, the result is the squared numbers
+        i. When $p=1$, the result is the absolute numbers
+        i. When $p=2$, the derivative is 2 times $x$
+        i. When $p=1$, the derivative equals the sign of $x$.
+
+1. The mean of a dataset $\{X_1,\dots, X_n\}$ can be cast as the solution to the following minimization problem
+$$ \min_{x \in \mathbb{R}} n^{-1}\sum_{i=1}^n (x - X_i)^2.$$ 
+To minimize a general function $g(x)$, the gradient descent algorithm is as follows.
+
+    *Step 0*. Initialize $x_0 = 0$</br>
+    *Step 1*. In the $k$th step, set
+    $$x_{k+1} = x_{k} - (0.99^{k})g'(x_{k}).$$
+    *Step 2*. Repeat Step 1 until $|g'(x_{k})|$ exceeds a small tolerance level $tol$ (e.g., `1e-5`) or $k$ exceeds the maximum number of iterations $K_\max$ (e.g., 1000).
+    
+    Use the dataset `cars$speed$ for $\{X_1,\dots, X_n\}$. Implement the gradient descent algorithm to find the median. You don't have to write the algorithm into a function in this question; you are going to do this in the next.
+    
+    [Hint: Plug in $n^{-1}\sum_{i=1}^n (x - X_i)^2$ for $g(x)$ and use the last question.]
+
+1. Wrap the gradient descent algorithm into a function. The function should take four arguments: A dataset vector, a small value for the tolerance level, and a large value for $K_\max$. Write three unit tests for your function.
+
+1. In the last question, your function minimizes the sum of squared errors. 
+Modify your function to solve 
+$$ \min_{x \in \mathbb{R}} n^{-1}\sum_{i=1}^n |x - X_i|^p.$$ 
+Your function should take in an additional argument `p`. When $p=1$, the minimizer should be the median. Test your function for the case $p=2$ and $p=1$ using dataset `dat <- c(1, 2, 3, 5, 10000)`. 
+
+1. Document the function you created in the last question, following the steps as in the lecture slides [here](../slides/02_02_functions.html#21).
+

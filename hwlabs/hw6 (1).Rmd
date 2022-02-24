@@ -1,0 +1,119 @@
+---
+title: 'Homework #6'
+output: html_document
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## A useful note
+Remove any `View()` or `install.packages()` commands in your `Rmd` file. These commands will prevent the knitting of your file. 
+
+## Applying functions
+
+1. Repeat Homework 5 Question 1a and 1b, but this time using functions in `purrr`.
+
+1. Perform the following using `purrr` functions as much as possible.
+
+    a. Compute the median of every variable in `mtcars`. The result should be a vector.
+    a. Find the means of all columns in `mtcars` by the number of cylinders.
+    a. Find the class of each column in `classdata::cities`. The result should be a vector.
+    a. Compute the number of unique values in each column of `iris`.
+    a. Use `map2_dbl` to calculate the product of the sepal length and sepal width in `iris`.
+    a. Use `pmap_dbl` to calculate the sum of the sepal length, sepal width, petal length, and petal width columns in `iris`.
+
+1. Work on a list containing information of Game of Thrones characters. Install `repurrrsive` using `install.packages("repurrrsive")`, and load it. The list `got_chars` is what you will use. Check out what does it contain before you start.
+    a. Extract all the character names (the `name` field) and the corresponding actor names (the `playedBy` field) as two separate character vectors
+    a. Create a new file for each character. The file name should be `characterName.txt`, replacing the corresponding character name, and the content should be just the name of the actor. 
+    a. Create a new file containing all the information for each character. 
+    The file name should be `characterNameAll.txt`, replacing the corresponding character name. Here is an example content for the first character:
+    
+        ```{r, echo=FALSE, comment=''}
+        library(repurrrsive)
+        library(purrr)
+        out <- imap_chr(got_chars[[1]], function(val, name) stringr::str_glue("{name}: {stringr::str_c(val, collapse=', ')}"))
+        writeLines(out)
+        ```
+
+1. You have a list of matrices
+
+    ```
+    l <- list(
+      matrix(c(2, 3,
+               4, 5), 2, 2),
+      diag(c(1, 2)), 
+      diag(c(-2, 1))
+    )
+    ```
+    
+    a. Use `purrr::reduce` to find the *matrix product* of all matrices in `l`. (The order of the matrices should follow their order in `l`.)
+    b. Use `purrr::accumulate` to find the cumulative sum of all matrices in `l`.
+
+## Advanced functions
+
+1. What does the following code output? Make a prediction before running the code. Use the principles (could be more than 1) covered in [the lecture](../slides/02_03_functional_programming.html) to explain.
+
+    a. 
+        ```{R, eval=FALSE} 
+        x <- 10
+        f1 <- function(x) {
+          function() {
+            x + 10
+          }
+        }
+        g <- f1(1)
+        g()
+        ```
+    
+    b. 
+        ```{r, eval=FALSE}
+        y <- 2
+        i1<- function() {
+          z <- 3
+          c(y, z)
+        }
+        y <- 3
+        i1()
+        ```    
+    
+    a. 
+        ```{r, eval=FALSE}
+        f <- function(x) print("ha")
+        g <- function(y) print("hello")
+        y = f()
+        g(y)
+        ```
+        
+    a. 
+        ```{r, eval=FALSE}
+        f <- function(x) print("ha")
+        g <- function(y) print("hello")
+        g(y = f())
+        ```
+        
+
+1. Write a function to calculate the definite integral 
+$$\int_l^u f(x) dx$$
+of an arbitrary polynomial
+$$f(x) = a_0 + a_1 x + a_2 x^2 + \dots + a_n x^n, \quad x\in \mathbb{R}$$
+for $n \ge 0$. The user will input a vector `a` specifying the coefficients (`a[1]`=$a_0$, `a[2]`=$a_1$, etc), a lower bound `lower` ($l$), and an upper bound `upper` ($u$). 
+You function should perform the integral *numerically*, so do not apply integral rules learned in Calculus for this question.
+Test that TODO
+
+    [Hint: First create a function factory, and then apply `integrate`]
+
+1. Write a function factory to obtain the log-likelihood function of a Gamma$(\alpha,\beta)$ distribution, where $\alpha > 0$ and $\beta > 0$. The pdf is 
+$$f(x;\,\alpha,\beta)={\frac {\beta ^{\alpha }}{\Gamma (\alpha )}}x^{\alpha -1}e^{-\beta x}, \quad x > 0$$
+where $\Gamma (\alpha)=\int _{0}^{\infty }x^{\alpha-1}e^{-x}\,dx$ is the gamma function. 
+Given dataset $\{X_1, \dots, X_n\}$, the log-likelihood function is 
+$$l(\alpha, \beta) = \sum_{i=1} \log f(x;\,\alpha,\beta).$$
+You can use `lgamma` to find the log of the gamma function, but do not use `dgamma` to find the Gamma density for this question.
+Test that TODO
+
+    Note: The reason to always operate on the log scale when solving optimization involving likelihood is that when dataset becomes large, the likelihood function can get very large or small, so calculation can lose considerable precision. 
+
+1. Use the `optim` function to find the maximum likehood estimation for the following dataset TODO, assuming they come from a gamma distribution.
+
+    [Hint: Check out `?optim` to learn how to use it, especially the examples. You will be needing only the very basic usage involving just the first two arguments, namely `par` and `fn`. Set the initial value `par` to be `c(1, 1)` should give you a reasonable starting value. Also set `control = list(fnscale = -1)` to ask `optim` to perform a maximization instead of minimization.]

@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>R Fundamentals</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Xiongtao Dai" />
+    <script src="libs/header-attrs-2.11/header-attrs.js"></script>
+    <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view-0.2.6/tile-view.js"></script>
+    <link rel="stylesheet" href="myslides.css" type="text/css" />
+    <link rel="stylesheet" href="myslides-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# R Fundamentals
+## STAT486/586
+### Xiongtao Dai
+
+---
+
+class: big, middle
+
+
+
+## Welcome to R
+
+---
+
+## Outline
+
+- R language
+
+- Data types
+
+- Inspecting data
+
+- Making vectors
+
+- Assignment
+
+- Workspace and reproducibility
+
+- Numerical and logical operations
+
+- Indexing
+
+---
+
+## The R language
+
+For someone who had previous programming experience: 
+
+- R is an intuitive high-level programming language
+
+- R has an excellent handling of data, analysis, and graphics.
+
+- You will use R interactively
+
+---
+
+## Some Specifics
+
+- R functions are like mathmatical functions. So `cos(x)` means "return me the cosine of the value of the variable `x`". Not going to modify `x` (calling by value but almost never by reference)
+
+- So R is great for functional programming
+
+- R is case-sensitive, so `function` and `Function` are very different
+
+- R counts from 1 (unlike Python &amp; C++ which counts from 0)
+
+- Easy to access to documentation: E.g., type `?cos` in the R console
+
+---
+
+## R Syntax Examples 
+
+|**Math** | **Code**|
+|:-------:|:-------:|
+|Assignments `\(x = \frac{2}{3}\)` | `x &lt;- 2/3` |
+|Vectors `\(y = \left( 1, 2, 3, 5\right)\)` | `y &lt;- c(1, 2, 3, 5)`|
+| Indices `\(y_1\)` | `y[1]` | 
+| `\(2y\)` | `2 * y` |
+|Functions `\(\sqrt{x}\)` | `sqrt(x)` |
+|Mathematical Operators `\(\sum_{i=1}^{4} y\)` | `sum(y)` |
+
+
+---
+
+## R Data Types
+
+R has different data types:
+
+- Numeric variables, e.g. `3`, `1:20`, `pi`
+
+- Character variables, e.g. `"hello world"`, `c("cat", "dog")`
+
+- Logical variables, e.g. `TRUE`, `FALSE`, `c(FALSE, TRUE)`
+
+- Missing values `NA` (more next time)
+
+- Data frame. Use `$` to extract a column. E.g., `df$column` 
+
+- Matrix (more soon)
+
+- List (more soon)
+
+Here, `c()` is the function for creating a vector (combine/concatenate)
+
+---
+
+## Inspecting objects
+
+for an object `x`, we can try out the following commands:
+
+- `x` 
+- `print(x)`
+- `str(x)`
+- `class(x)`
+- `length(x)`
+- `head(x)`
+- `tail(x)`
+- `summary(x)`
+- `dim(x)`
+- `View(x)` (offered by RStudio, remove from Rmd before knitting)
+
+---
+
+## Loading class data
+
+- Some R packages have built-in datasets
+
+- I made an R package for this class available on github containing datasets
+
+- Installing `classdata` package:
+
+
+```r
+devtools::install_github("xdaiISU/classdata")
+```
+
+- Make the data available when needed (once after you start R):
+
+```r
+library(classdata)
+```
+
+- In general, `library(pkgname)` loads the package `pkgname` into R
+
+---
+
+## The `cities` data
+
+- `cities` is a data frame with columns (variables) and rows (records)
+
+
+```r
+str(cities)
+```
+
+```
+## 'data.frame':	1207 obs. of  14 variables:
+##  $ City               : chr  "Adel" "Albia" "Ames" "Amosa" ...
+##  $ Population         : int  4067 3699 52541 5646 36876 2464 32059 2611 12899 25571 ...
+##  $ Violent.crime      : int  3 9 147 5 36 0 75 2 33 120 ...
+##  $ Murder             : int  0 0 0 0 0 0 1 0 0 1 ...
+##  $ Rape               : int  0 0 24 0 6 0 9 1 15 8 ...
+##  $ Robbery            : int  0 0 17 0 6 0 13 0 0 13 ...
+##  $ Aggravated.assault : int  3 9 106 5 24 0 52 1 18 98 ...
+##  $ Property.crime     : int  114 67 1465 99 806 18 832 23 412 1226 ...
+##  $ Burglary           : int  13 11 363 16 140 10 156 7 112 296 ...
+##  $ Larceny.theft      : int  93 53 1061 81 626 4 644 15 285 881 ...
+##  $ Motor.vehicle.theft: int  8 3 41 2 40 4 32 1 15 49 ...
+##  $ Arson              : int  0 2 5 3 4 0 6 0 3 23 ...
+##  $ State              : chr  "iowa" "iowa" "iowa" "iowa" ...
+##  $ Year               : int  2006 2006 2006 2006 2006 2006 2006 2006 2006 2006 ...
+```
+
+---
+
+## Exploring data
+
+We will play with the crime data `cities`. 
+
+- To show what columns are available, use `names(df)`
+
+```r
+library(classdata) # load the dataset
+names(cities)
+```
+
+```
+##  [1] "City"                "Population"          "Violent.crime"      
+##  [4] "Murder"              "Rape"                "Robbery"            
+##  [7] "Aggravated.assault"  "Property.crime"      "Burglary"           
+## [10] "Larceny.theft"       "Motor.vehicle.theft" "Arson"              
+## [13] "State"               "Year"
+```
+
+- To extract a column, use `df$column`:
+
+```r
+cities$City
+```
+
+```
+##    [1] "Adel"            "Albia"           "Ames"            "Amosa"          
+##    [5] "Ankeny"          "Belmond"         "Bettendorf"      "Bloomfield"     
+##    [9] "Boone"           "Burlington"      "Camanche"        "Carlisle"       
+##   [13] "Carter Lake"     "Cedar Falls"     "Cedar Rapids"    "Centerville"    
+##   [17] "Chariton"        "Cherokee"        "Clarinda"        "Clarion"        
+##   [21] "Clinton"         "Clive"           "Coralville"      "Council Bluffs" 
+##   [25] "Cresco"          "Creston"         "Decorah"         "Denison"        
+##   [29] "Des Moines"      "De Witt"         "Dubuque"         "Dyersville"     
+##   [33] "Eagle Grove"     "Eldridge"        "Emmetsburg"      "Estherville"    
+##   [37] "Evansdale"       "Fort Dodge"      "Fort Madison"    "Glenwood"       
+##   [41] "Grinnell"        "Hampton"         "Hawarden"        "Humboldt"       
+##   [45] "Independence"    "Indianola"       "Iowa City"       "Iowa Falls"     
+##   [49] "Jefferson"       "Le Mars"         "Leon"            "Manchester"     
+##   [53] "Maquoketa"       "Marion"          "Marshalltown"    "Mason City"     
+##   [57] "Monticello"      "Mount Pleasant"  "Mount Vernon"    "Muscatine"      
+##   [61] "Nevada"          "New Hampton"     "Newton"          "North Liberty"  
+##   [65] "Norwalk"         "Oelwein"         "Ogden"           "Orange City"    
+##   [69] "Osage"           "Osceola"         "Oskaloosa"       "Ottumwa"        
+##   [73] "Perry"           "Pleasant Hill"   "Polk City"       "Red Oak"        
+##   [77] "Sergeant Bluff"  "Sheldon"         "Shendoah"        "Sioux City"     
+##   [81] "Spencer"         "Spirit Lake"     "Story City"      "Urbandale"      
+##   [85] "Vinton"          "Waterloo"        "Waukee"          "Waverly"        
+##   [89] "Webster City"    "West Burlington" "West Des Moines" "West Liberty"   
+##   [93] "West Union"      "Williamsburg"    "Wilton"          "Winterset"      
+##   [97] "Adel"            "Albia"           "Algo"            "Altoo"          
+##  [101] "Ames"            "Amosa"           "Atlantic"        "Bettendorf"     
+##  [105] "Bloomfield"      "Boone"           "Burlington"      "Camanche"       
+##  [109] "Carlisle"        "Carroll"         "Carter Lake"     "Cedar Falls"    
+##  [113] "Cedar Rapids"    "Centerville"     "Chariton"        "Charles City"   
+##  [117] "Cherokee"        "Clarinda"        "Clarion"         "Clinton"        
+##  [121] "Clive"           "Coralville"      "Council Bluffs"  "Cresco"         
+##  [125] "Davenport"       "Decorah"         "Denison"         "Des Moines"     
+##  [129] "De Witt"         "Dubuque"         "Dyersville"      "Eldora"         
+##  [133] "Emmetsburg"      "Estherville"     "Evansdale"       "Fairfield"      
+##  [137] "Forest City"     "Fort Dodge"      "Fort Madison"    "Garner"         
+##  [141] "Glenwood"        "Hampton"         "Hawarden"        "Humboldt"       
+##  [145] "Indianola"       "Iowa City"       "Jefferson"       "Johnston"       
+##  [149] "Le Mars"         "Leon"            "Manchester"      "Maquoketa"      
+##  [153] "Marion"          "Marshalltown"    "Mason City"      "Monticello"     
+##  [157] "Mount Pleasant"  "Mount Vernon"    "Muscatine"       "Nevada"         
+##  [161] "New Hampton"     "Norwalk"         "Oelwein"         "Orange City"    
+##  [165] "Osage"           "Osceola"         "Oskaloosa"       "Ottumwa"        
+##  [169] "Pella"           "Perry"           "Pleasant Hill"   "Polk City"      
+##  [173] "Prairie City"    "Red Oak"         "Sac City"        "Sergeant Bluff" 
+##  [177] "Sheldon"         "Shendoah"        "Sioux City"      "Spencer"        
+##  [181] "Spirit Lake"     "State Center"    "Storm Lake"      "Story City"     
+##  [185] "Urbandale"       "Vinton"          "Waterloo"        "Waukee"         
+##  [189] "Waverly"         "Webster City"    "West Burlington" "West Des Moines"
+##  [193] "West Liberty"    "Williamsburg"    "Wilton"          "Windsor Heights"
+##  [197] "Winterset"       "Adel"            "Algo"            "Altoo"          
+##  [201] "Ames"            "Amosa"           "Ankeny"          "Atlantic"       
+##  [205] "Belmond"         "Bettendorf"      "Bloomfield"      "Boone"          
+##  [209] "Burlington"      "Camanche"        "Carlisle"        "Carroll"        
+##  [213] "Carter Lake"     "Cedar Falls"     "Cedar Rapids"    "Centerville"    
+##  [217] "Chariton"        "Charles City"    "Cherokee"        "Clarinda"       
+##  [221] "Clarion"         "Clinton"         "Clive"           "Coralville"     
+##  [225] "Council Bluffs"  "Cresco"          "Creston"         "Davenport"      
+##  [229] "Decorah"         "Denison"         "Des Moines"      "De Witt"        
+##  [233] "Dubuque"         "Dyersville"      "Eldora"          "Eldridge"       
+##  [237] "Emmetsburg"      "Estherville"     "Evansdale"       "Fairfield"      
+##  [241] "Forest City"     "Fort Dodge"      "Fort Madison"    "Garner"         
+##  [245] "Glenwood"        "Grinnell"        "Grundy Center"   "Hampton"        
+##  [249] "Hawarden"        "Humboldt"        "Independence"    "Indianola"      
+##  [253] "Iowa City"       "Iowa Falls"      "Jefferson"       "Johnston"       
+##  [257] "Keokuk"          "Le Mars"         "Manchester"      "Maquoketa"      
+##  [261] "Marion"          "Marshalltown"    "Mason City"      "Missouri Valley"
+##  [265] "Monticello"      "Mount Pleasant"  "Mount Vernon"    "Muscatine"      
+##  [269] "Nevada"          "New Hampton"     "Newton"          "North Liberty"  
+##  [273] "Norwalk"         "Oelwein"         "Osage"           "Osceola"        
+##  [277] "Oskaloosa"       "Ottumwa"         "Pella"           "Perry"          
+##  [281] "Pleasant Hill"   "Polk City"       "Prairie City"    "Red Oak"        
+##  [285] "Sac City"        "Sergeant Bluff"  "Sheldon"         "Shendoah"       
+##  [289] "Sioux City"      "Spencer"         "Spirit Lake"     "State Center"   
+##  [293] "Storm Lake"      "Story City"      "Urbandale"       "Vinton"         
+##  [297] "Waterloo"        "Waukee"          "Waverly"         "Webster City"   
+##  [301] "West Burlington" "West Des Moines" "West Union"      "Williamsburg"   
+##  [305] "Wilton"          "Windsor Heights" "Winterset"       "Adel"           
+##  [309] "Albia"           "Algo"            "Altoo"           "Ames"           
+##  [313] "Amosa"           "Ankeny"          "Atlantic"        "Audubon"        
+##  [317] "Bettendorf"      "Boone"           "Burlington"      "Camanche"       
+##  [321] "Carlisle"        "Carroll"         "Cedar Falls"     "Cedar Rapids"   
+##  [325] "Centerville"     "Chariton"        "Charles City"    "Cherokee"       
+##  [329] "Clarinda"        "Clarion"         "Clinton"         "Clive"          
+##  [333] "Coralville"      "Council Bluffs"  "Cresco"          "Creston"        
+##  [337] "Davenport"       "Decorah"         "Denison"         "Des Moines"     
+##  [341] "De Witt"         "Dubuque"         "Dyersville"      "Eagle Grove"    
+##  [345] "Eldora"          "Eldridge"        "Emmetsburg"      "Estherville"    
+##  [349] "Evansdale"       "Fairfield"       "Forest City"     "Fort Dodge"     
+##  [353] "Fort Madison"    "Glenwood"        "Grinnell"        "Grundy Center"  
+##  [357] "Hampton"         "Hawarden"        "Humboldt"        "Independence"   
+##  [361] "Indianola"       "Iowa City"       "Iowa Falls"      "Jefferson"      
+##  [365] "Johnston"        "Le Mars"         "Manchester"      "Maquoketa"      
+##  [369] "Marion"          "Marshalltown"    "Mason City"      "Monticello"     
+##  [373] "Mount Pleasant"  "Mount Vernon"    "Muscatine"       "Newton"         
+##  [377] "North Liberty"   "Norwalk"         "Oelwein"         "Ogden"          
+##  [381] "Osage"           "Osceola"         "Oskaloosa"       "Ottumwa"        
+##  [385] "Pella"           "Perry"           "Pleasant Hill"   "Polk City"      
+##  [389] "Prairie City"    "Red Oak"         "Sergeant Bluff"  "Sheldon"        
+##  [393] "Shendoah"        "Sioux City"      "Spencer"         "Spirit Lake"    
+##  [397] "State Center"    "Storm Lake"      "Story City"      "Tipton"         
+##  [401] "Urbandale"       "Vinton"          "Washington"      "Waterloo"       
+##  [405] "Waukee"          "Waverly"         "Webster City"    "West Burlington"
+##  [409] "West Des Moines" "West Liberty"    "West Union"      "Williamsburg"   
+##  [413] "Windsor Heights" "Winterset"       "Adel"            "Albia"          
+##  [417] "Algo"            "Altoo"           "Ames"            "Amosa"          
+##  [421] "Ankeny"          "Atlantic"        "Audubon"         "Bettendorf"     
+##  [425] "Boone"           "Burlington"      "Camanche"        "Carlisle"       
+##  [429] "Carroll"         "Cedar Falls"     "Cedar Rapids"    "Centerville"    
+##  [433] "Chariton"        "Charles City"    "Cherokee"        "Clarinda"       
+##  [437] "Clarion"         "Clinton"         "Clive"           "Coralville"     
+##  [441] "Council Bluffs"  "Cresco"          "Creston"         "Davenport"      
+##  [445] "Decorah"         "Denison"         "Des Moines"      "De Witt"        
+##  [449] "Dubuque"         "Dyersville"      "Eldora"          "Eldridge"       
+##  [453] "Emmetsburg"      "Estherville"     "Evansdale"       "Fairfield"      
+##  [457] "Forest City"     "Fort Dodge"      "Fort Madison"    "Glenwood"       
+##  [461] "Grinnell"        "Hampton"         "Hawarden"        "Hiawatha"       
+##  [465] "Humboldt"        "Independence"    "Indianola"       "Iowa City"      
+##  [469] "Iowa Falls"      "Jefferson"       "Johnston"        "Keokuk"         
+##  [473] "Le Mars"         "Lisbon"          "Manchester"      "Maquoketa"      
+##  [477] "Marion"          "Marshalltown"    "Mason City"      "Monticello"     
+##  [481] "Mount Pleasant"  "Mount Vernon"    "Muscatine"       "Nevada"         
+##  [485] "New Hampton"     "Newton"          "North Liberty"   "Norwalk"        
+##  [489] "Oelwein"         "Ogden"           "Orange City"     "Osage"          
+##  [493] "Osceola"         "Oskaloosa"       "Ottumwa"         "Pella"          
+##  [497] "Perry"           "Pleasant Hill"   "Prairie City"    "Red Oak"        
+##  [501] "Sac City"        "Sergeant Bluff"  "Sheldon"         "Shendoah"       
+##  [505] "Sioux City"      "Spirit Lake"     "St. Ansgar"      "State Center"   
+##  [509] "Storm Lake"      "Story City"      "Tipton"          "Urbandale"      
+##  [513] "Vinton"          "Washington"      "Waterloo"        "Waukee"         
+##  [517] "Webster City"    "West Burlington" "West Des Moines" "West Liberty"   
+##  [521] "West Union"      "Williamsburg"    "Wilton"          "Windsor Heights"
+##  [525] "Winterset"       "Adel"            "Albia"           "Algo"           
+##  [529] "Altoo"           "Ames"            "Amosa"           "Ankeny"         
+##  [533] "Atlantic"        "Audubon"         "Bettendorf"      "Bloomfield"     
+##  [537] "Boone"           "Burlington"      "Carlisle"        "Carroll"        
+##  [541] "Carter Lake"     "Cedar Falls"     "Cedar Rapids"    "Centerville"    
+##  [545] "Chariton"        "Charles City"    "Cherokee"        "Clarinda"       
+##  [549] "Clarion"         "Clear Lake"      "Clinton"         "Coralville"     
+##  [553] "Council Bluffs"  "Cresco"          "Creston"         "Davenport"      
+##  [557] "Decorah"         "Denison"         "Des Moines"      "De Witt"        
+##  [561] "Dubuque"         "Eldora"          "Eldridge"        "Emmetsburg"     
+##  [565] "Estherville"     "Evansdale"       "Fairfield"       "Fort Dodge"     
+##  [569] "Fort Madison"    "Glenwood"        "Grinnell"        "Hampton"        
+##  [573] "Hawarden"        "Hiawatha"        "Humboldt"        "Indianola"      
+##  [577] "Iowa City"       "Iowa Falls"      "Jefferson"       "Keokuk"         
+##  [581] "Le Mars"         "Lisbon"          "Manchester"      "Maquoketa"      
+##  [585] "Marengo"         "Marion"          "Marshalltown"    "Mason City"     
+##  [589] "Missouri Valley" "Monticello"      "Mount Pleasant"  "Mount Vernon"   
+##  [593] "Muscatine"       "Nevada"          "North Liberty"   "Norwalk"        
+##  [597] "Oelwein"         "Ogden"           "Orange City"     "Osage"          
+##  [601] "Osceola"         "Oskaloosa"       "Ottumwa"         "Pella"          
+##  [605] "Perry"           "Pleasant Hill"   "Polk City"       "Prairie City"   
+##  [609] "Red Oak"         "Sergeant Bluff"  "Sheldon"         "Shendoah"       
+##  [613] "Sioux City"      "Spencer"         "Spirit Lake"     "State Center"   
+##  [617] "Storm Lake"      "Story City"      "Tipton"          "Urbandale"      
+##  [621] "Vinton"          "Washington"      "Waterloo"        "Waukee"         
+##  [625] "Waverly"         "Webster City"    "West Burlington" "West Des Moines"
+##  [629] "West Liberty"    "West Union"      "Williamsburg"    "Wilton"         
+##  [633] "Windsor Heights" "Winterset"       "Adel"            "Albia"          
+##  [637] "Algo"            "Altoo"           "Ames"            "Amosa"          
+##  [641] "Ankeny"          "Atlantic"        "Audubon"         "Bettendorf"     
+##  [645] "Bloomfield"      "Blue Grass"      "Boone"           "Buffalo"        
+##  [649] "Burlington"      "Camanche"        "Carlisle"        "Carroll"        
+##  [653] "Carter Lake"     "Cedar Falls"     "Cedar Rapids"    "Centerville"    
+##  [657] "Chariton"        "Charles City"    "Cherokee"        "Clarinda"       
+##  [661] "Clarion"         "Clinton"         "Clive"           "Coralville"     
+##  [665] "Council Bluffs"  "Cresco"          "Davenport"       "Decorah"        
+##  [669] "Denison"         "Des Moines"      "De Witt"         "Dubuque"        
+##  [673] "Eagle Grove"     "Eldora"          "Eldridge"        "Emmetsburg"     
+##  [677] "Estherville"     "Evansdale"       "Forest City"     "Fort Dodge"     
+##  [681] "Fort Madison"    "Glenwood"        "Grinnell"        "Grundy Center"  
+##  [685] "Hampton"         "Hawarden"        "Hiawatha"        "Humboldt"       
+##  [689] "Iowa City"       "Iowa Falls"      "Jefferson"       "Johnston"       
+##  [693] "Keokuk"          "Le Claire"       "Le Mars"         "Leon"           
+##  [697] "Lisbon"          "Manchester"      "Maquoketa"       "Marengo"        
+##  [701] "Marion"          "Marshalltown"    "Mason City"      "Mount Pleasant" 
+##  [705] "Mount Vernon"    "Muscatine"       "Nevada"          "New Hampton"    
+##  [709] "Newton"          "North Liberty"   "Norwalk"         "Ogden"          
+##  [713] "Orange City"     "Osage"           "Osceola"         "Ottumwa"        
+##  [717] "Perry"           "Pleasant Hill"   "Polk City"       "Prairie City"   
+##  [721] "Princeton"       "Red Oak"         "Sergeant Bluff"  "Sioux City"     
+##  [725] "Spencer"         "Spirit Lake"     "State Center"    "Storm Lake"     
+##  [729] "Story City"      "Tipton"          "Toledo"          "Urbandale"      
+##  [733] "Vinton"          "Walcott"         "Washington"      "Waterloo"       
+##  [737] "Waukee"          "Waverly"         "Webster City"    "West Branch"    
+##  [741] "West Burlington" "West Des Moines" "West Union"      "Wilton"         
+##  [745] "Windsor Heights" "Winterset"       "Adel"            "Albia"          
+##  [749] "Algo"            "Altoo"           "Ames"            "Amosa"          
+##  [753] "Ankeny"          "Bettendorf"      "Bloomfield"      "Blue Grass"     
+##  [757] "Boone"           "Buffalo"         "Camanche"        "Carlisle"       
+##  [761] "Carroll"         "Carter Lake"     "Cedar Falls"     "Cedar Rapids"   
+##  [765] "Centerville"     "Chariton"        "Charles City"    "Cherokee"       
+##  [769] "Clarinda"        "Clear Lake"      "Clinton"         "Clive"          
+##  [773] "Coralville"      "Council Bluffs"  "Cresco"          "Davenport"      
+##  [777] "Decorah"         "Denison"         "Des Moines"      "De Witt"        
+##  [781] "Dubuque"         "Dyersville"      "Eagle Grove"     "Eldora"         
+##  [785] "Eldridge"        "Emmetsburg"      "Estherville"     "Evansdale"      
+##  [789] "Fairfield"       "Forest City"     "Fort Dodge"      "Fort Madison"   
+##  [793] "Glenwood"        "Grinnell"        "Grundy Center"   "Hampton"        
+##  [797] "Hawarden"        "Hiawatha"        "Humboldt"        "Indianola"      
+##  [801] "Iowa City"       "Iowa Falls"      "Jefferson"       "Johnston"       
+##  [805] "Keokuk"          "Le Claire"       "Le Mars"         "Leon"           
+##  [809] "Lisbon"          "Manchester"      "Maquoketa"       "Marengo"        
+##  [813] "Marion"          "Marshalltown"    "Mason City"      "Monticello"     
+##  [817] "Mount Vernon"    "Muscatine"       "New Hampton"     "Newton"         
+##  [821] "North Liberty"   "Norwalk"         "Oelwein"         "Orange City"    
+##  [825] "Osage"           "Osceola"         "Oskaloosa"       "Ottumwa"        
+##  [829] "Pella"           "Perry"           "Pleasant Hill"   "Prairie City"   
+##  [833] "Red Oak"         "Sergeant Bluff"  "Sheldon"         "Shendoah"       
+##  [837] "Sioux City"      "Spencer"         "Spirit Lake"     "State Center"   
+##  [841] "Storm Lake"      "Story City"      "Toledo"          "Urbandale"      
+##  [845] "Vinton"          "Walcott"         "Washington"      "Waukee"         
+##  [849] "Waukon"          "Waverly"         "Webster City"    "West Burlington"
+##  [853] "West Des Moines" "West Liberty"    "Williamsburg"    "Wilton"         
+##  [857] "Windsor Heights" "Winterset"       "Adel"            "Albia"          
+##  [861] "Algo"            "Altoo"           "Ames"            "Amosa"          
+##  [865] "Ankeny"          "Atlantic"        "Audubon"         "Bettendorf"     
+##  [869] "Bloomfield"      "Boone"           "Buffalo"         "Burlington"     
+##  [873] "Camanche"        "Carlisle"        "Carroll"         "Carter Lake"    
+##  [877] "Cedar Falls"     "Cedar Rapids"    "Centerville"     "Chariton"       
+##  [881] "Charles City"    "Cherokee"        "Clarinda"        "Clear Lake"     
+##  [885] "Clinton"         "Clive"           "Coralville"      "Council Bluffs" 
+##  [889] "Cresco"          "Creston"         "Davenport"       "Decorah"        
+##  [893] "Des Moines"      "De Witt"         "Dubuque"         "Dyersville"     
+##  [897] "Eagle Grove"     "Eldridge"        "Emmetsburg"      "Estherville"    
+##  [901] "Evansdale"       "Fairfield"       "Forest City"     "Fort Dodge"     
+##  [905] "Fort Madison"    "Glenwood"        "Grinnell"        "Hawarden"       
+##  [909] "Hiawatha"        "Humboldt"        "Independence"    "Indianola"      
+##  [913] "Iowa City"       "Iowa Falls"      "Jefferson"       "Johnston"       
+##  [917] "Keokuk"          "Le Claire"       "Le Mars"         "Manchester"     
+##  [921] "Maquoketa"       "Marengo"         "Marion"          "Marshalltown"   
+##  [925] "Mason City"      "Monticello"      "Mount Pleasant"  "Mount Vernon"   
+##  [929] "Muscatine"       "New Hampton"     "Newton"          "North Liberty"  
+##  [933] "Norwalk"         "Oelwein"         "Ogden"           "Owa"            
+##  [937] "Orange City"     "Osage"           "Osceola"         "Ottumwa"        
+##  [941] "Pella"           "Perry"           "Pleasant Hill"   "Polk City"      
+##  [945] "Prairie City"    "Red Oak"         "Sergeant Bluff"  "Sheldon"        
+##  [949] "Shendoah"        "Sioux City"      "Spencer"         "Spirit Lake"    
+##  [953] "State Center"    "Storm Lake"      "Story City"      "Tipton"         
+##  [957] "Toledo"          "Urbandale"       "Vinton"          "Walcott"        
+##  [961] "Washington"      "Waterloo"        "Waukee"          "Waukon"         
+##  [965] "Waverly"         "Webster City"    "West Burlington" "West Des Moines"
+##  [969] "West Liberty"    "Williamsburg"    "Wilton"          "Windsor Heights"
+##  [973] "Winterset"       "Adel"            "Albia"           "Algo"           
+##  [977] "Altoo"           "Ames"            "Amosa"           "Ankeny"         
+##  [981] "Atlantic"        "Audubon"         "Bettendorf"      "Bloomfield"     
+##  [985] "Blue Grass"      "Boone"           "Buffalo"         "Burlington"     
+##  [989] "Camanche"        "Carlisle"        "Carroll"         "Carter Lake"    
+##  [993] "Cedar Falls"     "Cedar Rapids"    "Centerville"     "Chariton"       
+##  [997] "Charles City"    "Cherokee"        "Clarinda"        "Clarion"        
+## [1001] "Clear Lake"      "Clinton"         "Coralville"      "Council Bluffs" 
+## [1005] "Cresco"          "Creston"         "Davenport"       "Decorah"        
+## [1009] "Des Moines"      "De Witt"         "Dubuque"         "Dyersville"     
+## [1013] "Eldridge"        "Estherville"     "Evansdale"       "Fairfield"      
+## [1017] "Fort Dodge"      "Garner"          "Glenwood"        "Grinnell"       
+## [1021] "Hampton"         "Hawarden"        "Hiawatha"        "Humboldt"       
+## [1025] "Indianola"       "Iowa City"       "Iowa Falls"      "Jefferson"      
+## [1029] "Johnston"        "Keokuk"          "Le Mars"         "Leon"           
+## [1033] "Manchester"      "Maquoketa"       "Marion"          "Marshalltown"   
+## [1037] "Mason City"      "Missouri Valley" "Monticello"      "Mount Pleasant" 
+## [1041] "Mount Vernon"    "Muscatine"       "New Hampton"     "Newton"         
+## [1045] "North Liberty"   "Norwalk"         "Oelwein"         "Ogden"          
+## [1049] "Owa"             "Orange City"     "Osage"           "Osceola"        
+## [1053] "Oskaloosa"       "Ottumwa"         "Pella"           "Perry"          
+## [1057] "Pleasant Hill"   "Prairie City"    "Red Oak"         "Sergeant Bluff" 
+## [1061] "Sheldon"         "Shendoah"        "Sioux City"      "Spencer"        
+## [1065] "Spirit Lake"     "State Center"    "Storm Lake"      "Story City"     
+## [1069] "Tipton"          "Urbandale"       "Vinton"          "Washington"     
+## [1073] "Waterloo"        "Waukon"          "Waverly"         "Webster City"   
+## [1077] "West Burlington" "West Des Moines" "West Liberty"    "Williamsburg"   
+## [1081] "Wilton"          "Windsor Heights" "Winterset"       "Adel"           
+## [1085] "Albia"           "Algo"            "Altoo"           "Ames"           
+## [1089] "Amosa"           "Ankeny"          "Audubon"         "Belmond"        
+## [1093] "Bettendorf"      "Bloomfield"      "Blue Grass"      "Boone"          
+## [1097] "Buffalo"         "Burlington"      "Camanche"        "Carlisle"       
+## [1101] "Carroll"         "Carter Lake"     "Cedar Falls"     "Cedar Rapids"   
+## [1105] "Centerville"     "Chariton"        "Charles City"    "Cherokee"       
+## [1109] "Clarinda"        "Clarion"         "Clear Lake"      "Clinton"        
+## [1113] "Clive"           "Coralville"      "Council Bluffs"  "Cresco"         
+## [1117] "Creston"         "Davenport"       "Decorah"         "Des Moines"     
+## [1121] "De Witt"         "Dubuque"         "Dyersville"      "Eagle Grove"    
+## [1125] "Eldridge"        "Emmetsburg"      "Estherville"     "Evansdale"      
+## [1129] "Fairfield"       "Forest City"     "Fort Dodge"      "Fort Madison"   
+## [1133] "Glenwood"        "Grinnell"        "Grundy Center"   "Hampton"        
+## [1137] "Hawarden"        "Hiawatha"        "Humboldt"        "Indianola"      
+## [1141] "Iowa City"       "Iowa Falls"      "Jefferson"       "Johnston"       
+## [1145] "Keokuk"          "Le Claire"       "Le Mars"         "Leon"           
+## [1149] "Manchester"      "Maquoketa"       "Marengo"         "Marion"         
+## [1153] "Marshalltown"    "Mason City"      "Missouri Valley" "Monticello"     
+## [1157] "Mount Pleasant"  "Mount Vernon"    "Muscatine"       "New Hampton"    
+## [1161] "Newton"          "North Liberty"   "Norwalk"         "Oelwein"        
+## [1165] "Ogden"           "Owa"             "Orange City"     "Osage"          
+## [1169] "Osceola"         "Oskaloosa"       "Ottumwa"         "Pella"          
+## [1173] "Perry"           "Pleasant Hill"   "Prairie City"    "Red Oak"        
+## [1177] "Rock Valley"     "Sergeant Bluff"  "Sheldon"         "Shendoah"       
+## [1181] "Sigourney"       "Sioux Center"    "Sioux City"      "Spencer"        
+## [1185] "Spirit Lake"     "State Center"    "Storm Lake"      "Story City"     
+## [1189] "Tama"            "Tipton"          "Toledo"          "Urbandale"      
+## [1193] "Vinton"          "Walcott"         "Washington"      "Waterloo"       
+## [1197] "Waukon"          "Waverly"         "Webster City"    "West Branch"    
+## [1201] "West Burlington" "West Des Moines" "West Liberty"    "Williamsburg"   
+## [1205] "Wilton"          "Windsor Heights" "Winterset"
+```
+
+---
+
+## R demo...
+
+---
+class: inverse
+
+## Your Turn
+
+&lt;img src="images/green.png" width=20&gt; Install the package `classdata` on your machine &lt;br&gt;
+
+&lt;img src="images/green.png" width=20&gt; Make the package active in your current R session:
+```
+library(classdata)
+```
+
+&lt;img src="images/green.png" width=20&gt; Check the R help on the dataset `cities`&lt;br&gt;
+
+&lt;img src="images/green.png" width=20&gt; Use the object browser to view the data frame by issuing `View(cities)`.&lt;br&gt;
+
+&lt;img src="images/green.png" width=20&gt; Use different R commands to inspect the dataset `cities`.
+
+
+
+---
+
+## Functions for Building a Vector
+
+- `c()`, for combining elements and vectors
+
+- `:`, for creating a simple sequence of numbers. E.g., `1:10`
+
+- `seq()`, for creating a sequence of numbers
+
+- `rep()`, for repeating a vector
+
+- `ifelse()`, for creating a vector where the value of each entry depends on a logical vector
+
+- `vector(mode = "numeric", length=10)`, for initializing a numeric vector of length 10. .style[We will need it sometimes, but initialization can most of the time be avoided in R]
+
+More details in the demo
+
+---
+
+## Assignment
+
+- `&lt;-` is the assignment operator. `=` can also be used as an assignment operator, .style[but avoid it as a matter of style.] E.g., 
+  
+  ```r
+  x &lt;- c(2, 5)
+  ```
+- You can assign names and other attributes
+  
+  ```r
+  names(x) &lt;- c("male", "female")
+  x
+  ```
+  
+  ```
+  ##   male female 
+  ##      2      5
+  ```
+  
+  ```r
+  class(x) &lt;- "tally"
+  x
+  ```
+  
+  ```
+  ##   male female 
+  ##      2      5 
+  ## attr(,"class")
+  ## [1] "tally"
+  ```
+
+
+---
+
+## R workspace
+
+- Your current R environment is called the *workspace*. It contains all variables you defined.
+
+- Your workspace lives in your computer memory and will be cleared once you exit R
+
+- To see what variables are in the workspace, use 
+
+
+```r
+ls()
+```
+
+```
+## [1] "x"
+```
+
+- Use `rm()` to remove one or more variables
+
+
+```r
+rm(x)
+ls()
+```
+
+```
+## character(0)
+```
+
+---
+
+## Reproducibility
+
+- For reproducibility, you want any meaningful work to be reproducible. Namely, the .danger[results should be reproduced by running the **code** you saved, but not by saving the results directly]
+
+- Thus, saving R variables onto your hard disk is not a great idea
+
+- Instead, a great idea is to always write code in a `.R` or `.Rmd` file
+
+- When exiting R, you will be prompted to save the workspace image. **Always select Don't Save** for reproduciblity
+
+
+---
+
+## R demo
+
+---
+class: inverse
+
+## Your Turn
+
+&lt;img src="images/green.png" width=20&gt; Introduce vector `\(x\)` defined as `\(x = (4, 1, 3, 9)\)` and `\(y\)` defined as `\(y = (1, 2, 3, 4)\)`
+
+&lt;img src="images/green.png" width=20&gt; Create character vector `\(z\)` containing `c`, `b`, and `a` in its three entries
+
+&lt;img src="images/green.png" width=20&gt; Save your code in either a `.R` or a `.Rmd` file
+
+&lt;img src="images/green.png" width=20&gt; Restart RStudio *without* saving workspace image. Then reproduce vectors `x`, `y`, and `z` by rerunning the code you saved
+
+
+---
+
+## Numerical Opertions
+
+- `+`, `-`, `*`, `/`, Add, substract, multiple, and divide
+
+- `x ^ a`, x raised to the power of a
+
+- `x %/% y`, x integer divided by y (fractional part is discarded)
+
+- `x %% y`, take the remainder of x integer divided by y (also called modulo or mod)
+
+- Note the operator precedence, namely, which operation is calculated before which. See `?Syntax`
+
+---
+
+## Comparison Operations
+
+- `a == b`, test whether two variables equal elementwise. To test equality for objects as a whole, use `identical(a, b)`
+
+- `a != b`, test whether two variables are different elementwise
+
+- `a &gt; b`, `a &lt; b`, `a &gt;= b`, `a &lt;= b`, comparisons
+
+- `a %in% b`, whether each element of `a` is a member of `b`
+
+---
+
+## Vectorized Operations
+
+- Most of the R opeartions and functions are vectorized. Namely, they apply to vectors and not just to scalars
+
+- The calculation will be performed for each element in the vector. E.g., 
+
+  
+  ```r
+  1:4 + 4:1
+  ```
+  
+  ```
+  ## [1] 5 5 5 5
+  ```
+  
+  ```r
+  1:4 + 2
+  ```
+  
+  ```
+  ## [1] 3 4 5 6
+  ```
+  
+- The *recycling rule*: Basic R operations follow a recycling rule: If the two vectors have different length, the shorter one will be repeated so match the length of the longer one. .style[Write code in an intuitive way]
+
+  
+  ```r
+  rep(30, 6) + c(1, 0) # Add one day to odd months
+  ```
+  
+  ```
+  ## [1] 31 30 31 30 31 30
+  ```
+
+---
+class: inverse
+
+## Your Turn
+
+Continue the last Your turn.
+
+&lt;img src="images/green.png" width=20&gt; Play with the arithmatic and comparison operators on `x` and `y`
+
+&lt;img src="images/blue.png" width=20&gt; Evaluate `rep(0, 9) + 1:3`. Reason about the result with the recycling rule
+
+
+---
+
+## Indexing with Integers
+
+- Use square brackets `[]` to extract index or modify indexed entries
+- Note that R counts from 1
+- Indexing with integers: 
+
+```r
+x &lt;- month.abb
+x[1]
+```
+
+```
+## [1] "Jan"
+```
+
+```r
+x[c(6, 6, 7, 8)]
+```
+
+```
+## [1] "Jun" "Jun" "Jul" "Aug"
+```
+
+```r
+x[c(6, 7, 8)] &lt;- "break!"
+x
+```
+
+```
+##  [1] "Jan"    "Feb"    "Mar"    "Apr"    "May"    "break!" "break!" "break!"
+##  [9] "Sep"    "Oct"    "Nov"    "Dec"
+```
+
+```r
+x[-1] # What does negative index mean?
+```
+
+```
+##  [1] "Feb"    "Mar"    "Apr"    "May"    "break!" "break!" "break!" "Sep"   
+##  [9] "Oct"    "Nov"    "Dec"
+```
+
+
+---
+
+## Indexing with Names
+
+- Indexing with names: The index vector can be a character vector
+
+
+```r
+pets &lt;- c(cat = 10, dog = 15, lizard = 2)
+pets
+```
+
+```
+##    cat    dog lizard 
+##     10     15      2
+```
+
+```r
+pets[c("cat", "dog")]
+```
+
+```
+## cat dog 
+##  10  15
+```
+
+---
+
+## Indexing with Logicals
+
+- Indexing with logicals: E.g., `x[logiVec]`. You can use a logical vector with the same length as `x` to index
+
+
+```r
+x &lt;- 1:3
+x[c(TRUE, FALSE, TRUE)]
+```
+
+```
+## [1] 1 3
+```
+
+- Oftentimes the logical index vector is created by comparison
+
+
+```r
+x[x &gt; 2]
+```
+
+```
+## [1] 3
+```
+
+---
+
+## Which
+
+- `which(logiVec)` returns the integer positions where the entry of `logiVec` is `TRUE`
+
+
+```r
+logi &lt;- month.abb == "Jun"
+logi
+```
+
+```
+##  [1] FALSE FALSE FALSE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE
+```
+
+```r
+which(logi)
+```
+
+```
+## [1] 6
+```
+
+```r
+month.abb[which(logi) + 2]
+```
+
+```
+## [1] "Aug"
+```
+
+---
+
+## Indexing Data Frames
+
+For a data frame `x`, we can extract parts in the following manner:
+
+```
+x$variable
+x[, "variable"]
+x$variable[rows]
+
+x[rows, columns]
+x[1:5, 2:3]
+x[c(1,5,6), c("State", "Year")]
+```
+
+- `rows` and `columns` each can be a vector of integer position indices or a logical vector 
+
+- `columns` can also be a character vector specifying the names. .style[This is the preferred way of specifying the columns]
+
+- `x[, "variable"]` will give a vector (not a data frame any more).&lt;/br&gt;
+`x[, "variable", drop=TRUE]` will give a data frame with a single column
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="macros.js"></script>
+<script>var slideshow = remark.create({
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

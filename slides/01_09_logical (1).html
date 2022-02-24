@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Logical variables</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Xiongtao Dai" />
+    <script src="libs/header-attrs-2.11/header-attrs.js"></script>
+    <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view-0.2.6/tile-view.js"></script>
+    <link rel="stylesheet" href="myslides.css" type="text/css" />
+    <link rel="stylesheet" href="myslides-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Logical variables
+## STAT486/586
+### Xiongtao Dai
+
+---
+
+class: big, middle
+
+
+
+## Logical variables
+
+---
+
+## Logical vectors
+
+- Vectors consisting of values `TRUE` and `FALSE`
+
+- `&amp;` and `|` are the logical *and* and *or*
+
+- `!` is the logical negation
+
+- `&lt;, &gt;, ==, !=, &lt;=, &gt;=` are comparison operators that returns a logical vector
+
+- use parentheses `()` when linking expressions to avoid mis-interpretation
+
+- `x %in% c(1, 3, 5)` tells whether each element of `x` is one of `c(1, 3, 5)`
+
+- `ifelse` assigns values in a vector according to a logical variable
+
+---
+
+## Logical Operations
+
+&lt;img class="cover" src="images/logical.png" alt="" width=2000&gt;
+
+---
+
+## R demo...
+
+---
+class: inverse
+
+## Your turn
+
+
+Define a vector: `a &lt;- c(1, 15, 3, 20, 5, 8, 9, 10, 1, 3)`
+
+Create logical vectors to indicate which entries in  `a` are:
+
+&lt;img src="images/green.png" width=20&gt; less than 20&lt;br/&gt;
+
+&lt;img src="images/green.png" width=20&gt; squared value is either at least 100 or less than 10&lt;br/&gt;
+
+&lt;img src="images/green.png" width=20&gt; equals 1 or 3 or 5&lt;br/&gt;
+
+&lt;img src="images/green.png" width=20&gt; even. 
+  Hint: have a look at the help for the operator `%%`
+
+---
+
+## Subsetting Data Frames
+
+```r
+library(classdata)
+Iowa2009 &lt;- fbi[fbi$State == 'Iowa' &amp; fbi$Year == 2009, ]
+str(Iowa2009)
+```
+
+```
+## 'data.frame':	8 obs. of  7 variables:
+##  $ State        : chr  "Iowa" "Iowa" "Iowa" "Iowa" ...
+##  $ Abb          : chr  "IA" "IA" "IA" "IA" ...
+##  $ Year         : int  2009 2009 2009 2009 2009 2009 2009 2009
+##  $ Population   : int  3007856 3007856 3007856 3007856 3007856 3007856 3007856 3007856
+##  $ Type         : Factor w/ 8 levels "Aggravated.assault",..: 6 4 7 8 1 2 3 5
+##  $ Count        : int  38 890 NA 1201 6356 16419 49757 3904
+##  $ Violent.crime: logi  TRUE TRUE TRUE TRUE TRUE FALSE ...
+```
+
+&lt;!-- Other useful functions for subsetting data frames are `subset` and `dplyr::filter` (later) --&gt;
+
+---
+
+## Updating elements in a data set
+
+Data sets and their parts can be used as the left hand side (LHS) of an assignment:
+
+
+```r
+fbi$State[fbi$State == 'Iowa'] &lt;- 'Our State'
+unique(fbi$State)[10:20]
+```
+
+```
+##  [1] "Florida"   "Georgia"   "Hawaii"    "Idaho"     "Illinois"  "Indiana"  
+##  [7] "Our State" "Kansas"    "Kentucky"  "Louisiana" "Maine"
+```
+
+
+```r
+# Round the population to nearest thousands
+fbi$Population &lt;- signif(fbi$Population, 3)
+str(fbi$Population)
+```
+
+```
+##  num [1:23672] 3300000 3360000 3350000 3410000 3460000 3520000 3540000 3570000 3530000 3440000 ...
+```
+If that column exists before, it is being over-written/updated. It is a good idea to work on a copy of the data frame in case anything is messed up
+
+---
+
+## R demo...
+
+---
+class: inverse 
+
+## Your turn
+
+Work on the `fbi` dataset
+
+&lt;img src="images/green.png" width=20&gt; Get a subset of all crimes in Iowa in 2009 and 2010. How many rows do you have?
+
+&lt;img src="images/blue.png" width=20&gt; Get a subset of all violent crimes in 2009 for Iowa and 3 of its neighboring states. Visualize the crime rate for one type of crime. (Hint: Take out the crime rate, name it according to the state, and use `barplot`)
+
+&lt;img src="images/blue.png" width=20&gt; Change the state name of California to "the Golden State"
+
+&lt;img src="images/black.png" width=20&gt; Get a subset of the data that includes number of murders for the last five years. Find the murder rates, extract all states that have a rate of greater than 90% of the rates across all states, and plot (Hint: `?quantile`).
+
+---
+
+## Missing values in R
+
+- `NA` is the special code for "not available"
+- R consistently handles mising values. Eg. we get 
+
+```r
+NA + 1
+```
+
+```
+## [1] NA
+```
+
+
+```r
+NA | TRUE
+```
+
+```
+## [1] TRUE
+```
+- Caution: Direct testing for missing values with `==` will result in an `NA`:
+
+```r
+x &lt;- c(1, NA)
+x == NA
+```
+
+```
+## [1] NA NA
+```
+&lt;!-- - `NaN` is the code for "not a number", e.g. in 0/0 --&gt;
+
+---
+
+## Essential functions 
+
+- Use function `is.na` for testing `NA`s
+
+```r
+x &lt;- c(1, NA)
+is.na(x)
+```
+
+```
+## [1] FALSE  TRUE
+```
+
+- `complete.cases(data)` test the existence of `NA`s in the rows of data frames
+&lt;!-- - `drop_na(data, col1, ...)` drops the rows if `NA`s exist in `col1` or additional columns --&gt;
+
+---
+
+## Handling missing values
+
+There are a few principles for handing missing values. 
+
+- Errors in the dataset should be removed
+
+- If uncertain whether missing values are due to errors, perform analysis with as little distortion to the data as possible
+
+- Performing a sensitivity analysis is a good idea: One version with missing values, and the other without. Compare the results.
+
+---
+
+## R demo...
+
+---
+class: inverse
+
+## Your turn
+
+&lt;img src="images/green.png" width=20&gt; What does `2 * NA` give you? Why
+
+&lt;img src="images/green.png" width=20&gt; What does `NA &amp; FALSE` give you? Why
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="macros.js"></script>
+<script>var slideshow = remark.create({
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

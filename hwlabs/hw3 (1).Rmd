@@ -1,0 +1,85 @@
+---
+title: 'Homework #3'
+output: html_document
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## A useful note
+Remove any `str_view()`, `View()` or `install.packages()` commands in your `Rmd` file. These commands will prevent the knitting of your file. 
+
+## Strings
+1.  Create a variable storing single string containing the following paragraph exactly including formatting. Display the variable in a reader-friendly manner.
+    
+      ```
+      "Age is an issue of mind over matter. If you don't mind, it doesn't matter."
+      
+      -- Mark Twain
+      ```
+
+2. Write code to tell whether each entry in the following string has identical first and second halves. Do not consider cases here, so both `abcdabcd` and `abcdABCD` have identical first and second halves.
+
+    ```
+    c('apple', 'appleapple', 'BananaBanana', 'Banana', 'cherryCherry')
+    ```
+
+3. Count the number of words in the following string. [Hint: You can use `str_split` with a well-designed pattern to separate the words. `str_split(x, pattern)[[1]]` extracts the vector of words.]
+
+    ```
+    "Dear Friends,
+
+    The exuberance of the change of seasons at Iowa State University never grows old — from the blooms of spring to the joys of another graduating class. During this holiday season, let your spirits be lifted by family and friends — and by this short video of captivating images of this magnificent campus.
+    
+    Our best wishes to you and yours for a happy, hope-filled 2022!
+
+    Wendy Wintersteen and Robert Waggoner"
+
+    ```
+
+4. You will be analyzing the movie script of The Matrix (1999) in this question. The script can be found [here](....). Download the file and put it side by side your source file. Then use `script <- readLines('matrix_script.txt')` to read in the data. [Hint: If the command does not work, you may have a wrong working directory. In RStudio, click Session -- Set Working Directory -- To Source File Location]
+    
+    1. Look at the script file and see what it has. Compare it with the `script` variable. This part is for your own understanding and you don't need to answer anything.
+    
+    2. How many times did Neo speak?
+    
+    ```{r, include=FALSE, eval=FALSE}
+    library(stringr)
+    script <- readLines('matrix_script.txt')
+    neo <- str_detect(script, '^NEO')
+    table(neo)
+    ```
+    
+    3. [*Optional for STAT 486 students*] How many time did Neo refer to Trinity?
+    
+    
+## Factors and Logical variables
+
+TODO: post dataset.
+You will be working with an extraction related to happiness from the general social survey (GSS) available [here](happy.csv). The GSS is a yearly survey of Americans. The data you will work on spans 1972 to 2018.
+Use `happy <- readr::read_csv('happy.csv')` to read in the data.
+
+```{r, include=FALSE, eval=FALSE}
+library(dplyr)
+write.csv(happy %>% select(-polviews), file='happy.csv', row.names = FALSE)
+happy <- readr::read_csv('happy.csv')
+```
+
+1. Convert the `happy`, `marital`, `degree`, and `health` columns into factors. Make sure the factor levels are arranged in a meaningful order.
+
+2. Tabulate the status of (i) happiness, (ii) health, and (iii) happiness by health.
+
+3. Create a barchart showing the *proportion* of happy respondents by marital status. The proportion is the ratio of the number of happy respondents over the number of respondents in the marital status group.
+
+4. 
+    1. Create a data frame containing respondents who are married and happy
+    2. Create a data frame containing respondents who are either married or happy (or both)
+    3. Find the number of respondents who are either married or happy, but not both
+    4. Find the number of respondents who are neither married nor happy
+
+5. Work with the `partyid` column as follows. 
+    1. Set those who are `ind,near dem`, `not str democrat`, `strong democrat` to `democrat`
+    2. Set those who are `ind,near rep`, `not str republican`, `strong republican` to `republican`
+    3. Finally, tabulate the new `partyid` column

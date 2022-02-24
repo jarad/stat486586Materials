@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Factors in R</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Xiongtao Dai" />
+    <script src="libs/header-attrs-2.11/header-attrs.js"></script>
+    <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view-0.2.6/tile-view.js"></script>
+    <link rel="stylesheet" href="myslides.css" type="text/css" />
+    <link rel="stylesheet" href="myslides-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Factors in R
+## STAT486/586
+### Xiongtao Dai
+
+---
+
+class: big, middle
+
+
+
+## Factor variables
+
+---
+
+## Overview
+
+- What is a factor variable
+
+- Why is it important
+
+- Inspecting, creating, and using factor variables
+
+- Type casting
+
+---
+
+## Factors in R
+
+- A type of variable to indicate *categories*
+
+- Stores both *levels* and the *order* of the levels
+
+- It is more than a character vector, which does not store the order information
+
+---
+
+## The `fbi` data
+
+
+```r
+library(classdata)
+str(fbi)
+```
+
+```
+## 'data.frame':	23672 obs. of  7 variables:
+##  $ State        : chr  "Alabama" "Alabama" "Alabama" "Alabama" ...
+##  $ Abb          : chr  "AL" "AL" "AL" "AL" ...
+##  $ Year         : int  1961 1962 1963 1964 1965 1966 1967 1968 1969 1970 ...
+##  $ Population   : int  3302000 3358000 3347000 3407000 3462000 3517000 3540000 3566000 3531000 3444165 ...
+##  $ Type         : Factor w/ 8 levels "Aggravated.assault",..: 6 6 6 6 6 6 6 6 6 6 ...
+##  $ Count        : int  427 316 340 316 395 384 415 421 485 404 ...
+##  $ Violent.crime: logi  TRUE TRUE TRUE TRUE TRUE TRUE ...
+```
+
+---
+
+## Using factors in R
+
+- Many R functions behave nicely when applied on a factor, for example `boxplot(x ~ fct)` creates a side-by-side boxplot of `x` in different groups specified by the levels in `fct`
+
+- The order of factor levels affects the order of the boxes. It is crucial to arrange them in a meaningful order for presentation!
+
+
+```r
+boxplot(fbi$Count ~ fbi$Type)
+```
+
+![](01_08_factors_files/figure-html/unnamed-chunk-2-1.png)&lt;!-- --&gt;
+
+---
+
+## Working with factors
+
+- `table`, `str` inspect a factor
+
+- `factor` creates a new factor with specified levels
+
+- `levels`, `levels&lt;-` extracts and set the levels
+
+- `reorder(fct, numbers, FUN)` reorders a factor `fct` according to a summary statistic `FUN` of `numbers`
+
+---
+
+## R demo...
+
+---
+
+## Additional notes
+
+- Sometimes text variables are stored in factors during input by default
+
+- Numeric variables and factors are treated differently in R, and they have to be converted manually
+
+---
+class: inverse
+
+## Your turn
+
+For this your turn use the `fbi` object from the `classdata` package. 
+
+- &lt;img src="images/green.png" width=20&gt; Introduce a rate of the number of reported offenses by population into the `fbi` data. 
+
+- &lt;img src="images/blue.png" width=20&gt; 
+Plot boxplots of crime rates by different types of crime. How can you make axis text legible? 
+
+- &lt;img src="images/blue.png" width=20&gt; 
+Reorder the boxplots of crime rates, such that the crime types are ordered by the median crime rates. 
+
+---
+class: big, middle
+
+## Quick summary of demo
+
+---
+
+## Reordering factor levels manually
+
+
+```r
+levels(fbi$Type)
+```
+
+```
+## [1] "Aggravated.assault"                  
+## [2] "Burglary"                            
+## [3] "Larceny.theft"                       
+## [4] "Legacy.rape"                         
+## [5] "Motor.vehicle.theft"                 
+## [6] "Murder.and.nonnegligent.Manslaughter"
+## [7] "Rape"                                
+## [8] "Robbery"
+```
+
+Reorder so that property crimes come first (extremely sensitive to typos):
+
+
+```r
+levels(factor(fbi$Type, levels=c("Larceny.theft", "Burglary", "Motor.vehicle.theft", "Aggravated.assault", "Robbery", "Legacy.rape", "Murder.and.nonnegligent.Manslaughter", "Rape")))
+```
+
+```
+## [1] "Larceny.theft"                       
+## [2] "Burglary"                            
+## [3] "Motor.vehicle.theft"                 
+## [4] "Aggravated.assault"                  
+## [5] "Robbery"                             
+## [6] "Legacy.rape"                         
+## [7] "Murder.and.nonnegligent.Manslaughter"
+## [8] "Rape"
+```
+
+---
+
+## Reordering factor levels - using another variable
+
+`reorder(factor, numbers, function)`
+
+reorder levels in factor by values in `numbers`. Use `function` to summarize (average is used by default). 
+
+
+```r
+levels(reorder(fbi$Type, fbi$Count, mean, na.rm=TRUE))
+```
+
+```
+## [1] "Murder.and.nonnegligent.Manslaughter"
+## [2] "Legacy.rape"                         
+## [3] "Rape"                                
+## [4] "Robbery"                             
+## [5] "Aggravated.assault"                  
+## [6] "Motor.vehicle.theft"                 
+## [7] "Burglary"                            
+## [8] "Larceny.theft"
+```
+Missing values in `numbers`? make sure to use parameter `na.rm=TRUE`!
+
+---
+
+## Changing levels' names
+
+
+```r
+levels(fbi$Type)
+```
+
+```
+## [1] "Aggravated.assault"                  
+## [2] "Burglary"                            
+## [3] "Larceny.theft"                       
+## [4] "Legacy.rape"                         
+## [5] "Motor.vehicle.theft"                 
+## [6] "Murder.and.nonnegligent.Manslaughter"
+## [7] "Rape"                                
+## [8] "Robbery"
+```
+
+
+```r
+levels(fbi$Type)[6] &lt;- "Murder"
+
+levels(fbi$Type)
+```
+
+```
+## [1] "Aggravated.assault"  "Burglary"            "Larceny.theft"      
+## [4] "Legacy.rape"         "Motor.vehicle.theft" "Murder"             
+## [7] "Rape"                "Robbery"
+```
+
+ 
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="macros.js"></script>
+<script>var slideshow = remark.create({
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
