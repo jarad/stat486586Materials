@@ -104,7 +104,6 @@ $g(x) = n^{-1}\sum_{i=1}^n (x - X_i)^2$
 
 <img src="images/blue.png" width=20> Manufacture a function using dataset `cars$speed`. Use `optimize` to find the minimum point $\text{argmin}_x\, g(x)$
 
-
 ---
 
 ## Caution: Forced evaluation
@@ -144,6 +143,58 @@ a <- 1
 linear <- power2(a)
 a <- 2
 linear(3)
+```
+
+---
+
+## One more example
+
+Suppose that $X_1,\dots, X_n \sim \exp(\lambda)$. The density function is 
+$$
+f(x) = \lambda e^{-\lambda x}, \quad x > 0.
+$$
+This is an example for finding the maximum likelihood estimate (MLE) of $\lambda$ using a function factory and `optimise`. 
+
+Given data $\{X_1,\dots,X_n\}$, the log-likelihood function is 
+
+$$ 
+l(\lambda) = \sum_{i=1}^n \log f(X_i) = -\lambda \sum_i X_i + n\log(\lambda).
+$$
+
+We will write a function factory to obtain the log-likelihood given $\{X_1,\dots,X_n\}$:
+
+```{r}
+getl <- function(X) {
+  force(X)
+  n <- length(X)
+  function(lam) {
+    -lam * sum(X) + n * log(lam)
+  }
+}
+```
+---
+
+Suppose the dataset is given by `cars$speed`. Manufacture the likelihood for this dataset:
+
+```{r}
+lCars <- getl(cars$speed)
+```
+
+Test it out:
+```{r}
+lCars(0.5)
+```
+
+Maximize the likelihood using `optimize`:
+```{r}
+res <- optimize(lCars, c(0, 100), maximum=TRUE)
+```
+
+Check that the MLE is the same as the analytical solution $\hat\lambda_{\text{MLE}} = n / \sum_{i=1}^n X_i$:
+```{r}
+testthat::expect_equal(res$maximum, 
+                       1 / mean(cars$speed), 
+                       tolerance=1e-3)
 ```
 
 ---

@@ -137,7 +137,6 @@ class: inverse
 
 &lt;img src="images/blue.png" width=20&gt; Manufacture a function using dataset `cars$speed`. Use `optimize` to find the minimum point `\(\text{argmin}_x\, g(x)\)`
 
-
 ---
 
 ## Caution: Forced evaluation
@@ -187,6 +186,67 @@ linear(3)
 
 ```
 ## [1] 3
+```
+
+---
+
+## One more example
+
+Suppose that `\(X_1,\dots, X_n \sim \exp(\lambda)\)`. The density function is 
+$$
+f(x) = \lambda e^{-\lambda x}, \quad x &gt; 0.
+$$
+This is an example for finding the maximum likelihood estimate (MLE) of `\(\lambda\)` using a function factory and `optimise`. 
+
+Given data `\(\{X_1,\dots,X_n\}\)`, the log-likelihood function is 
+
+$$ 
+l(\lambda) = \sum_{i=1}^n \log f(X_i) = -\lambda \sum_i X_i + n\log(\lambda).
+$$
+
+We will write a function factory to obtain the log-likelihood given `\(\{X_1,\dots,X_n\}\)`:
+
+
+```r
+getl &lt;- function(X) {
+  force(X)
+  n &lt;- length(X)
+  function(lam) {
+    -lam * sum(X) + n * log(lam)
+  }
+}
+```
+---
+
+Suppose the dataset is given by `cars$speed`. Manufacture the likelihood for this dataset:
+
+
+```r
+lCars &lt;- getl(cars$speed)
+```
+
+Test it out:
+
+```r
+lCars(0.5)
+```
+
+```
+## [1] -419.6574
+```
+
+Maximize the likelihood using `optimize`:
+
+```r
+res &lt;- optimize(lCars, c(0, 100), maximum=TRUE)
+```
+
+Check that the MLE is the same as the analytical solution `\(\hat\lambda_{\text{MLE}} = n / \sum_{i=1}^n X_i\)`:
+
+```r
+testthat::expect_equal(res$maximum, 
+                       1 / mean(cars$speed), 
+                       tolerance=1e-3)
 ```
 
 ---
