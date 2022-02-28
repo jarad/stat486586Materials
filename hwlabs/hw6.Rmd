@@ -13,7 +13,12 @@ Remove any `View()` or `install.packages()` commands in your `Rmd` file. These c
 
 ## Applying functions
 
-1. Repeat [Homework 5](hw5.html) Question 1a and 1b, but this time using only `purrr` functions (`map_dbl`, etc. You may also use `sum`) instead of loops or vectorized operations. Compare the run times with your previous results using loops and vectorized operations and state what you find (e.g., which approach is the fastest, which is the slowest).
+1. (This is more or less a repeat of [Homework 5](hw5.html) Question 1a and 1b)
+For this question, use only `purrr` functions `map_dbl` etc but not loops or vectorized operations. You may use `sum()`
+
+    a. Use `map_dbl` to generate a vector containing $1/i$ in its $i$th entry, for $i=1,\dots,n$. Then sum up the numbers
+    a. Use `map`, `map_dbl`, and `do.call` to generate a matrix containing  $2^{-ij}$ in its $(i,j)$th entry, for $i=1,\dots,n$ and $j=1,\dots,m$. Then sum up the values in the matrix
+    a. Use `system.time` to time how long did the code run in each of the previous subquestions. Compare the run times with your previous results using loops and vectorized operations. Set a large enough $n$ so that the speed difference between the two methods is distinguishable. State what you find (e.g., which approach is the fastest, which is the slowest).
 
 1. Perform the following using `purrr` functions as much as possible.
 
@@ -25,12 +30,12 @@ Remove any `View()` or `install.packages()` commands in your `Rmd` file. These c
     a. Use `pmap_dbl` to calculate, for each record in `iris`, the sum of the sepal length, sepal width, petal length, and petal width columns in `iris`.
 
 1. Work on a list containing information of Game of Thrones characters. Install `repurrrsive` using `install.packages("repurrrsive")`, and load it using `library(repurrrsive)`. The list `got_chars` is what you will use. Check out what does it contain before you start.
-    a. Extract all the character names (the `name` field) and the corresponding actor names (the `playedBy` field) as two separate character vectors
-    a. Create a new file for each character. The file name should be `characterName.txt` (replace the placeholder by the corresponding character name), and the content should be just the name of the actor. Use `writeLines(charVec, fileName)` to write the contents of a character vector `charVec` into a file `fileName`.
+    a. Extract all the character names (the `name` field) and the corresponding actor names (the `playedBy` field) as two separate character vectors. [Hint: Some characters are played by more than one actors, in which case you will combine the actor names]
+    a. Create a new file for each character. The file name should be `characterName.txt` (replace the placeholder by the corresponding character name), and the content should be just the name(s) of the actor(s). Use `writeLines(charVec, fileName)` to write the contents of a character vector `charVec` into a file `fileName`.
     a. Create a new file containing all the information for each character. 
     The file name should be `characterNameAll.txt` (replace the placeholder by the corresponding character name). [Hint: You can use RStudio to open the `.txt` files and check your results. Click File -- Open File] 
     
-        Here is an example content for the file `Theon Greyjoy.txt` for the first character:
+        Here is an example content for the file `Theon Greyjoy.txt` for the first character. It is not expected that your output matches the example content exactly. You will receive full credit as long as the output is formatted in a very reader-friendly fashion.
     
         ```{r, echo=FALSE, comment=''}
         library(repurrrsive)

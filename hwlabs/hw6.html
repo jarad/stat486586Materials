@@ -175,7 +175,12 @@ pre code {
 <div id="applying-functions" class="section level2">
 <h2>Applying functions</h2>
 <ol style="list-style-type: decimal">
-<li><p>Repeat <a href="hw5.html">Homework 5</a> Question 1a and 1b, but this time using only <code>purrr</code> functions (<code>map_dbl</code>, etc. You may also use <code>sum</code>) instead of loops or vectorized operations. Compare the run times with your previous results using loops and vectorized operations and state what you find (e.g., which approach is the fastest, which is the slowest).</p></li>
+<li><p>(This is more or less a repeat of <a href="hw5.html">Homework 5</a> Question 1a and 1b) For this question, use only <code>purrr</code> functions <code>map_dbl</code> etc but not loops or vectorized operations. You may use <code>sum()</code></p>
+<ol style="list-style-type: lower-alpha">
+<li>Use <code>map_dbl</code> to generate a vector containing <span class="math inline">\(1/i\)</span> in its <span class="math inline">\(i\)</span>th entry, for <span class="math inline">\(i=1,\dots,n\)</span>. Then sum up the numbers</li>
+<li>Use <code>map</code>, <code>map_dbl</code>, and <code>do.call</code> to generate a matrix containing <span class="math inline">\(2^{-ij}\)</span> in its <span class="math inline">\((i,j)\)</span>th entry, for <span class="math inline">\(i=1,\dots,n\)</span> and <span class="math inline">\(j=1,\dots,m\)</span>. Then sum up the values in the matrix</li>
+<li>Use <code>system.time</code> to time how long did the code run in each of the previous subquestions. Compare the run times with your previous results using loops and vectorized operations. Set a large enough <span class="math inline">\(n\)</span> so that the speed difference between the two methods is distinguishable. State what you find (e.g., which approach is the fastest, which is the slowest).</li>
+</ol></li>
 <li><p>Perform the following using <code>purrr</code> functions as much as possible.</p>
 <ol style="list-style-type: lower-alpha">
 <li>Compute the medians of all variables in <code>mtcars</code>. The result should be a vector.</li>
@@ -187,10 +192,10 @@ pre code {
 </ol></li>
 <li><p>Work on a list containing information of Game of Thrones characters. Install <code>repurrrsive</code> using <code>install.packages(&quot;repurrrsive&quot;)</code>, and load it using <code>library(repurrrsive)</code>. The list <code>got_chars</code> is what you will use. Check out what does it contain before you start.</p>
 <ol style="list-style-type: lower-alpha">
-<li><p>Extract all the character names (the <code>name</code> field) and the corresponding actor names (the <code>playedBy</code> field) as two separate character vectors</p></li>
-<li><p>Create a new file for each character. The file name should be <code>characterName.txt</code> (replace the placeholder by the corresponding character name), and the content should be just the name of the actor. Use <code>writeLines(charVec, fileName)</code> to write the contents of a character vector <code>charVec</code> into a file <code>fileName</code>.</p></li>
+<li><p>Extract all the character names (the <code>name</code> field) and the corresponding actor names (the <code>playedBy</code> field) as two separate character vectors. [Hint: Some characters are played by more than one actors, in which case you will combine the actor names]</p></li>
+<li><p>Create a new file for each character. The file name should be <code>characterName.txt</code> (replace the placeholder by the corresponding character name), and the content should be just the name(s) of the actor(s). Use <code>writeLines(charVec, fileName)</code> to write the contents of a character vector <code>charVec</code> into a file <code>fileName</code>.</p></li>
 <li><p>Create a new file containing all the information for each character. The file name should be <code>characterNameAll.txt</code> (replace the placeholder by the corresponding character name). [Hint: You can use RStudio to open the <code>.txt</code> files and check your results. Click File – Open File]</p>
-<p>Here is an example content for the file <code>Theon Greyjoy.txt</code> for the first character:</p>
+<p>Here is an example content for the file <code>Theon Greyjoy.txt</code> for the first character. It is not expected that your output matches the example content exactly. You will receive full credit as long as the output is formatted in a very reader-friendly fashion.</p>
 <pre><code>url: https://www.anapioficeandfire.com/api/characters/1022
 id: 1022
 name: Theon Greyjoy
