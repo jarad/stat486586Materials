@@ -452,7 +452,7 @@ l &lt;- list(
   c(4, 6, 8),
   c(1, 1, 2)
 )
-pmap(l, function(a, b, c) seq(from=a, to=b, by=c))
+pmap(l, function(a, b, c) seq(a, b, by=c))
 ## [[1]]
 ## [1] 1 2 3 4
 ## 
@@ -535,9 +535,9 @@ map(sLenBySpecies, summary)
 
 ## Base R apply functions (optional)
 
-- `apply`: map functions over margins of a matrix or array
+- `lapply`, `sapply`, `vapply`: map functions over a vector or a list; the formats of the returned values differs
 
-- `lapply`, `sapply`, `vapply`: map functions over a vector or a list; the manners of the return differs
+- `apply`: map functions over margins of a matrix or array
 
 - `tapply`, `by`, `aggregate`: map functions for each group
 
@@ -552,13 +552,13 @@ class: big, middle
 
 ## Reduce
 
-- Heard about the map-reduce framework for big data?
+- Heard about the [map-reduce framework](https://www.scnsoft.com/blog-pictures/business-intelligence/spark-vs-hadoop.png) for big data?
 
-- Here, "map" means the same as the `map` function, applying the same operation to many inputs, generating multiple intermediate results. E.g., calculate the total sales *in each state*
+- Here, "map" means the same as the `map` function, applying the same operation to many inputs, generating multiple intermediate results. E.g., calculate the total sales *in each state in the US*
 
-- "Reduce" means combine the intermediate results to have a final, aggregated result. E.g., *combine* the per state sales to have a total sales
+- "Reduce" means combine the intermediate results to have a final, aggregated result. E.g., *combine* the sales per state to calculate a total sales
 
-- This is done by combining the first two results, and then that with the third, and so on
+- This is done by combining sales in the first two states, and then that with the third, and so on
 
 
 ---
@@ -568,7 +568,7 @@ The `reduce` function in `purrr` performs the reduce operation
 ![:scale 40%](https://d33wubrfki0l68.cloudfront.net/9c239e1227c69b7a2c9c2df234c21f3e1c74dd57/eec0e/diagrams/functionals/reduce.png)
 ]
 
-- E.g, sum up (revenue, profit)
+- E.g, sum up vectors containing (revenue, profit)
 
 ```r
 l &lt;- list(IA = c(2, 1), NE = c(1.5, 1), IL=c(5, 2))
@@ -606,9 +606,26 @@ accumulate(l, `+`)
 ## [1] 8.5 4.0
 ```
 
----
 
-## R demo...
+---
+class: inverse
+
+## Your turn
+
+&lt;img src="images/green.png" width=20&gt; Work with the `mtcars` dataset. Split it into multiple datasets using `split` according to the number of cylinders `mtcars$cyl`
+
+
+For the next question, start with a list
+```
+l3 &lt;- list(c(1, 3, 5, 100),
+          c(3, 6, 7),
+          c(7, 8, 9))
+```
+
+
+&lt;img src="images/green.png" width=20&gt; Use `reduce` and `c` to concatenate all entries in `l3`
+
+&lt;img src="images/blue.png" width=20&gt; Use `reduce` and `intersect` to find the elements that appear in every entry in `l3`. Hint: `intersect(x, y)` gives the intersect of `x` and `y` (i.e. elements appearing in both sets)
 
 ---
 
