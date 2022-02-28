@@ -226,7 +226,7 @@ playedBy: Alfie Allen</code></pre></li>
 <div id="advanced-functions" class="section level2">
 <h2>Advanced functions</h2>
 <ol style="list-style-type: decimal">
-<li><p>Reason with each of the following code (run them in your head). Make a prediction of the output before running the code. Use the principles (could be more than 1) covered in <a href="../slides/02_04_advanced_functions.html">the lecture</a> to explain why the output makes sense.</p>
+<li><p>Reason with each of the following code (run them in your head). Make a prediction of the output before running the code (note that the last two questions may have multiple outputs). Use the principles (could be more than 1 for each question) covered in <a href="../slides/02_04_advanced_functions.html">the lecture</a> to explain why the output makes sense.</p>
 <ol style="list-style-type: lower-alpha">
 <li><pre class="r"><code>x &lt;- 10
 f1 &lt;- function(x) {
@@ -251,8 +251,8 @@ g(y)</code></pre></li>
 g &lt;- function(y) print(&quot;hello&quot;)
 g(y = f())</code></pre></li>
 </ol></li>
-<li><p>Write a function to calculate the definite integral <span class="math display">\[\int_l^u f(x) dx\]</span> of an arbitrary polynomial <span class="math display">\[f(x) = a_0 + a_1 x + a_2 x^2 + \dots + a_n x^n, \quad x\in \mathbb{R}\]</span> for <span class="math inline">\(n \ge 0\)</span>. The user will input a vector <code>a</code> specifying the coefficients (<code>a[1]</code>=<span class="math inline">\(a_0\)</span>, <code>a[2]</code>=<span class="math inline">\(a_1\)</span>, etc), a lower bound <code>lower</code> (<span class="math inline">\(l\)</span>), and an upper bound <code>upper</code> (<span class="math inline">\(u\)</span>).</p>
-<p>You function should perform the integral <em>numerically</em> using the following steps (instead of applying integral rules learned in Calculus):</p>
+<li><p>We are going to write a function to calculate the definite integral <span class="math display">\[\int_l^u f(x) dx\]</span> of an arbitrary polynomial <span class="math display">\[f(x) = a_0 + a_1 x + a_2 x^2 + \dots + a_n x^n, \quad x\in \mathbb{R}\]</span> for <span class="math inline">\(n \ge 0\)</span>. The user will input a vector <code>a</code> specifying the coefficients (<code>a[1]</code>=<span class="math inline">\(a_0\)</span>, <code>a[2]</code>=<span class="math inline">\(a_1\)</span>, etc), a lower bound <code>lower</code> (<span class="math inline">\(l\)</span>), and an upper bound <code>upper</code> (<span class="math inline">\(u\)</span>).</p>
+<p>You function should perform the integral <em>numerically</em> (instead of applying integral rules learned in Calculus). Follow the following steps:</p>
 <ol style="list-style-type: lower-alpha">
 <li>create a function factory, namely, a function that takes in the coefficients <code>a</code> and outputs a polynomial function. If you input a vector to a manufactured function, it should output a vector with the same length</li>
 <li>Test that your function factory behaves as expected, by writing at least a unit test for each of the following aspects:
@@ -261,7 +261,8 @@ g(y = f())</code></pre></li>
 <li>Manufacture a function with <span class="math inline">\(a_0 = 2\)</span>. Given a vector input <code>x</code>, the manufactured function returns a vector of all <code>2</code> with the same length as <code>x</code></li>
 <li>Manufacture a function with <span class="math inline">\(a_0 = 1\)</span> and <span class="math inline">\(a_1 = -1\)</span>. The manufactured function works well given a vector input <code>x</code></li>
 </ol></li>
-<li>Manufacture a polynomial function with <span class="math inline">\(a_0 = 1\)</span>, <span class="math inline">\(a_1 = 0\)</span>, and <span class="math inline">\(a_2 = 1\)</span>, and apply the <code>integrate</code> function to evaluate the definite integral of the manufactured function from 0 to 10.</li>
+<li>Manufacture a polynomial function with <span class="math inline">\(a_0 = 1\)</span>, <span class="math inline">\(a_1 = 0\)</span>, and <span class="math inline">\(a_2 = 1\)</span>, and apply the <code>integrate</code> function to evaluate the definite integral of the manufactured function from 0 to 10</li>
+<li>Wrap the entire procedure for making a polynomial and then calculating integral into a function</li>
 </ol></li>
 <li><p>(Optional) In this question, you will write a function factory to obtain the log-likelihood function of a Gamma<span class="math inline">\((\alpha,\beta)\)</span> distribution. The probability density function (pdf) of a Gamma<span class="math inline">\((\alpha,\beta)\)</span> distribution is, for <span class="math inline">\(\alpha &gt; 0\)</span> and <span class="math inline">\(\beta &gt; 0\)</span>, <span class="math display">\[f(x;\,\alpha,\beta)={\frac {\beta ^{\alpha }}{\Gamma (\alpha )}}x^{\alpha -1}e^{-\beta x}, \quad x &gt; 0\]</span> where <span class="math inline">\(\Gamma (\alpha)=\int _{0}^{\infty }x^{\alpha-1}e^{-x}\,dx\)</span> is the gamma function. Given dataset <span class="math inline">\(\{X_1, \dots, X_n\}\)</span>, the log-likelihood function, is <span class="math display">\[l(\alpha, \beta) = \sum_{i=1} \log f(X_i;\,\alpha,\beta).\]</span></p>
 <p>Implement a function factory to manufacture the log-likelihood function. The function factory should take a vector <code>x</code> input for the dataset and output the log-likelihood function corresponding to <code>x</code>. The manufactured function should take a single input <code>par</code>, which is a vector of length 2 where the first entry stands for <code>gamma</code> and the second entry stands for <code>beta</code>.</p>

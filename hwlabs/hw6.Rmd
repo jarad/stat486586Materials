@@ -55,7 +55,7 @@ Remove any `View()` or `install.packages()` commands in your `Rmd` file. These c
 
 ## Advanced functions
 
-1. Reason with each of the following code (run them in your head). Make a prediction of the output before running the code. Use the principles (could be more than 1) covered in [the lecture](../slides/02_04_advanced_functions.html) to explain why the output makes sense.
+1. Reason with each of the following code (run them in your head). Make a prediction of the output before running the code (note that the last two questions may have multiple outputs). Use the principles (could be more than 1 for each question) covered in [the lecture](../slides/02_04_advanced_functions.html) to explain why the output makes sense.
 
     a. 
         ```{R, eval=FALSE} 
@@ -97,20 +97,22 @@ Remove any `View()` or `install.packages()` commands in your `Rmd` file. These c
         
 
 
-1. Write a function to calculate the definite integral 
+1. We are going to write a function to calculate the definite integral 
 $$\int_l^u f(x) dx$$
 of an arbitrary polynomial
 $$f(x) = a_0 + a_1 x + a_2 x^2 + \dots + a_n x^n, \quad x\in \mathbb{R}$$
-for $n \ge 0$. The user will input a vector `a` specifying the coefficients (`a[1]`=$a_0$, `a[2]`=$a_1$, etc), a lower bound `lower` ($l$), and an upper bound `upper` ($u$). 
+for $n \ge 0$. 
+The user will input a vector `a` specifying the coefficients (`a[1]`=$a_0$, `a[2]`=$a_1$, etc), a lower bound `lower` ($l$), and an upper bound `upper` ($u$). 
 
-    You function should perform the integral *numerically* using the following steps (instead of applying integral rules learned in Calculus):
+    You function should perform the integral *numerically* (instead of applying integral rules learned in Calculus). Follow the following steps:
 
     a. create a function factory, namely, a function that takes in the coefficients `a` and outputs a polynomial function. If you input a vector to a manufactured function, it should output a vector with the same length
     a. Test that your function factory behaves as expected, by writing at least a unit test for each of the following aspects:
         i. The output of your function factory is a function
         i. Manufacture a function with $a_0 = 2$. Given a vector input `x`, the manufactured function returns a vector of all `2` with the same length as `x`
         i. Manufacture a function with $a_0 = 1$ and $a_1 = -1$. The manufactured function works well given a vector input `x`
-    a. Manufacture a polynomial function with $a_0 = 1$, $a_1 = 0$, and $a_2 = 1$, and apply the `integrate` function to evaluate the definite integral of the manufactured function from 0 to 10.
+    a. Manufacture a polynomial function with $a_0 = 1$, $a_1 = 0$, and $a_2 = 1$, and apply the `integrate` function to evaluate the definite integral of the manufactured function from 0 to 10
+    a. Wrap the entire procedure for making a polynomial and then calculating integral into a function
     
     
 1. (Optional)  In this question, you will write a function factory to obtain the log-likelihood function of a Gamma$(\alpha,\beta)$ distribution.
