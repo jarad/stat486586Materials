@@ -12,15 +12,10 @@ output:
       highlightLines: true
       countIncrementalSlides: false
 ---
-class: big, middle
 
 ```{r xaringan-tile-view, echo=FALSE}
 xaringanExtra::use_tile_view()
 ```
-
-## Advanced Functions
-
----
 
 ## Outline
 

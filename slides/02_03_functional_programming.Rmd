@@ -474,6 +474,7 @@ class: inverse
 
 <img src="images/green.png" width=20> Work with the `mtcars` dataset. Split it into multiple datasets using `split` according to the number of cylinders `mtcars$cyl`
 
+<img src="images/blue.png" width=20> Use `map` to find the correlations between mileage `mpg` and car weight `wt` for cars grouped by the number of cylinders
 
 For the next question, start with a list
 ```
