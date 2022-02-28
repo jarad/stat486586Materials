@@ -31,7 +31,6 @@ class: center, middle, inverse, title-slide
 
 - Lazy evaluation
 
-- Function factory
 
 ---
 class: big, middle
@@ -223,7 +222,7 @@ f2()
 ```
 
 ```
-## [1] 3
+## [1] 1
 ```
 
 ```r
@@ -231,7 +230,7 @@ f2()
 ```
 
 ```
-## [1] 3
+## [1] 1
 ```
 
 ---
@@ -393,7 +392,7 @@ plus_one &lt;- plus(1)
 ```r
 plus_one
 ## function(y) x + y
-## &lt;environment: 0x7fd65e63a1a8&gt;
+## &lt;environment: 0x7f92d99e36e8&gt;
 plus_one(2)
 ## [1] 3
 ```
@@ -488,7 +487,7 @@ h3(tripple(y))
 
 ## Some implications of lazy evaluation
 
-We are going to see some implications of lazy evaluation
+Lazy evaluation is useful for the following tasks:
 
 1. Specifying default arguments for a function
 
@@ -566,126 +565,6 @@ E.g. of NSE:
     ![](02_04_advanced_functions_files/figure-html/unnamed-chunk-23-1.png)&lt;!-- --&gt;
 
 - You will see more NSE examples (some super useful) when we introduce `dplyr`
-
----
-class: big, middle
-
-## Function factories
-
----
-
-## Function factories
-
-A *function factory* is a function which returns functions. In addition to `plus()` we say before, there is a second example
-
-
-```r
-power1 &lt;- function(exp) {
-  function(x) {
-    x ^ exp
-  }
-}
-square &lt;- power1(2)
-class(square)
-```
-
-```
-## [1] "function"
-```
-
-```r
-square(2)
-```
-
-```
-## [1] 4
-```
-
-- `square()` is a *manufactured function*. It encloses a piece of data (`exp = 2`)
-
----
-- *Closures* (functions with enclosed data) are very useful as input to R functions that takes a function as input, e.g., 
-    - `integrate(f, lower, upper)`, for integrating a one-dimensional function `f`
-    - `uniroot(f, interval)` and `optimise(f, interval)`, for searching for the root (i.e., zero point) or the minimum/maximum of a one-dimensional `f`
-    - `optim(par, fn)`, for searching for the minimum or maximum of a multi-dimensional `fn`
-    
-E.g.,
-
-```r
-integrate(power1(3), 0, 1) # ∫ x^3 dx from 0 to 1
-```
-
-```
-## 0.25 with absolute error &lt; 2.8e-15
-```
-
-- In particular, the problem of finding maximum likelihood estimate can utilize a function factory, which takes a dataset as argument and output the likelihood function (homework)
-
----
-
-## Forced evaluation
-
-There is a subtle bug in `power1` due to lazy evaluation
-```
-power1 &lt;- function(exp) {
-  function(x) {
-    x ^ exp
-  }
-}
-```
-
-```r
-a &lt;- 1
-linear &lt;- power1(a)
-a &lt;- 2
-linear(3)
-```
-
-```
-## [1] 9
-```
-
-- You may hope the output to be 3, because the `linear` function is made with an exponent 1 by value, at the time of its definition
-
-- This is not the case because of lazy evaluation. The value of `a` get bound to `linear` only at the first time `linear` is evaluated. At this moment, `a` equals 2
-
----
-
-- To fix the issue, use `force()` to *force evaluate* `exp` before the function factory returns. The correct function is
-
-
-```r
-power2 &lt;- function(exp) {
-  force(exp)
-  function(x) {
-    x ^ exp
-  }
-}
-
-a &lt;- 1
-linear &lt;- power2(a)
-a &lt;- 2
-linear(3)
-```
-
-```
-## [1] 3
-```
-
----
-
-## R demo...
-
----
-class: inverse
-
-## Your turn (TODO)
-
-&lt;img src="images/blue.png" width=20&gt; Implement a function `mymean` with a single vector input `x` that outputs the mean of `x`, without using the `mean` function
-
-&lt;img src="images/green.png" width=20&gt; Call your function on `c(1, 3, 4)` and `c(1, 3, 4, 5)`. Make sure your function has the same output as `mean()`
-
-&lt;img src="images/blue.png" width=20&gt; Now, add a second optional argument to `mymean`, which is a flag `na.rm` that defaults to `FALSE` to indicate whether to remove missing values before the mean calculation. You may use `is.na()`. Again, compare the results from your function and `mean()` to make sure your implementation is correct
 
 ---
 

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Function Factories</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Xiongtao Dai" />
+    <script src="libs/header-attrs-2.11/header-attrs.js"></script>
+    <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view-0.2.6/tile-view.js"></script>
+    <link rel="stylesheet" href="myslides.css" type="text/css" />
+    <link rel="stylesheet" href="myslides-fonts.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Function Factories
+## STAT486/586
+### Xiongtao Dai
+
+---
+
+
+
+
+## Outline
+
+- Creating a function factory
+
+- Using function factories
+
+- Examples
+
+
+---
+
+## Function factories
+
+A *function factory* is a function which returns functions. In addition to `plus()` we saw before, there is a second example
+
+
+```r
+power1 &lt;- function(exp) {
+  function(x) {
+    x ^ exp
+  }
+}
+square &lt;- power1(2)
+class(square)
+```
+
+```
+## [1] "function"
+```
+
+```r
+square(2)
+```
+
+```
+## [1] 4
+```
+
+- A function returned by a function factory is called a *manufactured function*. E.g., `square()` is a *manufactured function*. It encloses a piece of data (`exp = 2`)
+
+---
+
+## Built-in function factories
+
+R has some built-in function factories, e.g., `ecdf` and `approxfun`. We are going to learn the former
+
+- `ecdf(x)` takes a vector input `x` and outputs the empirical cumulative distribution function of `x`. Note that the returned value is a function
+
+
+- The *empirical* cumulative distribution function is the cdf for the *empirical distribution* of a sample. The empirical cdf for dataset `\(\{X_1, \dots, X_n\}\)` is
+`$$\hat{F}_{n}(x)={\frac {1}{n}}\sum _{i=1}^{n}\mathbf{1} \{X_{i}\leq x\},$$`
+where `\(\mathbf{1}\{A\}\)` is the indicator function that equals 1 if `\(A\)` is true or 0 otherwise.
+
+---
+
+## Empirical cdf
+
+- You can evaluate or plot the returned function
+
+
+```r
+Fn &lt;- ecdf(mtcars$mpg)
+Fn(c(15, 20, 25))
+```
+
+```
+## [1] 0.1875 0.5625 0.8125
+```
+
+```r
+x &lt;- seq(0, 40, length.out=100)
+plot(x, Fn(x))
+```
+
+&lt;img src="02_05_function_factories_files/figure-html/unnamed-chunk-2-1.png" style="display: block; margin: auto;" /&gt;
+
+---
+## Using manufactorued functions
+
+- Some R functions take a function as input, e.g., 
+    - `integrate(f, lower, upper)`, for integrating a one-dimensional function `f`. `f` must be vectorized in its input
+    - `optimize(f, interval)` and `uniroot(f, interval)`, for searching for the minimum/maximum or the root (i.e., zero point) of a one-dimensional `f`
+    - `optim(par, fn)`, for searching for the minimum or maximum of a multi-dimensional `fn`
+
+- *Closures* (functions with enclosed data) are very useful in this context as input.
+E.g.,
+    
+    ```r
+    integrate(power1(3), 0, 1) # ∫ x^3 dx from 0 to 1
+    ```
+    
+    ```
+    ## 0.25 with absolute error &lt; 2.8e-15
+    ```
+
+- In particular, the problem of finding maximum likelihood estimate can utilize a function factory, which takes a dataset as argument and output the likelihood function (homework)
+
+---
+
+class: inverse
+
+## Your turn
+
+
+&lt;img src="images/green.png" width=20&gt; Create a function factory that creates functions that compute the `\(p\)`th moment `\(n^{-1}\sum_{i=1}^n X_i^p\)` of a numeric vector. Manufacture two functions, one for calculating the 1st moment and the other for the 2nd moment
+
+&lt;img src="images/green.png" width=20&gt; Now test the manufactured functions using input `c(-1, 0, 1)`. Check that the first moment is 0 and the second moment is 2/3
+
+
+&lt;img src="images/blue.png" width=20&gt; Create a function factory that takes input `X` for a vector of data points `\(\{X_1,\dots,X_n\}\)` and output a function 
+`\(g(x) = n^{-1}\sum_{i=1}^n (x - X_i)^2\)`
+
+&lt;img src="images/blue.png" width=20&gt; Manufacture a function using dataset `cars$speed`. Use `optimize` to find the minimum point `\(\text{argmin}_x\, g(x)\)`
+
+
+---
+
+## Caution: Forced evaluation
+
+There is a subtle bug in `power1` due to lazy evaluation
+```
+power1 &lt;- function(exp) {
+  function(x) {
+    x ^ exp
+  }
+}
+```
+
+```r
+a &lt;- 1
+linear &lt;- power1(a)
+a &lt;- 2
+linear(3)
+```
+
+```
+## [1] 9
+```
+
+- You may hope the output to be 3, because the `linear` function is made with an exponent 1 by value, at the time of its definition
+
+- This is not the case because of lazy evaluation. The value of `a` is unevaluated when `linear` is defined, and `a` is bound to `linear` only at the first time `linear` is evaluated. At that moment, `a` equals 2
+
+---
+
+- To fix the issue, use `force()` to *force evaluate* `exp` before the function factory returns. The correct function is
+
+
+```r
+power2 &lt;- function(exp) {
+  force(exp)
+  function(x) {
+    x ^ exp
+  }
+}
+
+a &lt;- 1
+linear &lt;- power2(a)
+a &lt;- 2
+linear(3)
+```
+
+```
+## [1] 3
+```
+
+---
+
+## References
+
+- Chapters 6, 7, and 10, [Advanced R](https://adv-r.hadley.nz/index.html) by Hadley Wickham
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="macros.js"></script>
+<script>var slideshow = remark.create({
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
