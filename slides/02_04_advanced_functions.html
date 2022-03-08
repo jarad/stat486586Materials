@@ -392,7 +392,7 @@ plus_one &lt;- plus(1)
 ```r
 plus_one
 ## function(y) x + y
-## &lt;environment: 0x7fa8dcf67dd0&gt;
+## &lt;environment: 0x7fb25e14ce58&gt;
 plus_one(2)
 ## [1] 3
 ```
@@ -407,6 +407,51 @@ plus_one(2)
 class: big, middle
 
 ## Lazy evaluation
+
+---
+
+## Lazy evaluation "Quizzes"
+
+Use your intuition to predict what the following functions output:
+
+1. 
+    
+    ```r
+    h &lt;- function(x) {
+      10
+    }
+    h(stop("an error here"))
+    ```
+  
+1. How many times will we see the message "Calculating..."?
+    
+    ```r
+    double &lt;- function(x) { 
+      message("Calculating...")
+      x * 2
+    }
+    
+    h2 &lt;- function(x) {
+      c(x, x)
+    }
+    
+    h2(double(20))
+    ```
+
+---
+
+3\. 
+
+```r
+tripple &lt;- function(x)  x * 3
+h3 &lt;- function(x) {
+  y &lt;- 100
+  x
+}
+
+y &lt;- 1
+h3(tripple(y))
+```
 
 ---
 ## Lazy evaluation
@@ -516,7 +561,7 @@ Lazy evaluation is useful for the following tasks:
 
 ---
 
-- An empty argument can have a default as well
+- We can handle missing arguments without default values
 
 
 ```r
@@ -537,7 +582,9 @@ h5()
 
 ## Non-standard evaluation
 
-*Non-standard evaluation* (NSE) is as opposed to standard evaluation rules which interpret arguments by the values
+*Standard evaluation* rules interpret arguments by the values
+
+*Non-standard evaluation* (NSE) is as opposed to standard evaluation rules and evaluate according to the expression (but not the value of the expression)
 
 E.g. of NSE:
 
@@ -562,7 +609,7 @@ E.g. of NSE:
     plot(myX, sin(myX)) # How does plot() set the label names?
     ```
     
-    ![](02_04_advanced_functions_files/figure-html/unnamed-chunk-23-1.png)&lt;!-- --&gt;
+    ![](02_04_advanced_functions_files/figure-html/unnamed-chunk-26-1.png)&lt;!-- --&gt;
 
 - You will see more NSE examples (some super useful) when we introduce `dplyr`
 

@@ -107,7 +107,7 @@ The *empirical* cumulative distribution function is the cdf for the *empirical d
 where `\(\mathbf{1}\{A\}\)` is the indicator function that equals 1 if `\(A\)` is true or 0 otherwise.
 
 ---
-- `ecdf(x)` returns the empirical cdf, which is a *function*
+- `ecdf(x)` takes a vector input `x` and outputs the empirical cumulative distribution function of `x`. Note that the returned value is a function
 
 - You can evaluate or plot the returned function
 
@@ -118,7 +118,7 @@ Fn(c(5, 10, 15))
 ```
 
 ```
-## [1] 0.004 0.480 0.994
+## [1] 0.004 0.536 0.986
 ```
 
 ```r
@@ -158,7 +158,7 @@ runif(1)
 ```
 
 ```
-## [1] 0.9547801
+## [1] 0.7092283
 ```
 
 ```r
@@ -166,7 +166,7 @@ runif(1)
 ```
 
 ```
-## [1] 0.5945762
+## [1] 0.7349194
 ```
 
 - The random numbers you generated will be most likely different, since they are random afterall...
@@ -217,16 +217,16 @@ The waiting time of the first 10 customers is
 ```r
 n &lt;- 10
 (wait &lt;- rexp(n))
-##  [1] 0.40474807 0.14665267 1.73070972 0.08952618 0.66689763 1.07436686 1.51162930
-##  [8] 1.31427591 0.15653028 0.74511896
+##  [1] 0.40474807 0.14665267 1.73070972 0.08952618 0.66689763 1.07436686
+##  [7] 1.51162930 1.31427591 0.15653028 0.74511896
 ```
 
 The arrival time of the `\(i\)`th customer is
 
 ```r
 (arrival &lt;- cumsum(wait))
-##  [1] 0.4047481 0.5514007 2.2821105 2.3716366 3.0385343 4.1129011 5.6245304 6.9388063
-##  [9] 7.0953366 7.8404556
+##  [1] 0.4047481 0.5514007 2.2821105 2.3716366 3.0385343 4.1129011 5.6245304
+##  [8] 6.9388063 7.0953366 7.8404556
 ```
 
 ---

@@ -49,30 +49,11 @@ square(2)
 
 ## Built-in function factories
 
-R has some built-in function factories, e.g., `ecdf` and `approxfun`. We are going to learn the former
+R has some built-in function factories, e.g., `ecdf` and `approxfun`. We are going to learn the former next week
 
-- `ecdf(x)` takes a vector input `x` and outputs the empirical cumulative distribution function of `x`. Note that the returned value is a function
-
-
-- The *empirical* cumulative distribution function is the cdf for the *empirical distribution* of a sample. The empirical cdf for dataset $\{X_1, \dots, X_n\}$ is
-$$\hat{F}_{n}(x)={\frac {1}{n}}\sum _{i=1}^{n}\mathbf{1} \{X_{i}\leq x\},$$
-where $\mathbf{1}\{A\}$ is the indicator function that equals 1 if $A$ is true or 0 otherwise.
 
 ---
-
-## Empirical cdf
-
-- You can evaluate or plot the returned function
-
-```{r, fig.width=5, fig.height=5, fig.align='center'}
-Fn <- ecdf(mtcars$mpg)
-Fn(c(15, 20, 25))
-x <- seq(0, 40, length.out=100)
-plot(x, Fn(x))
-```
-
----
-## Using manufactorued functions
+## Using manufactured functions
 
 - Some R functions take a function as input, e.g., 
     - `integrate(f, lower, upper)`, for integrating a one-dimensional function `f`. `f` must be vectorized in its input
@@ -93,16 +74,12 @@ class: inverse
 
 ## Your turn
 
-
-<img src="images/green.png" width=20> Create a function factory that creates functions that compute the $p$th moment $n^{-1}\sum_{i=1}^n X_i^p$ of a numeric vector. Manufacture two functions, one for calculating the 1st moment and the other for the 2nd moment
-
-<img src="images/green.png" width=20> Now test the manufactured functions using input `c(-1, 0, 1)`. Check that the first moment is 0 and the second moment is 2/3
-
-
 <img src="images/blue.png" width=20> Create a function factory that takes input `X` for a vector of data points $\{X_1,\dots,X_n\}$ and output a function 
 $g(x) = n^{-1}\sum_{i=1}^n (x - X_i)^2$
 
-<img src="images/blue.png" width=20> Manufacture a function using dataset `cars$speed`. Use `optimize` to find the minimum point $\text{argmin}_x\, g(x)$
+<img src="images/green.png" width=20> Manufacture a function using input `c(-1, 0, 1)`. Call the manufactured function using `x=0` and make sure the result is 2/3
+
+<img src="images/blue.png" width=20> Manufacture a function using input `cars$speed`. Use `optimize` to find the minimum point $\text{argmin}_x\, g(x)$
 
 ---
 
@@ -129,7 +106,7 @@ linear(3)
 
 ---
 
-- To fix the issue, use `force()` to *force evaluate* `exp` before the function factory returns. The correct function is
+- To fix the issue, use `force()` to *force evaluate* `exp` before the function factory returns. The corrected function is
 
 ```{r}
 power2 <- function(exp) {
@@ -149,11 +126,13 @@ linear(3)
 
 ## One more example
 
+The following is an example for finding the maximum likelihood estimate (MLE) of $\lambda$ using a function factory and `optimise`. 
+
 Suppose that $X_1,\dots, X_n \sim \exp(\lambda)$. The density function is 
 $$
 f(x) = \lambda e^{-\lambda x}, \quad x > 0.
 $$
-This is an example for finding the maximum likelihood estimate (MLE) of $\lambda$ using a function factory and `optimise`. 
+
 
 Given data $\{X_1,\dots,X_n\}$, the log-likelihood function is 
 

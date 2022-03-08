@@ -346,6 +346,48 @@ class: big, middle
 ## Lazy evaluation
 
 ---
+
+## Lazy evaluation "Quizzes"
+
+Use your intuition to predict what the following functions output:
+
+1. 
+    ```{r, eval=FALSE}
+    h <- function(x) {
+      10
+    }
+    h(stop("an error here"))
+    ```
+  
+1. How many times will we see the message "Calculating..."?
+    ```{r, eval=FALSE}
+    double <- function(x) { 
+      message("Calculating...")
+      x * 2
+    }
+    
+    h2 <- function(x) {
+      c(x, x)
+    }
+    
+    h2(double(20))
+    ```
+
+---
+
+3\. 
+```{r, eval=FALSE}
+tripple <- function(x)  x * 3
+h3 <- function(x) {
+  y <- 100
+  x
+}
+
+y <- 1
+h3(tripple(y))
+```
+
+---
 ## Lazy evaluation
 R function arguments are lazily evaluated. There are three principles:
 
@@ -424,7 +466,7 @@ Lazy evaluation is useful for the following tasks:
 
 ---
 
-- An empty argument can have a default as well
+- We can handle missing arguments without default values
 
 ```{r}
 h5 <- function(x) {
@@ -440,7 +482,9 @@ h5()
 
 ## Non-standard evaluation
 
-*Non-standard evaluation* (NSE) is as opposed to standard evaluation rules which interpret arguments by the values
+*Standard evaluation* rules interpret arguments by the values
+
+*Non-standard evaluation* (NSE) is as opposed to standard evaluation rules and evaluate according to the expression (but not the value of the expression)
 
 E.g. of NSE:
 

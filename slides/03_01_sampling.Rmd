@@ -115,7 +115,7 @@ $$\hat{F}_{n}(x)={\frac {1}{n}}\sum _{i=1}^{n}\mathbf{1} \{X_{i}\leq x\},$$
 where $\mathbf{1}\{A\}$ is the indicator function that equals 1 if $A$ is true or 0 otherwise.
 
 ---
-- `ecdf(x)` returns the empirical cdf, which is a *function*
+- `ecdf(x)` takes a vector input `x` and outputs the empirical cumulative distribution function of `x`. Note that the returned value is a function
 
 - You can evaluate or plot the returned function
 
