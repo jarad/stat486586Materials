@@ -26,10 +26,6 @@ class: big, middle
 
 ## Module 3: Simulation and Resampling Methods
 
----
-class: big, middle
-
-## Probability and Sampling
 
 ---
 
@@ -37,9 +33,16 @@ class: big, middle
 
 - Probability in R
 
-- Random number generation
+- Pseudo random number generation
+
+- Case study
 
 - Random sampling
+
+---
+class: big, middle
+
+## Probability and Sampling
 
 ---
 
@@ -47,8 +50,8 @@ class: big, middle
 
 The *density function* `\(f(x)\)` for a continuous random variable `\(X\)` describes how likely it is for `\(X\)` to lie close to `\(x\)` on the support
 
-- often abbreviated as pdf (probability density function)
-- for a discrete r.v., the analogy is pmf (probability mass function)
+- often abbreviated as *pdf* (probability density function)
+- for a discrete r.v., the analogy is *pmf* (probability mass function)
 
 &lt;img src="03_01_sampling_files/figure-html/unnamed-chunk-1-1.png" style="display: block; margin: auto;" /&gt;
 
@@ -61,8 +64,8 @@ The *density function* `\(f(x)\)` for a continuous random variable `\(X\)` descr
 The *distribution function* for a continuous r.v. `\(X\)` is the probability for `\(X\)` to be at most `\(x\)`, namely 
 `$$F(x) = P(X \le x) = \int_{-\infty}^x f(x) dx.$$`
 
-- often abbreviated as cdf (cumulative distribution function)
-- For a discrete r.v., the integral becomes a summation. In this case `\(F(x)\)` can be discontinuous
+- often abbreviated as *cdf* (cumulative distribution function)
+- For a discrete r.v., the integral becomes a summation over pmf values. In this case `\(F(x)\)` can be discontinuous
 &lt;!-- - `\(F(x)\)` is the probability for `\(X\)` to be at most `\(x\)` --&gt;
 &lt;img src="03_01_sampling_files/figure-html/unnamed-chunk-2-1.png" style="display: block; margin: auto;" /&gt;
 - `pnorm(x, mean, sd)` returns the normal cdf values
@@ -88,7 +91,7 @@ For any probability `\(p \in [0,1]\)`, a `\(p\)`-quantile of the distribution is
 
 
 ```r
-*X &lt;- rnorm(500, 10, 2) # X ~ N(10, 2^2)
+X &lt;- rnorm(500, 10, 2) # X ~ N(10, 2^2)
 hist(X, freq=FALSE)
 xx &lt;- seq(0, 20, length.out=100)
 lines(xx, dnorm(xx, 10, 2))
@@ -97,6 +100,40 @@ lines(xx, dnorm(xx, 10, 2))
 &lt;img src="03_01_sampling_files/figure-html/unnamed-chunk-4-1.png" style="display: block; margin: auto;" /&gt;
 
 - The histogram of the random sample will approximate the underlying density, given a large sample
+
+---
+
+## A table of distributions R knows
+
+| **Distribution** | **R function** | **Arguments** |
+|---------|----------|---------|
+|Beta | `*beta` | `shape1, shape2`|
+|Binomial| `*binom`| `size, prob`|
+|Cauchy| `*cauchy` | `location, scale`|
+|Chi-square| `*chisq` | `df`|
+|Exponential| `*exp` | `rate`|
+|F| `*F` | `df1, df2`|
+|Gamma| `*gamma`| `shape, rate/scale`|
+|Geometric | `*geom` | `prob`|
+|Poisson| `*pois` | `lambda`|
+|Student's `\(t\)` | `*t` | `df`|
+|Uniform | `*unif` | `min, max`|
+
+E.g., `dt/pt/qt/rt` stand for the density/cdf/quantile/random sample for a `\(t\)`-distribution
+
+---
+
+class: inverse
+
+## Your turn
+
+
+&lt;img src="images/green.png" width=20&gt; Generate a random sample of size `\(n=500\)` from the Beta(1,1)
+
+&lt;img src="images/blue.png" width=20&gt; Show the histogram of the random sample (use `freq=FALSE` to show the relative frequency). Overlay the density function (pdf) of a Beta(1, 1) random variable
+
+&lt;img src="images/green.png" width=20&gt; Generate a random sample of 100 biased coin flips, where the head probability is 0.6. Find the proportion of heads in your sample
+G
 
 ---
 
@@ -113,12 +150,12 @@ where `\(\mathbf{1}\{A\}\)` is the indicator function that equals 1 if `\(A\)` i
 
 
 ```r
-Fn &lt;- ecdf(X)
+Fn &lt;- ecdf(cars$speed)
 Fn(c(5, 10, 15))
 ```
 
 ```
-## [1] 0.004 0.536 0.986
+## [1] 0.04 0.18 0.52
 ```
 
 ```r
@@ -127,106 +164,89 @@ plot(Fn)
 
 &lt;img src="03_01_sampling_files/figure-html/unnamed-chunk-5-1.png" style="display: block; margin: auto;" /&gt;
 
-
 ---
 
-## A table of distributions R knows
-
-| **Distribution** | **R function** | **Arguments** |
-|---------|----------|---------|
-|Beta | `*beta` | `shape1, shape2, ncp`|
-|Binomial| `*binom`| `size, prob`|
-|Cauchy| `*cauchy` | `location, scale`|
-|Chi-square| `*chisq` | `df, ncp`|
-|Exponential| `*exp` | `rate`|
-|F| `*F` | `df1, df2, ncp`|
-|Gamma| `*gamma`| `shape, rate/scale`|
-|Geometric | `*geom` | `prob`|
-|Poisson| `*pois` | `lambda`|
-|Student's `\(t\)` | `*t` | `df, ncp`|
-|Uniform | `*unif` | `min, max`|
-
-E.g., `dt/pt/qt/rt` stand for the density/cdf/quantile/random sample for a `\(t\)`-distribution
-
----
-
-## Random number generation
+## Pseudo random number generation
 
 
 ```r
-runif(1)
+runif(3)
 ```
 
 ```
-## [1] 0.7092283
+## [1] 0.04003409 0.41716139 0.43148201
 ```
 
 ```r
-runif(1)
+runif(3)
 ```
 
 ```
-## [1] 0.7349194
+## [1] 0.3970556 0.4666815 0.2850684
 ```
 
-- The random numbers you generated will be most likely different, since they are random afterall...
+- The random numbers you generated will be most likely different, since they are random afterall
 
-- But truely random numbers are very hard to produce -- e.g., they come from astronomical noise or radioactive decay -- so are impractical for programs
+- But in fact, for efficiency, programs uses *pseudo-random* numbers.
+These are generated from deterministic algorithms but behave like random numbers
 
-- Programs uses *pseudo-random* numbers, which are generated from deterministic algorithms but behave like random numbers
+- Truely random numbers are very hard to produce -- e.g., they come from astronomical noise or radioactive decay -- so are impractical for programs
 
 ---
 
-- The pseudo-random numbers are generated from a *random seed*, which determines the sequence of numbers generated
+- The pseudo-random numbers are generated from a *random seed*
+
+- Once the random seed is set, the entire the sequence of numbers subsequently generated will be determined
 
 - Use `set.seed(seedNumber)` to set the seed
 
 
 ```r
-set.seed(2)
-runif(1)
+set.seed(1)
+runif(3)
 ```
 
 ```
-## [1] 0.1848823
+## [1] 0.2655087 0.3721239 0.5728534
 ```
 
 ```r
-set.seed(2)
-runif(1)
+set.seed(1)
+runif(3)
 ```
 
 ```
-## [1] 0.1848823
+## [1] 0.2655087 0.3721239 0.5728534
 ```
 
-- Setting the random seed will make random number generation and procedures involving randomness reproducible, 
+- .style[If your data analysis involves randomness, make sure to set seed before performing the analysis.] This will make your analysis reproducible and help isolating issues
 
-- This is a good practice because someone else running the code will see exactly the same as what you see right now
-
-- .style[Make sure to always set seed before performing analyses involving randomness]
+- .style[Don't set seed within a function. The users of the function would set seed before calling the function]
 
 ---
 
-## Case study: Simulating Customer Arrival
+## Case study: Simulating customer arrival
 
-Suppose that the arrival of customers at a McDonald at lunch time follows a Poisson process with rate 0.5 customers per minute.
-That is to say, the waiting time between the arrivals of customers follow an exponential distribution with rate `\(\lambda=0.5\)`. 
-The waiting time of the first 10 customers is
+We are going to simulate the arrival of customers at a McDonald at lunch time.
+
+Customers arrive at a McDonald following a Poisson process with rate 0.5 customers per minute.
+That is to say, the waiting time between the arrivals of customers follows an exponential distribution with rate `\(\lambda=0.5\)`. 
+
+On a particular day, the waiting time of the first 10 customers is
 
 ```r
 n &lt;- 10
-(wait &lt;- rexp(n))
-##  [1] 0.40474807 0.14665267 1.73070972 0.08952618 0.66689763 1.07436686
-##  [7] 1.51162930 1.31427591 0.15653028 0.74511896
+(wait &lt;- rexp(n, rate=0.5))
+##  [1] 0.2795905 0.8721373 5.7899371 2.4591241 1.0793657 1.9131350 0.2940920
+##  [8] 2.7814703 1.5240597 2.4752071
 ```
 
 The arrival time of the `\(i\)`th customer is
 
 ```r
 (arrival &lt;- cumsum(wait))
-##  [1] 0.4047481 0.5514007 2.2821105 2.3716366 3.0385343 4.1129011 5.6245304
-##  [8] 6.9388063 7.0953366 7.8404556
+##  [1]  0.2795905  1.1517278  6.9416649  9.4007890 10.4801546 12.3932896
+##  [7] 12.6873816 15.4688519 16.9929116 19.4681187
 ```
 
 ---
@@ -235,13 +255,32 @@ The number of customers in the restuarant (assuming none left) at any given time
 
 ```r
 Fn &lt;- ecdf(arrival)
-tVec &lt;- seq(0, 5, length.out=1000)
+tVec &lt;- seq(0, 20, length.out=1000)
 plot(tVec, Fn(tVec) * n, xlab='t', ylab="Number of Customers", type="l")
 ```
 
 &lt;img src="03_01_sampling_files/figure-html/unnamed-chunk-10-1.png" style="display: block; margin: auto;" /&gt;
 
+---
 
+How likely are we going to find the restaurant gets busy and has at least 3 customers within 5 minutes after it opens?
+
+
+```r
+nDays &lt;- 100
+n &lt;- 3
+busy &lt;- purrr::map_lgl(seq_len(nDays), function(i) {
+  wait &lt;- rexp(n, rate=0.5)
+  wait3 &lt;- sum(wait)
+  wait3 &lt;= 5
+})
+
+mean(busy)
+```
+
+```
+## [1] 0.44
+```
 ---
 
 ## Sampling from a vector
@@ -254,7 +293,7 @@ sample(1:5, 1)
 ```
 
 ```
-## [1] 1
+## [1] 5
 ```
 
 - The default `replace=FALSE` *samples without replacement*. You will not get the same observation twice
@@ -264,7 +303,7 @@ sample(1:5, 5) # same as sample(5)
 ```
 
 ```
-## [1] 1 4 3 2 5
+## [1] 2 4 3 5 1
 ```
 
 ---
@@ -276,7 +315,7 @@ sample(1:5, 10, replace=TRUE) # same as sample(5)
 ```
 
 ```
-##  [1] 5 3 1 5 5 2 2 3 4 3
+##  [1] 5 2 1 4 5 2 1 5 5 1
 ```
 
 - `prob` specifies the probability weights for obtaining the elements of the vector being sampled (e.g., for simulating a biased coin). The default is equal weight
@@ -286,7 +325,7 @@ sample(c("H", "T"), 10, replace=TRUE, prob=c(0.8, 0.2))
 ```
 
 ```
-##  [1] "H" "T" "H" "T" "H" "H" "H" "T" "H" "H"
+##  [1] "H" "H" "T" "H" "H" "H" "T" "H" "H" "T"
 ```
 
 ---
@@ -295,14 +334,11 @@ class: inverse
 
 ## Your turn
 
+&lt;img src="images/green.png" width=20&gt; Sample 3 random rows from `iris` without replacement
 
-&lt;img src="images/green.png" width=20&gt; Generate a random sample of size `\(n=10\)` from the following distributions: (a). Beta(1,2) and (b). Uniform(0,100)
+&lt;img src="images/green.png" width=20&gt; Randomly shuffle the 3 rows
 
-&lt;img src="images/green.png" width=20&gt; Sample 5 random rows from `iris` without replacement
-
-&lt;img src="images/green.png" width=20&gt; Randomly shuffle the 5 rows
-
-&lt;img src="images/green.png" width=20&gt; Sample 10 random rows from `iris` with replacement
+&lt;img src="images/green.png" width=20&gt; Sample 100 random rows from `iris` with replacement
 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>

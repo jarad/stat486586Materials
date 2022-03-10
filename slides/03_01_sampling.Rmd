@@ -20,10 +20,6 @@ xaringanExtra::use_tile_view()
 
 ## Module 3: Simulation and Resampling Methods
 
----
-class: big, middle
-
-## Probability and Sampling
 
 ---
 
@@ -31,7 +27,9 @@ class: big, middle
 
 - Probability in R
 
-- Random number generation
+- Pseudo random number generation
+
+- Case study
 
 - Random sampling
 
@@ -41,8 +39,8 @@ class: big, middle
 
 The *density function* $f(x)$ for a continuous random variable $X$ describes how likely it is for $X$ to lie close to $x$ on the support
 
-- often abbreviated as pdf (probability density function)
-- for a discrete r.v., the analogy is pmf (probability mass function)
+- often abbreviated as *pdf* (probability density function)
+- for a discrete r.v., the analogy is *pmf* (probability mass function)
 
 ```{r, echo=FALSE, fig.height=4, fig.width=4, fig.align='center'}
 x <- seq(-5, 5, by=0.05)
@@ -58,8 +56,8 @@ plot(x, dnorm(x), type='l', ylab='f(x)', main="Standard normal density")
 The *distribution function* for a continuous r.v. $X$ is the probability for $X$ to be at most $x$, namely 
 $$F(x) = P(X \le x) = \int_{-\infty}^x f(x) dx.$$
 
-- often abbreviated as cdf (cumulative distribution function)
-- For a discrete r.v., the integral becomes a summation. In this case $F(x)$ can be discontinuous
+- often abbreviated as *cdf* (cumulative distribution function)
+- For a discrete r.v., the integral becomes a summation over pmf values. In this case $F(x)$ can be discontinuous
 <!-- - $F(x)$ is the probability for $X$ to be at most $x$ -->
 ```{r, echo=FALSE, fig.height=3.5, fig.width=3.5, fig.align='center'}
 plot(x, pnorm(x), type='l', ylab='F(x)', main="Standard normal cdf")
@@ -98,13 +96,47 @@ par()
 - `rnorm(n, mean, sd)` generates $n$ normal r.v.s 
 
 ```{r, fig.height=4, fig.width=4, fig.align='center'}
-X <- rnorm(500, 10, 2) # X ~ N(10, 2^2) #<<
+X <- rnorm(500, 10, 2) # X ~ N(10, 2^2)
 hist(X, freq=FALSE)
 xx <- seq(0, 20, length.out=100)
 lines(xx, dnorm(xx, 10, 2))
 ```
 
 - The histogram of the random sample will approximate the underlying density, given a large sample
+
+---
+
+## A table of distributions R knows
+
+| **Distribution** | **R function** | **Arguments** |
+|---------|----------|---------|
+|Beta | `*beta` | `shape1, shape2`|
+|Binomial| `*binom`| `size, prob`|
+|Cauchy| `*cauchy` | `location, scale`|
+|Chi-square| `*chisq` | `df`|
+|Exponential| `*exp` | `rate`|
+|F| `*F` | `df1, df2`|
+|Gamma| `*gamma`| `shape, rate/scale`|
+|Geometric | `*geom` | `prob`|
+|Poisson| `*pois` | `lambda`|
+|Student's $t$ | `*t` | `df`|
+|Uniform | `*unif` | `min, max`|
+
+E.g., `dt/pt/qt/rt` stand for the density/cdf/quantile/random sample for a $t$-distribution
+
+---
+
+class: inverse
+
+## Your turn
+
+
+<img src="images/green.png" width=20> Generate a random sample of size $n=500$ from the Beta(1,1)
+
+<img src="images/blue.png" width=20> Show the histogram of the random sample (use `freq=FALSE` to show the relative frequency). Overlay the density function (pdf) of a Beta(1, 1) random variable
+
+<img src="images/green.png" width=20> Generate a random sample of 100 biased coin flips, where the head probability is 0.6. Find the proportion of heads in your sample
+G
 
 ---
 
@@ -120,76 +152,59 @@ where $\mathbf{1}\{A\}$ is the indicator function that equals 1 if $A$ is true o
 - You can evaluate or plot the returned function
 
 ```{r, fig.width=5, fig.height=5, fig.align='center'}
-Fn <- ecdf(X)
+Fn <- ecdf(cars$speed)
 Fn(c(5, 10, 15))
 plot(Fn)
 ```
 
-
 ---
 
-## A table of distributions R knows
-
-| **Distribution** | **R function** | **Arguments** |
-|---------|----------|---------|
-|Beta | `*beta` | `shape1, shape2, ncp`|
-|Binomial| `*binom`| `size, prob`|
-|Cauchy| `*cauchy` | `location, scale`|
-|Chi-square| `*chisq` | `df, ncp`|
-|Exponential| `*exp` | `rate`|
-|F| `*F` | `df1, df2, ncp`|
-|Gamma| `*gamma`| `shape, rate/scale`|
-|Geometric | `*geom` | `prob`|
-|Poisson| `*pois` | `lambda`|
-|Student's $t$ | `*t` | `df, ncp`|
-|Uniform | `*unif` | `min, max`|
-
-E.g., `dt/pt/qt/rt` stand for the density/cdf/quantile/random sample for a $t$-distribution
-
----
-
-## Random number generation
+## Pseudo random number generation
 
 ```{r}
-runif(1)
-runif(1)
+runif(3)
+runif(3)
 ```
 
-- The random numbers you generated will be most likely different, since they are random afterall...
+- The random numbers you generated will be most likely different, since they are random afterall
 
-- But truely random numbers are very hard to produce -- e.g., they come from astronomical noise or radioactive decay -- so are impractical for programs
+- But in fact, for efficiency, programs uses *pseudo-random* numbers.
+These are generated from deterministic algorithms but behave like random numbers
 
-- Programs uses *pseudo-random* numbers, which are generated from deterministic algorithms but behave like random numbers
+- Truely random numbers are very hard to produce -- e.g., they come from astronomical noise or radioactive decay -- so are impractical for programs
 
 ---
 
-- The pseudo-random numbers are generated from a *random seed*, which determines the sequence of numbers generated
+- The pseudo-random numbers are generated from a *random seed*
+
+- Once the random seed is set, the entire the sequence of numbers subsequently generated will be determined
 
 - Use `set.seed(seedNumber)` to set the seed
 
 ```{r}
-set.seed(2)
-runif(1)
-set.seed(2)
-runif(1)
+set.seed(1)
+runif(3)
+set.seed(1)
+runif(3)
 ```
 
-- Setting the random seed will make random number generation and procedures involving randomness reproducible, 
+- .style[If your data analysis involves randomness, make sure to set seed before performing the analysis.] This will make your analysis reproducible and help isolating issues
 
-- This is a good practice because someone else running the code will see exactly the same as what you see right now
-
-- .style[Make sure to always set seed before performing analyses involving randomness]
+- .style[Don't set seed within a function. The users of the function would set seed before calling the function]
 
 ---
 
-## Case study: Simulating Customer Arrival
+## Case study: Simulating customer arrival
 
-Suppose that the arrival of customers at a McDonald at lunch time follows a Poisson process with rate 0.5 customers per minute.
-That is to say, the waiting time between the arrivals of customers follow an exponential distribution with rate $\lambda=0.5$. 
-The waiting time of the first 10 customers is
+We are going to simulate the arrival of customers at a McDonald at lunch time.
+
+Customers arrive at a McDonald following a Poisson process with rate 0.5 customers per minute.
+That is to say, the waiting time between the arrivals of customers follows an exponential distribution with rate $\lambda=0.5$. 
+
+On a particular day, the waiting time of the first 10 customers is
 ```{r, collapse=TRUE}
 n <- 10
-(wait <- rexp(n))
+(wait <- rexp(n, rate=0.5))
 ```
 
 The arrival time of the $i$th customer is
@@ -202,11 +217,26 @@ The arrival time of the $i$th customer is
 The number of customers in the restuarant (assuming none left) at any given time $t$ in the first 5 minutes is 
 ```{r, collapse=TRUE, fig.width=5, fig.height=5, fig.align='center'}
 Fn <- ecdf(arrival)
-tVec <- seq(0, 5, length.out=1000)
+tVec <- seq(0, 20, length.out=1000)
 plot(tVec, Fn(tVec) * n, xlab='t', ylab="Number of Customers", type="l")
 ```
 
+---
 
+How likely are we going to find the restaurant get busy and have at least 3 customers within 5 minutes after it opens?
+
+```{r}
+set.seed(1)
+nDays <- 100
+n <- 3
+busy <- purrr::map_lgl(seq_len(nDays), function(i) {
+  wait <- rexp(n, rate=0.5)
+  wait3 <- sum(wait)
+  wait3 <= 5
+})
+
+mean(busy)
+```
 ---
 
 ## Sampling from a vector
@@ -240,12 +270,9 @@ class: inverse
 
 ## Your turn
 
+<img src="images/green.png" width=20> Sample 3 random rows from `iris` without replacement
 
-<img src="images/green.png" width=20> Generate a random sample of size $n=10$ from the following distributions: (a). Beta(1,2) and (b). Uniform(0,100)
+<img src="images/green.png" width=20> Randomly shuffle the 3 rows
 
-<img src="images/green.png" width=20> Sample 5 random rows from `iris` without replacement
-
-<img src="images/green.png" width=20> Randomly shuffle the 5 rows
-
-<img src="images/green.png" width=20> Sample 10 random rows from `iris` with replacement
+<img src="images/green.png" width=20> Sample 100 random rows from `iris` with replacement
 
