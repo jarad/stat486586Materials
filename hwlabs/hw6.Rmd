@@ -35,7 +35,7 @@ For this question, use only `purrr` functions `map_dbl` etc but not loops or vec
     a. Create a new file containing all the information for each character. 
     The file name should be `characterNameAll.txt` (replace the placeholder by the corresponding character name). [Hint: You can use RStudio to open the `.txt` files and check your results. Click File -- Open File] 
     
-        Here is an example content for the file `Theon Greyjoy.txt` for the first character. It is not expected that your output matches the example content exactly. You will receive full credit as long as the output is formatted in a very reader-friendly fashion.
+        Here is an example content for the file `Theon GreyjoyAll.txt` for the first character. It is not expected that your output matches the example content exactly. You will receive full credit as long as the output is formatted in a very reader-friendly fashion.
     
         ```{r, echo=FALSE, comment=''}
         library(repurrrsive)
