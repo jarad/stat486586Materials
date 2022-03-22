@@ -127,7 +127,7 @@ where $\Gamma (\alpha)=\int _{0}^{\infty }x^{\alpha-1}e^{-x}\,dx$ is the gamma f
 Given dataset $\{X_1, \dots, X_n\}$, the log-likelihood function, is 
 $$l(\alpha, \beta) = \sum_{i=1} \log f(X_i;\,\alpha,\beta).$$
 
-    Implement a function factory to manufacture the log-likelihood function. The function factory should take a vector `x` input for the dataset and output the log-likelihood function corresponding to `x`. The manufactured function should take a single input `par`, which is a vector of length 2 where the first entry stands for `gamma` and the second entry stands for `beta`.
+    Implement a function factory to manufacture the log-likelihood function. The function factory should take a vector `x` input for the dataset and output the log-likelihood function corresponding to `x`. The manufactured function should take a single input `par`, which is a vector of length 2 where the first entry stands for `alpha` and the second entry stands for `beta`.
     
     a. Implement the function factory
     b. Manufacture a log-likelihood function using input `c(0.289, 0.468, 0.035, 2.114, 0.281)`
