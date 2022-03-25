@@ -13,117 +13,21 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Simulation
 
-1. Perform the following exercise.
+1. Perform the following exercises.
     
-    a. Simulate observations $X_i$, $i=1,\dots,100$ from each of the following distributions. 
+    a. Simulate a sample of $n=100$ observations $X_i$, $i=1,\dots,100$ from each of the following distributions. 
     Create a histogram each time. 
         i. A uniform distribution on $[-10, 10]$
         i. A beta distribution with $\alpha=\beta=1$
-        i. A gamma distribution with mean 0.5 and variance 1 (you need some calculation)
+        i. A gamma distribution with mean 0.5 and variance 1 (you may need some on-paper calculation)
         i. Binomial distributions with $p=0.5$ and $n=4$. 
         i. Binomial distributions with $p=0.5$. The number of trials $n_i$ for $X_i$ itself follows a geometric distribution with success probability 0.2.
 
-    a. Draw the density of a Cauchy distribution with the location and scale parameters being 0 and 1, respectively. Overlay the standard normal density. 
+    <!-- a. Draw the density of a Cauchy distribution with the location and scale parameters being 0 and 1, respectively. Overlay the standard normal density.  -->
     
     a. Set the random seed to 2. Sample 30 random numbers from a chi-square distributions with degree of freedom 2. 
+        i. Plot the histogram of the random numbers and overlay the density of the $\chi^2_2$ distribution
         i. Plot the empirical cdf and overlay the true cdf.
-        i. Plot the empirical quantiles and the true quantiles.
+        i. Show a scatter plot for the empirical deciles vs the true deciles (namely, the $0.1, \dots, 0.9$-quantiles).
     
-1. Let $p$ be the probability that your printer operates successfully for a job, and suppose that the operation is independent across jobs. You have printed 20 jobs in a day, and all are successful. 
-
-    a. You want to find out how reliable your printer is. The point estimate for the reliability $p$ is just 1, and the standard error is 0.
-    We know a printer cannot always work, so this approach clearly fails.
-    Instead, test the hypothesis 
-    $$H_0: p = p_0 \quad \text{vs} \quad H_A: p > p_0$$
-    at the 0.05 significance level, where $p_0=0.92$. 
-    First write down the formula for calculating the p-value. 
-    Then use `pbinom` to find the p-value for this problem.
     
-    a. Create a confidence interval for the success probability $p$ by inverting the hypothesis test (namely, the interval contains all $p_0$ so that you do not reject $H_0$). This interval estimate is a more reasonable assessment of the reliablity than the point estimate.
-    
-    a. Use `binom.test` to verify your result in the last part.
-
-1. Suppose that you are running a blind taste experiment for two ingredients of cookies. The score given by a subject who tasted the new ingredient follows $N(\mu_1, 1)$, and that by a subject who tasted the old ingredient follows $N(\mu_2, 1)$. 
-
-    a. You will follow the standard practice and recruit 50 subjects to taste each ingredient. 
-    Use `t.test` to construct a 95% two-sided confidence interval. 
-    Repeate this experiment 1000 times and report how many times the confidence interval does not cover 0.
-    (In this case, you will conclude there is evidence that the two ingredients differ.)
-    Consider both scenarios
-        i. The ingredients do not make a difference, and $\mu_1=\mu_2=5$
-        i. The ingredients make a difference, and $\mu_1 = 5$ and $\mu_2 = 5.5$
-    
-    a. Suppose that you want to save time and recruit subjects in batches as you run the experiment in a sequential manner. 
-    Every time you recruit 5 subjects for each group, you will peek at the confidence interval.
-    If your confidence interval does not cover 0, then you are going to stop the experiment and conclude there is a difference; otherwise, you will stop the experiment when there is 50 subjects in each group and draw a conclusion based on the all the subjects.
-    Repeat this process 1000 times, and calculate the proportion of time you will conclude that there *is* a difference. 
-    Consider the same two scenarios as in the last part.
-    
-    a. How often do you make the type I error when using the standard and the sequential experiments?
-    What does this tell you?
-    
-1. We will use simulation to evaluate how well can a normal distribution approximate a binomial distribution. 
-Let $X \sim \text{Binomial}(n, p)$. 
-The approximation theorem says that if $n$ is large, then 
-$$T = \sqrt{n} (X / n - p)$$ 
-is approximately $N(0, p(1 - p))$. 
-Generate a sample of 100 binomial distributions each time.
-Use the Kolmogorov-Smirnov test to evaluate whether the deviation of $T$ from the closest normal distribution can be detected at the $\alpha=0.05$ level (you may use `ks.test`).
-Experiment with $n \in \{10, 50, 100, 200\}$ and $p \in \{0.01, 0.1, 0.5\}$.
-
-1. We are going to test out whether the pseudorandom numbers generated in R can pass the randomness test.
-The *minimum distance test* (modified from [Wikipedia](https://en.wikipedia.org/wiki/Diehard_tests#Test_descriptions)) tests out whether the pseudorandom numbers follow an asymptotic pattern that should hold true for true random numbers.
-
-    Repeat 100 times to generate 100 numbers: Choose $n = 8000$ random points uniformly distributed in a square of side 10000. 
-    Find $D$, the minimum distance between the $(n^2 − n) / 2$ pairs of different points, and obtain $E = 1 − \exp(−D^2 / 0.995)$.
-    [Hint: Start with a smaller $n$ to make sure your code is correct. You may use `?dist`]
-    
-    If the points are truly independent uniform, then $E$ should be uniform on $[0,1]$.
-    Use the Kolmogorov-Smirnov test on the resulting 100 values as a test of uniformity for random points in the square. 
-    Report your conclusion.
-
-1. We return to the McDonald customer process and use simulation to answer a couple of questions. 
-We now consider both the arrival and departure of customers.
-The restaurant opens at 11am, when it will be empty. 
-The waiting time between the arrivals of customers follow an exponential distribution with rate $\lambda_1=1/2$ *per minute*. 
-The time a customer spend in the resturant follows an exponential distribution with rate $\lambda_2=1/30$. 
-Suppose the restaurant is large enough to hold any number of customers.
-
-    a. Simulate a long stream of at least 200 customer arrivals and departures.
-    Plot the number of customers in the restaurant over the first 120 minutes since the restaurant opens.
-    b. Repeat the simulation 1000 times (say, for 1000 days), and answer the following questions.
-        i. Estimate the average number of customers in the restaurant 10, 20, 30, and 120 minutes after the restaurant opens.
-        i. Estimate how likely will the restaurant have less than 10 customer at 12pm.
-        i. Estimate how likely will the restaurant have more than 20 customer at 12pm.
-
-
-
-<!-- ```{r} -->
-<!-- set.seed(1, kind="default") -->
-<!-- set.seed(1, kind="Wichmann-Hill") -->
-<!-- MC <- 100 -->
-<!-- n <- 8000 -->
-<!-- u <- 10000 -->
-
-<!-- ds <- map_dbl(seq_len(MC), function(i) { -->
-<!--   X <- matrix(runif(n * 2, max=u), ncol=2) -->
-<!--   d <- dist(X) -->
-<!--   min(as.numeric(d)) -->
-<!-- }) -->
-<!-- U <- 1 - exp(-ds^2 / 0.995) -->
-<!-- ks.test(U, 'punif') -->
-<!-- ``````{r} -->
-<!-- set.seed(1, kind="default") -->
-<!-- set.seed(1, kind="Wichmann-Hill") -->
-<!-- MC <- 100 -->
-<!-- n <- 8000 -->
-<!-- u <- 10000 -->
-
-<!-- ds <- map_dbl(seq_len(MC), function(i) { -->
-<!--   X <- matrix(runif(n * 2, max=u), ncol=2) -->
-<!--   d <- dist(X) -->
-<!--   min(as.numeric(d)) -->
-<!-- }) -->
-<!-- U <- 1 - exp(-ds^2 / 0.995) -->
-<!-- ks.test(U, 'punif') -->
-<!-- ``` -->

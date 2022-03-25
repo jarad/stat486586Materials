@@ -1,0 +1,224 @@
+---
+title: 'Homework #8'
+output: html_document
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<!-- ## A useful note -->
+<!-- Remove any `View()` or `install.packages()` commands in your `Rmd` file. These commands will prevent the knitting of your file.  -->
+
+## The Bootstrap and Permutation Tests
+
+1. (Bootstrapping one-sample skewness and kurtosis)
+Let $X_1,\dots,X_n$ be i.i.d. observations. The population and sample skewness are, respectively, 
+$${\tilde {\mu }}_{3}=\operatorname {E} \left[\left({\frac {X-\mu }{\sigma }}\right)^{3}\right]={\frac {\operatorname {E} \left[(X-\mu )^{3}\right]}{(\operatorname {E} \left[(X-\mu )^{2}\right])^{3/2}}}, \quad 
+b_{1}={\frac{\tfrac{1}{n}\sum _{i=1}^{n}(X_{i}-{\bar {X}})^{3}}{\left[{\tfrac{1}{n-1}}\sum _{i=1}^{n}(X_{i}-{\bar {X}})^{2}\right]^{3/2}}}.$$
+The population and sample kurtosis, which measure the heavy-tailedness of the distribution, are respectively
+$${\tilde {\mu }}_{4}=\operatorname {E} \left[\left({\frac {X-\mu }{\sigma }}\right)^{4}\right]={\frac {\operatorname {E} \left[(X-\mu )^{4}\right]}{\left(\operatorname {E} \left[(X-\mu )^{2}\right]\right)^{2}}}, \quad
+b_{2}={\frac{\tfrac{1}{n}\sum _{i=1}^{n}(X_{i}-{\overline {X}})^{4}}{\left[{\tfrac{1}{n}}\sum _{i=1}^{n}(X_{i}-{\overline {X}})^{2}\right]^{2}}}.$$
+It is quite hard to write down formulas for the standard errors or to derive confidence intervals for skewness and kurtosis, so we are going to use bootstrap to do so.
+[Hint: It is a great idea to write flexible functions that can be called repetitively for the tasks below]
+
+    a. Simulate a very large sample of standard normal distributions, and calculate the sample skewness and kurtosis. Make sure the skewness is close to 0 and kurtosis close to 3, which are the population values.
+    a. Simulate a single sample of $n=50$ standard normal distributions. Use the bootstrap to compute the following quantities for both skewness and kurtosis:
+        i. The standard error 
+        i. The normal bootstrap c.i.
+        i. The pivotal bootstrap c.i.
+        i. The percentile bootstrap c.i.
+    a. Now we are ready to scale up. Repeat the previous part (b.) for $M=100$ times. For each bootstrap c.i. method, report how often the c.i.s cover the truth. 
+    Make sure the results are reader friendly. 
+    Explain what you find. 
+
+1. (Bootstrapping two-sample statistics)
+Consider the Uber Drives dataset [here]() TODO. 
+Download the csv file, and put it side-by-side your Rmd file. 
+Then use `uber <- read.csv("uber.csv")` to read in the file.
+We will be using the `CATEGORY*` column, which reports the type of the trip, and `MILES*`, which reports the miles traveled the trip. 
+We are interested in comparing the business trips (defining Population 1) and the personal trips (defining Population 2).
+```{r, eval=FALSE, include=FALSE}
+library(tidyverse)
+uber <- read.csv("uber.csv")
+ggplot(uber, aes(x=`MILES.`, y=`..density..`, fill=`CATEGORY.`)) + 
+  geom_histogram(position="dodge") +
+  xlim(c(-10, 100))
+```
+
+    a. Provide an estimate for the difference $\mu_1 - \mu_2$ between the mean miles of Population 1 and 2. Call this estimate $\hat{\mu}_1 - \hat\mu_2$.
+
+    a. Provide an estimate of the standard error of $\hat{\mu}_1 - \hat\mu_2$ using formulas you learned from statistics courses. You may assume observations are independent and the two populations have the same standard deviation.
+
+    a. Now estimate the standard error using the bootstrap. How does this compare to your answer from (b)?
+
+    a. Construct a 95\% confidence interval for the difference in the means. Compare it to the results obtained using `t.test`. 
+
+    a. Provide an estimate for the difference between the *median* miles of Population 1 and 2. Call this estimate $\hat{\theta}_1 - \hat\theta_2$.
+
+    a. Now estimate the standard error of $\hat{\theta}_1 - \hat\theta_2$ using bootstrap. Also construct a bootstrap c.i. Comment on your findings.
+
+1. (Permutation one-/paired-sample test) We are going to implement the one-sample permutation test and compare with the $t$-test. Suppose we have available i.i.d. $X_1,\dots,X_n$ from distribution $F$.
+
+    a. Implement a function to conduct the one-sample permutation test for 
+    $$H_0: F \text{ is symmetric about } 3 \quad H_A: H_0 \text{ is not true}.$$
+    Write some unit tests to make sure your function is correct.
+    
+    a. A study is designed to compare the effects of two drugs in increasing the hours of sleep. There were 10 subjects, each has taken both drugs and have the sleep hours measured. The data can be obtained as follows.
+        ```{r}
+        drug1 <- sleep$extra[sleep$group == 1]
+        drug2 <- sleep$extra[sleep$group == 2]
+        ```
+  
+        Let $(X_i, Y_i)$ be the measurements obtained for the $i$th subject, and $\mu_1$ and $\mu_2$ be the mean of the $X_i$ and $Y_i$, respectively. 
+        Test 
+        $$H_0: \mu_1=\mu_2 \quad\text{vs}\quad \mu_1\ne\mu_2$$
+        using the permutation test.
+      
+    a. Generate a sample of observations from various distributions with mean $\mu$ and sample size $n$. Test at the $\alpha=0.1$ significance level and report your result. Use
+        
+        - both the permutation and the $t$-test to test the location null hypothesis,
+        - let $F$ be either $N(\mu, 1)$ or $\text{Exponential(rate=1/μ)}$,
+        - $\mu$ be either $3$ or $4$, and
+        - $n$ be either 10, 20, or 50.
+        
+    a. Repeat the last part for $M=100$ times. Report the proportion of times each test rejects, and explain the results. Make sure the results are reader friendly.
+
+1. The permutation correlation test always control the size of the test below the nominal level if the $X$ and $Y$ are independent under $H_0$. 
+However, this property may not hold if $X$ and $Y$ are uncorrelated but dependent under $H_0$. 
+Let $(X_1,Y_1),\dots,(X_n,Y_n)$ be $n$ pairs of i.i.d. observations following the same distribution as $(X,Y)$, where the distribution for the latter is define as follows:
+$$P((X,Y)=(x,y)) = \begin{cases}
+1/2 - 1/n,  & \text{if } (x,y)=(0, 0) \\
+1/2,        & \text{if } (x,y)=(1, 1) \\
+1/n,        & \text{if } (x,y)=(1, -n / 2).
+\end{cases}$$
+
+    a. Hand calculate the correlation between $X$ and $Y$.
+    
+    a. Simulate $n=50$ observations. Visualize the dataset. Then perform the permutation correlation test at the $\alpha=0.05$ significance level. Repeat this a few times. What do you find?
+    
+    a. Repeat the simulation and hypothesis test for $M=100$ times at the $\alpha=0.05$ significance level. 
+    How often do you reject? 
+    What does this tell you about the permutation correlation test?
+
+<!-- ```{r} -->
+<!-- permTest <- function(x, y, stat,  -->
+<!--                      alternative = c("two.sided", "less", "greater"),  -->
+<!--                      nPerm=2000L) { -->
+
+<!--   alternative <- match.arg(alternative) -->
+
+<!--   if (missing(stat)) { -->
+<!--     stat <- function(x, y) { -->
+<!--       (mean(x) - mean(y)) / sd(c(x, y)) -->
+<!--     } -->
+<!--   } -->
+
+<!--   T0 <- stat(x, y) -->
+
+<!--   n1 <- length(x) -->
+<!--   n2 <- length(y) -->
+<!--   xy <- c(x, y) -->
+
+<!--   TPerm <- map_dbl(seq_len(nPerm), function(i) { -->
+<!--     ind1 <- sample(n1 + n2, n1, replace = FALSE) -->
+<!--     xPerm <- xy[ind1] -->
+<!--     yPerm <- xy[-ind1] -->
+<!--     stat(xPerm, yPerm) -->
+<!--   }) -->
+
+<!--   if (alternative == "two.sided") { -->
+<!--     p <- mean(abs(TPerm) >= abs(T0)) -->
+<!--   } else if (alternative == "less") { -->
+<!--     p <- mean(TPerm <= T0) -->
+<!--   } else if (alternative == "greater") { -->
+<!--     p <- mean(TPerm >= T0) -->
+<!--   } -->
+
+<!--   p -->
+<!-- } -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- library(purrr) -->
+<!-- set.seed(1) -->
+<!-- # An example where X and Y are uncorrelated but not independent. The permutation p-value is very off -->
+<!-- B <- 100 -->
+<!-- nPerm <- 1000 -->
+
+<!-- n <- 50 -->
+<!-- x <- c(0, 1, 1) -->
+<!-- y <- c(0, 1, -n / 2) -->
+<!-- w <- c(1/2 - 1/n, 1/2, 1/n) -->
+
+<!-- sum(w) -->
+<!-- plot(x, y) -->
+
+<!-- ind <- sample(seq_along(x), n, prob=w, replace=TRUE) -->
+<!-- X <- x[ind] -->
+<!-- Y <- y[ind] -->
+<!-- plot(X, Y) -->
+
+<!-- cov.wt(cbind(x, y), w)$cov -->
+<!-- mult <- 1000 -->
+
+<!-- pv <- map_dbl(seq_len(B), function(i) { -->
+<!--   ind <- sample(seq_along(x), n, prob=w, replace=TRUE) -->
+<!--   X <- x[ind] -->
+<!--   Y <- y[ind] -->
+<!--   permTest(X, Y, cor, nPerm=nPerm) -->
+<!-- }) -->
+<!-- hist(pv) -->
+<!-- mean(pv <= 0.05) -->
+<!-- ``` -->
+
+
+
+<!-- ```{r} -->
+
+<!-- library(purrr) -->
+<!-- nEach <- 4 -->
+<!-- res <- map(seq_len(10000), function(i) { -->
+<!--   x <- rnorm(nEach) -->
+<!--   y <- rnorm(nEach) -->
+<!--   a <- t.test(x, y) -->
+<!--   # pPerm <- permTest(x, y) -->
+<!--   pPerm <- permTest(x, y, function(x, y) mean(x) - mean(y)) -->
+
+<!--   c(t=a$p.value, perm=pPerm) -->
+<!-- }) -->
+<!-- a <- do.call(rbind, res) -->
+<!-- # hist(a[, 1]) -->
+<!-- # hist(a[, 2]) -->
+<!-- mean(a[, 1] <= 0.05) -->
+<!-- mean(a[, 2] <= 0.05) -->
+<!-- ks.test(a[, 1], "punif", 0, 1) -->
+<!-- ks.test(a[, 2], "punif", 0, 1) -->
+
+<!-- permTest(sleep$extra[sleep$group == 1], c(10, sleep$extra[sleep$group == 2])) -->
+<!-- t.test(sleep$extra[sleep$group == 1], c(10, sleep$extra[sleep$group == 2])) -->
+
+<!-- ``` -->
+
+
+<!-- ```{r} -->
+<!-- # Another uncorrelated case, but this time the distribution is more continuous -->
+<!-- n <- 50 -->
+<!-- A <- c(1, 1/2 - n/6) -->
+<!-- w <- c(1 - 1/n, 1/n) -->
+<!-- ind <- sample(1:2, 1e4, prob=w, replace=TRUE) -->
+<!-- X <- ifelse(ind == 1, runif(1e4), A[1]) -->
+<!-- Y <- ifelse(ind == 1, X, A[2]) -->
+<!-- plot(X, Y) -->
+
+<!-- cor.test(X, Y) -->
+
+<!-- pv <- map_dbl(seq_len(B), function(i) { -->
+<!--   ind <- sample(1:2, n, prob=w, replace=TRUE) -->
+<!--   X <- ifelse(ind == 1, runif(n), A[1]) -->
+<!--   Y <- ifelse(ind == 1, X, A[2]) -->
+<!--   permTest(X, Y, cor, nPerm=nPerm) -->
+<!-- }) -->
+<!-- hist(pv) -->
+<!-- ``` -->
