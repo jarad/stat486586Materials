@@ -12,16 +12,11 @@ output:
       highlightLines: true
       countIncrementalSlides: false
 ---
-class: big, middle
 
 ```{r xaringan-tile-view, echo=FALSE}
 xaringanExtra::use_tile_view()
 knitr::opts_chunk$set(fig.height=4, fig.width=4, fig.align='center')
 ```
-
-## Monte Carlo Simulations
-
----
 
 ## Outline
 

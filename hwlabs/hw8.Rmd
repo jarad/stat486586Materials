@@ -13,21 +13,21 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Simulation
 
-1. Perform the following exercise.
-    
-    a. Simulate a sample of $n=100$ observations $X_i$, $i=1,\dots,100$ from each of the following distributions. 
-    Create a histogram each time. 
-        i. A uniform distribution on $[-10, 10]$
-        i. A beta distribution with $\alpha=\beta=1$
-        i. A gamma distribution with mean 0.5 and variance 1 (you need some calculation)
-        i. Binomial distributions with $p=0.5$ and $n=4$. 
-        i. Binomial distributions with $p=0.5$. The number of trials $n_i$ for $X_i$ itself follows a geometric distribution with success probability 0.2.
+<!-- 1. Perform the following exercise. -->
 
-    a. Draw the density of a Cauchy distribution with the location and scale parameters being 0 and 1, respectively. Overlay the standard normal density. 
-    
-    a. Set the random seed to 2. Sample 30 random numbers from a chi-square distributions with degree of freedom 2. 
-        i. Plot the empirical cdf and overlay the true cdf.
-        i. Plot the empirical quantiles and the true quantiles.
+<!--     a. Simulate a sample of $n=100$ observations $X_i$, $i=1,\dots,100$ from each of the following distributions.  -->
+<!--     Create a histogram each time.  -->
+<!--         i. A uniform distribution on $[-10, 10]$ -->
+<!--         i. A beta distribution with $\alpha=\beta=1$ -->
+<!--         i. A gamma distribution with mean 0.5 and variance 1 (you need some calculation) -->
+<!--         i. Binomial distributions with $p=0.5$ and $n=4$.  -->
+<!--         i. Binomial distributions with $p=0.5$. The number of trials $n_i$ for $X_i$ itself follows a geometric distribution with success probability 0.2. -->
+
+<!--     a. Draw the density of a Cauchy distribution with the location and scale parameters being 0 and 1, respectively. Overlay the standard normal density.  -->
+
+<!--     a. Set the random seed to 2. Sample 30 random numbers from a chi-square distributions with degree of freedom 2.  -->
+<!--         i. Plot the empirical cdf and overlay the true cdf. -->
+<!--         i. Plot the empirical quantiles and the true quantiles. -->
     
 1. Let $p$ be the probability that your printer operates successfully for a job, and suppose that the operation is independent across jobs. You have printed 20 jobs in a day, and all are successful. 
 

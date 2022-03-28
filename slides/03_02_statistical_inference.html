@@ -29,7 +29,7 @@ class: center, middle, inverse, title-slide
 
 - Sample size calculation
 
-- Confidence interval
+- Duality between confidence intervals and hypothesis tests
 
 ---
 
@@ -74,6 +74,13 @@ where `\(s^2 = (n-1)^{-1}\sum_{i=1}^n (X_i - \bar{X})^2\)` is the sample varianc
 - If `\(p\)`-value `\(&gt; \alpha\)`, **fail to reject** `\(H_0\)` and there is insufficient evidence for `\(H_A\)`. No conclusion can be made! "insignificant"
 
 ---
+
+  .center[
+![:scale 90%](https://i.stack.imgur.com/Kq0OH.jpg) 
+&lt;/br&gt;([stackexchange](https://economics.stackexchange.com/questions/27677/type-i-error-type-ii-error-pregnancy-test-analogy-is-it-legit))
+]
+
+---
 ## Type I and Type II errors
 
 - *Type I error*: reject `\(H_0\)` when `\(H_0\)` is true
@@ -88,31 +95,27 @@ where `\(s^2 = (n-1)^{-1}\sum_{i=1}^n (X_i - \bar{X})^2\)` is the sample varianc
   |       | `\(H_0\)` false|   *Type II error*   |OK   |
   ]
 
-
----
-
-  .center[
-![:scale 90%](https://i.stack.imgur.com/Kq0OH.jpg) 
-&lt;/br&gt;([stackexchange](https://economics.stackexchange.com/questions/27677/type-i-error-type-ii-error-pregnancy-test-analogy-is-it-legit))
-]
+Making a Type I or  II error is an *event*, which may or may not happen
 
 ---
 ## Size and power
 
 - The *size* of the test is
 `$$Pr(\text{Type I error}) = Pr(\text{reject } H_0|H_0\text{ is true}).$$`
-When you set `\(\alpha = 0.05\)`, the goal is that `\(Pr(\text{Type I error})\le0.05\)`.
+When you set `\(\alpha = 0.05\)`, the goal for the test is that `\(Pr(\text{Type I error})\le0.05\)`.
 
 - The *power* of the test is `\(1 - Pr(\text{Type II error})\)`
 `$$Pr(\text{Type II error}) = Pr(\text{not reject } H_0|H_A\text{ is true}).$$`
-A common goal when planning for the sample size in an experiment is that the power is greater than `\(\beta = 0.8\)` (say).
+A common goal when planning for the sample size in an experiment is that the power is greater than the nominal level `\(\beta = 0.8\)` (say).
 
 
 ---
 
 ## Case study: Hypothesis testing
 
-Suppose that the income `\(X_1,\dots,X_{30}\)` follows i.i.d. `\(\text{Gamma}(\alpha=10, \beta=1) + 40\)`. The true mean is 50. Let's see how often does the `\(t\)`-test reject and find out the size of the test (type I error rate) at the `\(\alpha=0.1\)` significance level.
+Suppose that the income `\(X_1,\dots,X_{30}\)` follows i.i.d. `\(\text{Gamma}(\alpha=10, \beta=1) + 40\)`. The true mean is 50. 
+
+Let's see how often does the `\(t\)`-test reject and find out the size of the test (type I error rate) at the `\(\alpha=0.1\)` significance level.
 
 
 ```r
@@ -175,14 +178,17 @@ pvs &lt;- map_dbl(seq_len(MC), function(i) {
 ## [1] 0.534
 ```
 
-We only reject 53.4% of the time. What if we want to recruits so a larger number of respondents so that the power is at least `\(\beta=.8\)`, under the setup we consider here?
+Even if `\(H_A\)` is correct, we only reject 53.4% of the time. 
+
+What if we want to recruits a larger number of respondents so that the power is at least `\(\beta=.8\)`, under the setup we consider here?
 
 ---
 
 ## Sample size calculation
 
-The goal of sample size calculation is to find the sample size needed in order for the test to achieve a given power.
-The power is calculated under a hypothesized scenario `\(H_A\)` which usually reflects the smallest effect size, i.e., difference from `\(H_0\)`, that is of practical interest (in this e.g., `\(H_A: \mu=51\)`).
+Goal: To find the sample size needed in order for the test to achieve a given power.
+
+The power is calculated under a hypothesized scenario `\(H_A\)` which usually reflects the smallest effect size, i.e., difference from `\(H_0\)`, that is of *practical interest* (in this e.g., `\(H_A: \mu=51\)`).
 
 
 ```r
@@ -195,11 +201,15 @@ calcPower &lt;- function(n, MC) {
   })
   mean(pvs &lt;= alpha)
 }
-calcPower(n, MC) # same answer as before, since we set seed
+calcPower(n, MC) 
 ```
 
 ```
 ## [1] 0.534
+```
+
+```r
+# same answer as before, since we set seed
 ```
 
 ---
@@ -217,21 +227,46 @@ nVec[which(powerVec &gt;= beta)[1]]
 ```
 ## [1] 70
 ```
+
+**Wrapping it up:** 
+- If you test
+`$$H_0: \mu = 50 \quad \text{vs} \quad H_A: \mu \ne 50$$`
+- when `\(X_i \sim \text{Gamma}(\alpha=10, \beta=1) + 41\)` (true mean is 51),
+- and you want to reject with at least 0.8 probability, 
+- then the sample size `\(n\)` required will be 70.
+
+
 ---
 
-## Confidence intervals
+class: inverse
 
-Suppose you have a sample `\(\{X_1,\dots,X_n\}\)` and you have a parameter of interest `\(\theta\)` (say, the mean). A 95% *confidence interval* is an interval estimate `\((L,U)\)` constructed from the sample so that the *coverage* of the interval
+## Your turn
+
+&lt;img src="images/green.png" width=20&gt;   Set seed to 1. Generate a dataset of `\(n=10\)` observations `\(X_1,\dots,X_n\)` from `\(N(0, 1)\)`.
+Perform a `\(t\)`-test and report the `\(p\)`-value for 
+`$$H_0: \mu = 0 \quad \text{vs} \quad H_A: \mu \ne 0,$$`
+where `\(\mu\)` is the population mean of `\(X_i\)`. 
+
+&lt;img src="images/blue.png" width=20&gt; Repeat the last step for 500 times, and report the size of the test (namely, proportion of tests that reject, noting that the data were generated under `\(H_0\)`).
+
+&lt;img src="images/blue.png" width=20&gt; Repeat the last question, but this time `\(X_1,\dots,X_{n}\)` follow iid `\(t\)`-distributions with 3 degrees of freedom. Report the size of the test.
+
+---
+
+## Conf. intervals and hypothesis tests
+
+Suppose you have a sample `\(\{X_1,\dots,X_n\}\)` and you have a parameter of interest `\(\theta\)` (say, the mean `\(\mu\)`). A 95% *confidence interval* is an interval estimate `\((L,U)\)` constructed from the sample so that the *coverage* of the interval
 `$$P(\theta \in (L,U)) \ge  0.95$$`
 
-- If `\(\theta = \mu\)` in the one-sample setting or `\(\mu_1 - \mu_2\)` in the two-sample setting, then often a c.i. is constructed using the `\(t\)`-statistic.
+- If `\(\theta = \mu\)`, then often a c.i. is constructed using the `\(t\)`-statistic.
 
-- If you have a hypothesis test for `\(H_0:\theta = \theta_0\)` at the `\(\alpha\)`-significance level, then
+- If you have a `\(95\%\)` c.i. `\((L,U)\)`, then a hypothesis test at the `\(0.05\)` level is obtained as follows: rejects `\(H_0\)` if `\(\theta_0 \notin (L,U)\)`.
+
+- Vise versa, if you have a hypothesis test for `\(H_0:\theta = \theta_0\)` at the `\(0.05\)`-significance level, then
 `$$\{\theta_0\vert \text{the test does not reject }H_0:\theta = \theta_0\}$$`
-is a `\((1-\alpha)100\%\)` c.i. 
+is a `\(95\%\)` c.i. 
 So you can invert a hypothesis test to obtain a confidence interval. 
 
-- Vise versa, if you have a `\((1-\alpha)\%\)` c.i. `\((L,U)\)`, then a hypothesis test at the  `\(\alpha\)` level is obtained as follows: rejects `\(H_0\)` if `\(\theta_0 \notin (L,U)\)`.
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

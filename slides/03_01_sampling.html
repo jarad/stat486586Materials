@@ -40,11 +40,6 @@ class: big, middle
 - Random sampling
 
 ---
-class: big, middle
-
-## Probability and Sampling
-
----
 
 ## Density function
 
@@ -174,7 +169,7 @@ runif(3)
 ```
 
 ```
-## [1] 0.04003409 0.41716139 0.43148201
+## [1] 0.6770644 0.5754852 0.1872610
 ```
 
 ```r
@@ -182,7 +177,7 @@ runif(3)
 ```
 
 ```
-## [1] 0.3970556 0.4666815 0.2850684
+## [1] 0.7388488 0.4536362 0.1177261
 ```
 
 - The random numbers you generated will be most likely different, since they are random afterall
@@ -263,10 +258,11 @@ plot(tVec, Fn(tVec) * n, xlab='t', ylab="Number of Customers", type="l")
 
 ---
 
-How likely are we going to find the restaurant gets busy and has at least 3 customers within 5 minutes after it opens?
+How likely are we going to find the restaurant get busy and have at least 3 customers within 5 minutes after it opens?
 
 
 ```r
+set.seed(1)
 nDays &lt;- 100
 n &lt;- 3
 busy &lt;- purrr::map_lgl(seq_len(nDays), function(i) {
@@ -279,7 +275,7 @@ mean(busy)
 ```
 
 ```
-## [1] 0.44
+## [1] 0.41
 ```
 ---
 
@@ -293,7 +289,7 @@ sample(1:5, 1)
 ```
 
 ```
-## [1] 5
+## [1] 2
 ```
 
 - The default `replace=FALSE` *samples without replacement*. You will not get the same observation twice
@@ -303,7 +299,7 @@ sample(1:5, 5) # same as sample(5)
 ```
 
 ```
-## [1] 2 4 3 5 1
+## [1] 2 1 4 3 5
 ```
 
 ---
@@ -315,7 +311,7 @@ sample(1:5, 10, replace=TRUE) # same as sample(5)
 ```
 
 ```
-##  [1] 5 2 1 4 5 2 1 5 5 1
+##  [1] 5 5 2 2 1 1 1 4 2 4
 ```
 
 - `prob` specifies the probability weights for obtaining the elements of the vector being sampled (e.g., for simulating a biased coin). The default is equal weight
@@ -325,7 +321,7 @@ sample(c("H", "T"), 10, replace=TRUE, prob=c(0.8, 0.2))
 ```
 
 ```
-##  [1] "H" "H" "T" "H" "H" "H" "T" "H" "H" "T"
+##  [1] "T" "H" "H" "H" "H" "T" "T" "H" "H" "H"
 ```
 
 ---
