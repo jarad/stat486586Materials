@@ -258,7 +258,7 @@ Why to use this test:
 
 ---
 
-For a one sample test, let $X_1,\dots,X_n$ be i.i.d. observations coming from an unknown distribution $F$. 
+For a one sample test, let $X_1,\dots,X_n$ be i.i.d. observations coming from an unknown distribution (with cdf) $F$. 
 
 1. To test whether $X_i$ follows a given distribution $F_0$, the hypothesis is 
 $$H_0: F = F_0 \quad \text{vs} \quad H_A: F \ne F_0.$$
