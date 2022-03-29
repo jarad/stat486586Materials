@@ -20,30 +20,60 @@ knitr::opts_chunk$set(fig.height=4, fig.width=4, fig.align='center')
 
 ## Outline
 
+- Sampling distribution for $\bar{X}$
+
 - Visualizing the law of large numbers and the central limit theorem
 
 - Simulating stochastic processes
+
+- Kolmogorov–Smirnov test
 
 - Saving/loading results
 
 ---
 
+## The sampling distribution
+
+We are given a sample $X_1,\dots,X_n$. The *sampling distribution* of $\bar{X}$ is the distribution of $\bar{X}$. It represents the random variability in $\bar{X}$ *if we were to collect multiple datasets*
+
+- Let's use simulation to illustrate this.Recall that we use `map_dbl` to repeat calling a function that returns a numeric scalar
+
+```{r sampling, fig.show='hide'}
+mu <- 1
+MC <- 500
+n <- 10
+ X <- rexp(n, rate = 1/mu)
+  
+# sampling distribution
+set.seed(1)
+means <- map_dbl(seq_len(MC), function(i) {
+  X <- rexp(n, rate = 1/mu)
+  mean(X)
+})
+hist(means, main="Sampling distribution of XBar", xlab="XBar")
+```
+
+---
+
+.center[
+![:scale 70%](`r knitr::fig_chunk('sampling', 'png')`)
+]
+
+---
+
 ## Visualizing the LLN and CLT
 
-- The law of large numbers says that the same mean $\bar{X}$ of $X_1,\dots,X_n$ converges stochastically to the true mean $\mu$ as $n\rightarrow \infty$
+- The law of large numbers says that the same mean $\bar{X}$ of $X_1,\dots,X_n$ will approximate the true mean $\mu$ better and better as $n\rightarrow \infty$
 
-- The central limit theorem says that $\sqrt{n}/s(\bar{X} - \mu)$ is approximately $N(0, \sigma^2)$ where $\sigma^2$ is the variance of $X_1$
+- The central limit theorem says that $\sqrt{n}(\bar{X} - \mu)$ is approximately $N(0, \sigma^2)$ where $\sigma^2$ is the variance of $X_1$
 
-- Let's use simulation to verify this
-
-- Recall that we use `map_dbl` to repeat calling a function that returns a numeric scalar
 
 ---
 
 ```{r, eval=FALSE}
 library(purrr)
 # Try different sample sizes
-nVec <- c(10, 100, 100, 10000)
+nVec <- c(10, 100, 1000, 10000)
 mu <- 1
 MC <- 500
 
@@ -68,9 +98,9 @@ par(mfcol=c(1,1)) # Reset plotting device
 
 ---
 
-```{r, echo=FALSE, fig.width=10, fig.height=8}
+```{r, echo=FALSE, fig.width=10, fig.height=8, cache=TRUE}
 library(purrr)
-nVec <- c(10, 100, 100, 10000)
+nVec <- c(10, 100, 1000, 10000)
 mu <- 1
 MC <- 500
 
@@ -92,29 +122,45 @@ par(mfcol=c(1,1))
 
 ---
 
+class: inverse
+
+## Your turn
+
+Now, visualize the sampling distribution of the sample variance
+$$s^2 = \frac{1}{n-1} \sum_{i=1}^n (X_i - \bar{X})^2$$
+
+<img src="images/green.png" width=20> Generate a random sample of size $n=10$ from standard normal distribution $N(0,1)$, and calculate the sample variance (you can use `var`)
+
+<img src="images/green.png" width=20> Repeat the previous process for MC=500 times, and show the sampling distribution of the sample variance. Does the sampling distribution concentrate around 1, the true variance?
+
+<img src="images/blue.png" width=20> Repeat the last part, and now for multiple sample sizes $n=10, 100, 1000, 10000$. 
+---
+
 ## Simulating stochastic processes
 
-- A *stochastic process* $X_t$ is random function in time $t\in\mathcal{T}$, where the time domain $\mathcal{T}$ can be discrete (e.g., $\{0,1,2,\dots\}$) or continuous (e.g., $[0,1]$). 
+- A *stochastic process* $X_t$ is random function in time $t\in\mathcal{T}$, 
+  - The *time* domain $\mathcal{T}$ can be either *discrete* (e.g., $\{0,1,2,\dots\}$) or *continuous* (e.g., $[0,1]$)
+  - The *state space* which contains all the possible values of $X_t$ can be either *discrete* (e.g., $\{0,1,2,\dots\}$) or *continuous* (e.g., $\mathbb{R}$)
 
 - E.g., 
-  - the Wiener process (or Brownion motion) is a continuous-time continuous-state stochastic process on $[0, 1]$
+  - the Brownion motion (Wiener process) is a continuous-time continuous-state stochastic process on $\mathcal{T}=[0, 1]$
   
   <!-- - similarly, the Brownian bridge is a continuous-time continuous-state stochastic process on $[0, 1]$ -->
   
-  - The Poisson process (e.g., customer arrival) is a continuous-time discrete-state stochastic process 
+  - The Poisson process (e.g., the cumulative counts of customers who arrived) is a continuous-time discrete-state stochastic process 
   
   - The Markov chain is a discrete-time discrete-state stochastic process 
 
 
 ---
 
-## Wiener process (Brownian motion)
+## Brownian motion (Wiener process)
 
-The Wiener process is characterized by the following properties:
+The Brownian motion describes the random motion of a point jumping up and down. It is characterized by the following properties:
 
-1. $W_0=0$
-1. Independent increments: For any $t > 0$, the increment $W_{t+u}-W_t$, $u\ge 0$ are independent of the past values $W_s$, $s\le t$.
-1. Normal increament: $W_{t+u}-W_t \sim N(0, u)$
+1. The starting point is 0: $W_0=0$
+1. The jumps/increments are independent: For any $t > 0$, the increment $W_{t+u}-W_t$, $u\ge 0$ are independent of the past values $W_s$, $s\le t$.
+1. The jumps follow a normal distribution: $W_{t+u}-W_t \sim N(0, u)$
 1. $W_t$ is continuous in $t$.
 
 Some implications:
@@ -122,8 +168,12 @@ Some implications:
 - Disjoint jumps are independent: $W_{a} - W_{b}$ is independent of $W_c - W_d$ if $[a,b] \cap [c,d] = \varnothing$.
 ---
 
-To simulate the Wiener process, generate small independent normal jumps
-```{r, fig.height=3.5}
+Our goal is to simulate the Wiener process. This is done by
+
+1. generating independent normal jumps $N(0, \Delta)$ between $t$ and $t+\Delta$, where the interval $\Delta$ is small, and 
+2. accumulating the jumps 
+
+```{r wiener, fig.width=6, fig.height=6, fig.show='hide'}
 nStep <- 1000
 n <- 50
 
@@ -134,39 +184,80 @@ simWiener <- function(n, nStep) {
     jumps <- rnorm(nStep, 0, sqrt(jumpSize))
     cumsum(c(0, jumps))
   })
-  W <- do.call(rbind, W) # each row is a process
+  W <- do.call(cbind, W) # each column is a process
   list(t=t, W=W)
 }
 
 wiener <- simWiener(n, nStep)
 # matplot shows each column in a matrix
-matplot(wiener$t, t(wiener$W[1:10, ]), main="Wiener process", type="l") 
+matplot(wiener$t, wiener$W[, 1:10], 
+        main="Wiener process", type="l") 
 ```
+
+---
+
+.center[
+![:scale 70%](`r knitr::fig_chunk('wiener', 'png')`)
+]
 
 ---
 
 ## The Brownian bridge
 
-Roughly speaking, the Brownian bridge is a stochastic process obtained by tying both ends of a Brownian motion at 0. 
-More predicely, the *Brownian bridge* is, for $t \in [0, 1]$,
-$$B_t = W_t - tW(1).$$
+Roughly speaking, the Brownian bridge is a stochastic process obtained by "tying" both ends of a Brownian motion at 0. 
 
-```{r}
+More precisely, the *Brownian bridge* is, for $t \in [0, 1]$,
+$$B_t = W_t - tW_1,$$
+where $W_t$ is the Wiener process at time $t$
+
+```{r bridge, fig.width=6, fig.height=6, fig.show='hide'}
 simBB <- function(n, nStep) {
   wiener <- simWiener(n, nStep)
-  B <- wiener$W - matrix(wiener$t, n, nStep + 1, byrow=TRUE) * 
-    matrix(wiener$W[, ncol(wiener$W)], n, nStep + 1)
+  B <- wiener$W - matrix(wiener$t, nStep + 1, n) * 
+    matrix(wiener$W[nrow(wiener$W), ], nStep + 1, n, byrow=TRUE)
   list(t=wiener$t, B=B)
 }
 BB <- simBB(n, nStep)
-matplot(BB$t, t(BB$B[1:10, ]), main="Brownian bridge", type="l")
+matplot(BB$t, BB$B[, 1:10], main="Brownian bridge", type="l")
 ```
+
+---
+
+.center[
+![:scale 70%](`r knitr::fig_chunk('bridge', 'png')`)
+]
 
 ---
 
 ## Kolmogorov–Smirnov test
 
-Kolmogorov–Smirnov test (K–S test or KS test) is a nonparametric test for the equality of distributions. 
+Kolmogorov–Smirnov test (K–S test or KS test) is a nonparametric test for *the equality of distributions*. 
+
+```{r, fig.width=9, fig.height=3, echo=FALSE}
+set.seed(1)
+alpha <- 0.1
+n <- 100
+mu0 <- 50
+income <- rgamma(n, 10, 1) + 40
+
+par(mfrow=c(1, 3))
+hist(income, freq = FALSE, breaks=15)
+
+plot(1, 1, type="n", xaxt="n", yaxt="n", ann=FALSE, frame.plot=FALSE, main="income")
+text(1, 1, expression(atop("?", "~")), cex=7)
+
+s <- sd(income)
+x <- seq(min(income) - s, max(income) + s, length.out=100)
+plot(x, dnorm(x, mean(income), s), type="l", ylab="", main="A normal distribution")
+par(mfrow=c(1, 1))
+```
+Why to use this test: 
+- Suppose we are assessing the salaries of recent graduates
+- We could be interested in not just the underlying mean, but the entire distribution
+- A t-test can only detect whether the mean is as specified, but cannot detect, e.g., difference in the heaviness of tails
+
+---
+
 For a one sample test, let $X_1,\dots,X_n$ be i.i.d. observations coming from an unknown distribution $F$. 
 
 1. To test whether $X_i$ follows a given distribution $F_0$, the hypothesis is 
@@ -205,7 +296,7 @@ D <- apply(BB$B, 1, function(x) max(abs(x)))
 ```
 
 R has a build-in `ks.test` which has a slightly different implementation:
-```{r, collapse=TRUE}
+```{r, collapse=TRUE, warn=FALSE}
 ks.test(X, "pnorm", mean=mean(X), sd=sd(X))
 ```
 
@@ -213,27 +304,17 @@ ks.test(X, "pnorm", mean=mean(X), sd=sd(X))
 
 ## Saving and loading results
 
-- Sometimes a simulation may run for very long time. You may ask system to save the all the results first and then go back and explore
+- Sometimes a simulation may run for a very long time. You can ask R to save the all the results first and then go back and explore
 
 - Use `save(var1, var2, ..., file)` to save variables
 
 - Use `load(file)` to load the variables back into your workspace
+    ```{r, eval=FALSE}
+    save(BB, file="BB.RData")
+    rm(BB)
+    load("BB.RData")
+    ```
 
 - .style[The saving/loading technique should be used very sparingly.] 
 It could make it harder to reproduce the results if you rely on saved objects
 
----
-
-class: inverse
-
-## Your turn
-
-TODO
-
-<img src="images/green.png" width=20> Generate a random sample of size $n=10$ from the following distributions: (a). Beta(1,2) and (b). Uniform(0,100)
-
-<img src="images/green.png" width=20> Sample 5 random rows from `iris` without replacement
-
-<img src="images/green.png" width=20> Randomly shuffle the 5 rows
-
-<img src="images/green.png" width=20> Sample 10 random rows from `iris` with replacement

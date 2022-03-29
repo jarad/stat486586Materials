@@ -15,16 +15,14 @@ knitr::opts_chunk$set(echo = TRUE)
 
 1. Perform the following exercises.
     
-    a. Simulate a sample of $n=100$ observations $X_i$, $i=1,\dots,100$ from each of the following distributions. 
+    a. Simulate a sample of $100$ observations $X_i$, $i=1,\dots,100$ from each of the following distributions. 
     Create a histogram each time. 
         i. A uniform distribution on $[-10, 10]$
         i. A beta distribution with $\alpha=\beta=1$
         i. A gamma distribution with mean 0.5 and variance 1 (you may need some on-paper calculation)
-        i. Binomial distributions with $p=0.5$ and $n=4$. 
+        i. Binomial distributions with $p=0.5$ and number of trials $n=4$. 
         i. Binomial distributions with $p=0.5$. The number of trials $n_i$ for $X_i$ itself follows a geometric distribution with success probability 0.2.
 
-    <!-- a. Draw the density of a Cauchy distribution with the location and scale parameters being 0 and 1, respectively. Overlay the standard normal density.  -->
-    
     a. Set the random seed to 2. Sample 30 random numbers from a chi-square distributions with degree of freedom 2. 
         i. Plot the histogram of the random numbers and overlay the density of the $\chi^2_2$ distribution
         i. Plot the empirical cdf and overlay the true cdf.

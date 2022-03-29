@@ -39,42 +39,44 @@ knitr::opts_chunk$set(echo = TRUE)
     First write down the formula for calculating the p-value. 
     Then use `pbinom` to find the p-value for this problem.
     
-    a. Create a confidence interval for the success probability $p$ by inverting the hypothesis test (namely, the interval contains all $p_0$ so that you do not reject $H_0$). This interval estimate is a more reasonable assessment of the reliablity than the point estimate.
+    a. Create a confidence interval for the success probability $p$ by inverting the hypothesis test (namely, the confidence interval contains all $p_0$ so that you do not reject $H_0$; for code implementation, discretize the candidate $p_0\in [0, 1]$). This interval estimate is a more reasonable assessment of the reliablity than the point estimate.
     
     a. Use `binom.test` to verify your result in the last part.
 
-1. Suppose that you are running a blind taste experiment for two ingredients of cookies. The score given by a subject who tasted the new ingredient follows $N(\mu_1, 1)$, and that by a subject who tasted the old ingredient follows $N(\mu_2, 1)$. 
+1. Suppose that you are running a blind taste experiment for two cookies recipes. The score given by a subject who tasted the new recipe follows $N(\mu_1, 1)$, and that given by a subject who tasted the old recipe follows $N(\mu_2, 1)$. Consider both scenarios
 
-    a. You will follow the standard practice and recruit 50 subjects to taste each ingredient. 
-    Use `t.test` to construct a 95% two-sided confidence interval. 
-    Repeate this experiment 1000 times and report how many times the confidence interval does not cover 0.
-    (In this case, you will conclude there is evidence that the two ingredients differ.)
-    Consider both scenarios
-        i. The ingredients do not make a difference, and $\mu_1=\mu_2=5$
-        i. The ingredients make a difference, and $\mu_1 = 5$ and $\mu_2 = 5.5$
+    Scenario 1: The recipes do not make a difference, and $\mu_1=\mu_2=5$</br>
+    Scenario 2: The recipes make a difference, and $\mu_1 = 5$ and $\mu_2 = 5.5$
     
-    a. Suppose that you want to save time and recruit subjects in batches as you run the experiment in a sequential manner. 
+
+    a. You follow the standard practice and recruit 50 subjects to taste each recipe.
+    Simulate two datasets for the two groups. Use `t.test` to construct a 95% two-sided confidence interval. 
+    Repeat this experiment 1000 times and report the proportion of times the confidence interval does not cover 0.
+    (In this case, you will conclude that the two recipes differ.)
+    Make sure to consider both scenarios.
+    
+    a. (Optional) Suppose that you want to save time and recruit subjects in sequential batches as you run the experiment. 
     Every time you recruit 5 subjects for each group, you will peek at the confidence interval.
     If your confidence interval does not cover 0, then you are going to stop the experiment and conclude there is a difference; otherwise, you will stop the experiment when there is 50 subjects in each group and draw a conclusion based on the all the subjects.
     Repeat this process 1000 times, and calculate the proportion of time you will conclude that there *is* a difference. 
-    Consider the same two scenarios as in the last part.
+    Make sure to consider both scenarios.
     
-    a. How often do you make the type I error when using the standard and the sequential experiments?
+    a. (Optional) How often do you make the type I error when using the standard and the sequential experiments?
     What does this tell you?
     
 1. We will use simulation to evaluate how well can a normal distribution approximate a binomial distribution. 
-Let $X \sim \text{Binomial}(n, p)$. 
-The approximation theorem says that if $n$ is large, then 
+Suppose that $X \sim \text{Binomial}(n, p)$. 
+A theorem says that if $n$ is large, then 
 $$T = \sqrt{n} (X / n - p)$$ 
 is approximately $N(0, p(1 - p))$. 
 Generate a sample of 100 binomial distributions each time.
-Use the Kolmogorov-Smirnov test to evaluate whether the deviation of $T$ from the closest normal distribution can be detected at the $\alpha=0.05$ level (you may use `ks.test`).
+Use the Kolmogorov-Smirnov test to evaluate whether the deviation of $T$ from $N(0, p(1 - p))$ can be detected at the $\alpha=0.05$ level (you may use `ks.test`).
 Experiment with $n \in \{10, 50, 100, 200\}$ and $p \in \{0.01, 0.1, 0.5\}$.
 
-1. We are going to test out whether the pseudorandom numbers generated in R can pass the randomness test.
-The *minimum distance test* (modified from [Wikipedia](https://en.wikipedia.org/wiki/Diehard_tests#Test_descriptions)) tests out whether the pseudorandom numbers follow an asymptotic pattern that should hold true for true random numbers.
+1. (Optional) We are going to test out whether the pseudorandom numbers generated in R can pass the randomness test.
+The *minimum distance test* (modified from [Wikipedia](https://en.wikipedia.org/wiki/Diehard_tests#Test_descriptions)) tests out whether the pseudorandom numbers follow a pattern that should hold true for true random numbers.
 
-    Repeat 100 times to generate 100 numbers: Choose $n = 8000$ random points uniformly distributed in a square of side 10000. 
+    Repeat 100 times and generate 100 numbers: Choose $n = 8000$ random points uniformly distributed in a square of side 10000. 
     Find $D$, the minimum distance between the $(n^2 − n) / 2$ pairs of different points, and obtain $E = 1 − \exp(−D^2 / 0.995)$.
     [Hint: Start with a smaller $n$ to make sure your code is correct. You may use `?dist`]
     
@@ -82,16 +84,17 @@ The *minimum distance test* (modified from [Wikipedia](https://en.wikipedia.org/
     Use the Kolmogorov-Smirnov test on the resulting 100 values as a test of uniformity for random points in the square. 
     Report your conclusion.
 
-1. We return to the McDonald customer process and use simulation to answer a couple of questions. 
+1. We will work on an extended customer arrival and departure process example and use simulation to answer a couple of questions. 
 We now consider both the arrival and departure of customers.
 The restaurant opens at 11am, when it will be empty. 
 The waiting time between the arrivals of customers follow an exponential distribution with rate $\lambda_1=1/2$ *per minute*. 
-The time a customer spend in the resturant follows an exponential distribution with rate $\lambda_2=1/30$. 
+The time a customer spends in the resturant follows an exponential distribution with rate $\lambda_2=1/30$. 
 Suppose the restaurant is large enough to hold any number of customers.
 
-    a. Simulate a long stream of at least 200 customer arrivals and departures.
-    Plot the number of customers in the restaurant over the first 120 minutes since the restaurant opens.
-    b. Repeat the simulation 1000 times (say, for 1000 days), and answer the following questions.
+    a. Simulate a long stream for the time of at least 200 customer arrival and departure events.
+    Plot the number of customers in the restaurant over the first 120 minutes after the restaurant opens.
+    [Hint: Simulate a stream for customer arrival first. Then for each customer, simulate his/her departure time. Pool all the departure time into a long stream.]
+    b. Repeat the simulation for 1000 times (say, for 1000 days), and answer the following questions.
         i. Estimate the average number of customers in the restaurant 10, 20, 30, and 120 minutes after the restaurant opens.
         i. Estimate how likely will the restaurant have less than 10 customer at 12pm.
         i. Estimate how likely will the restaurant have more than 20 customer at 12pm.
