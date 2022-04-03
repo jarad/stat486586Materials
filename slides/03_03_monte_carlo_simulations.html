@@ -45,6 +45,7 @@ We are given a sample `\(X_1,\dots,X_n\)`. The *sampling distribution* of `\(\ba
 
 
 ```r
+library(purrr)
 mu &lt;- 1
 MC &lt;- 500
 n &lt;- 10
@@ -167,18 +168,19 @@ n &lt;- 50
 
 simWiener &lt;- function(n, nStep) {
   t &lt;- seq(0, 1, length.out=nStep + 1)
-  jumpSize &lt;- t[2] - t[1]
+  Delta &lt;- t[2] - t[1]
   W &lt;- map(seq_len(n), function(i) {
-    jumps &lt;- rnorm(nStep, 0, sqrt(jumpSize))
-    cumsum(c(0, jumps))
+    jumps &lt;- rnorm(nStep, 0, sd=sqrt(Delta))
+    traj &lt;- cumsum(c(0, jumps))
+    traj
   })
-  W &lt;- do.call(cbind, W) # each column is a process
+  W &lt;- do.call(rbind, W)
   list(t=t, W=W)
 }
 
 wiener &lt;- simWiener(n, nStep)
 # matplot shows each column in a matrix
-matplot(wiener$t, wiener$W[, 1:10], 
+matplot(wiener$t, t(wiener$W[1:10, ]), 
         main="Wiener process", type="l") 
 ```
 
@@ -200,14 +202,15 @@ where `\(W_t\)` is the Wiener process at time `\(t\)`
 
 
 ```r
-simBB &lt;- function(n, nStep) {
+simBB &lt;- function(n, nStep) {	
   wiener &lt;- simWiener(n, nStep)
-  B &lt;- wiener$W - matrix(wiener$t, nStep + 1, n) * 
-    matrix(wiener$W[nrow(wiener$W), ], nStep + 1, n, byrow=TRUE)
+  B &lt;- wiener$W - 
+    matrix(wiener$t, n, nStep + 1, byrow=TRUE) *
+    matrix(wiener$W[, nStep + 1], n, nStep + 1)
   list(t=wiener$t, B=B)
 }
 BB &lt;- simBB(n, nStep)
-matplot(BB$t, BB$B[, 1:10], main="Brownian bridge", type="l")
+matplot(BB$t, t(BB$B[1:10, ]), main="Brownian bridge", type="l")
 ```
 
 ---
@@ -264,17 +267,17 @@ grid &lt;- seq(min(X), max(X), length.out=100)
 Fx &lt;- pnorm(grid, mean(X), sd(X)) # the closest normal distribution
 dn &lt;- sqrt(length(X)) * max(abs(Fn(grid) - Fx))
 BB &lt;- simBB(500, 1000)
-D &lt;- apply(BB$B, 1, function(x) max(abs(x)))
+D &lt;- map_dbl(seq_len(nrow(BB$B)), function(i) max(abs(BB$B[i, ])))
 (pv &lt;- mean(D &gt;= dn))
-## [1] 0.6753247
+## [1] 0.17
 ```
 
 R has a build-in `ks.test` which has a slightly different implementation:
 
 ```r
 ks.test(X, "pnorm", mean=mean(X), sd=sd(X))
-## Warning in ks.test(X, "pnorm", mean = mean(X), sd = sd(X)): ties should not be present for the
-## Kolmogorov-Smirnov test
+## Warning in ks.test(X, "pnorm", mean = mean(X), sd = sd(X)): ties should not be
+## present for the Kolmogorov-Smirnov test
 ## 
 ## 	One-sample Kolmogorov-Smirnov test
 ## 

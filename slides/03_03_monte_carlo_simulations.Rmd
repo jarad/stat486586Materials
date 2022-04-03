@@ -39,6 +39,7 @@ We are given a sample $X_1,\dots,X_n$. The *sampling distribution* of $\bar{X}$ 
 - Let's use simulation to illustrate this.Recall that we use `map_dbl` to repeat calling a function that returns a numeric scalar
 
 ```{r sampling, fig.show='hide'}
+library(purrr)
 mu <- 1
 MC <- 500
 n <- 10
@@ -179,18 +180,19 @@ n <- 50
 
 simWiener <- function(n, nStep) {
   t <- seq(0, 1, length.out=nStep + 1)
-  jumpSize <- t[2] - t[1]
+  Delta <- t[2] - t[1]
   W <- map(seq_len(n), function(i) {
-    jumps <- rnorm(nStep, 0, sqrt(jumpSize))
-    cumsum(c(0, jumps))
+    jumps <- rnorm(nStep, 0, sd=sqrt(Delta))
+    traj <- cumsum(c(0, jumps))
+    traj
   })
-  W <- do.call(cbind, W) # each column is a process
+  W <- do.call(rbind, W)
   list(t=t, W=W)
 }
 
 wiener <- simWiener(n, nStep)
 # matplot shows each column in a matrix
-matplot(wiener$t, wiener$W[, 1:10], 
+matplot(wiener$t, t(wiener$W[1:10, ]), 
         main="Wiener process", type="l") 
 ```
 
@@ -211,14 +213,15 @@ $$B_t = W_t - tW_1,$$
 where $W_t$ is the Wiener process at time $t$
 
 ```{r bridge, fig.width=6, fig.height=6, fig.show='hide'}
-simBB <- function(n, nStep) {
+simBB <- function(n, nStep) {	
   wiener <- simWiener(n, nStep)
-  B <- wiener$W - matrix(wiener$t, nStep + 1, n) * 
-    matrix(wiener$W[nrow(wiener$W), ], nStep + 1, n, byrow=TRUE)
+  B <- wiener$W - 
+    matrix(wiener$t, n, nStep + 1, byrow=TRUE) *
+    matrix(wiener$W[, nStep + 1], n, nStep + 1)
   list(t=wiener$t, B=B)
 }
 BB <- simBB(n, nStep)
-matplot(BB$t, BB$B[, 1:10], main="Brownian bridge", type="l")
+matplot(BB$t, t(BB$B[1:10, ]), main="Brownian bridge", type="l")
 ```
 
 ---
@@ -291,7 +294,7 @@ grid <- seq(min(X), max(X), length.out=100)
 Fx <- pnorm(grid, mean(X), sd(X)) # the closest normal distribution
 dn <- sqrt(length(X)) * max(abs(Fn(grid) - Fx))
 BB <- simBB(500, 1000)
-D <- apply(BB$B, 1, function(x) max(abs(x)))
+D <- map_dbl(seq_len(nrow(BB$B)), function(i) max(abs(BB$B[i, ])))
 (pv <- mean(D >= dn))
 ```
 

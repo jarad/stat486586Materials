@@ -17,27 +17,27 @@ knitr::opts_chunk$set(echo = TRUE)
 Let $X_1,\dots,X_n$ be i.i.d. observations. The population and sample skewness are, respectively, 
 $${\tilde {\mu }}_{3}=\operatorname {E} \left[\left({\frac {X-\mu }{\sigma }}\right)^{3}\right]={\frac {\operatorname {E} \left[(X-\mu )^{3}\right]}{(\operatorname {E} \left[(X-\mu )^{2}\right])^{3/2}}}, \quad 
 b_{1}={\frac{\tfrac{1}{n}\sum _{i=1}^{n}(X_{i}-{\bar {X}})^{3}}{\left[{\tfrac{1}{n-1}}\sum _{i=1}^{n}(X_{i}-{\bar {X}})^{2}\right]^{3/2}}}.$$
-The population and sample kurtosis, which measure the heavy-tailedness of the distribution, are respectively
+The population and sample kurtosis, which measure the heavy-tailedness of the distribution, are, respectively,
 $${\tilde {\mu }}_{4}=\operatorname {E} \left[\left({\frac {X-\mu }{\sigma }}\right)^{4}\right]={\frac {\operatorname {E} \left[(X-\mu )^{4}\right]}{\left(\operatorname {E} \left[(X-\mu )^{2}\right]\right)^{2}}}, \quad
 b_{2}={\frac{\tfrac{1}{n}\sum _{i=1}^{n}(X_{i}-{\overline {X}})^{4}}{\left[{\tfrac{1}{n}}\sum _{i=1}^{n}(X_{i}-{\overline {X}})^{2}\right]^{2}}}.$$
-It is quite hard to write down formulas for the standard errors or to derive confidence intervals for skewness and kurtosis, so we are going to use bootstrap to do so.
-[Hint: It is a great idea to write flexible functions that can be called repetitively for the tasks below]
+It is quite hard to write down closed-form formulas for the standard errors of the sample skewness and kurtosis or to derive confidence intervals, so we are going to use bootstrap to do so.
+Make sure the results are formatted in a  reader friendly manner. 
+[Hint: It is a great idea to write one or more flexible function(s) that can be called repetitively for the tasks below]
 
-    a. Simulate a very large sample of standard normal distributions, and calculate the sample skewness and kurtosis. Make sure the skewness is close to 0 and kurtosis close to 3, which are the population values.
-    a. Simulate a single sample of $n=50$ standard normal distributions. Use the bootstrap to compute the following quantities for both skewness and kurtosis:
+    a. Simulate a very large sample ($n \ge 1000$, say) of standard normal distributions, and calculate the sample skewness and kurtosis. Check that your code is correct by checking whether the sample estimates are close to the population quantities. The population skewness for a standard normal distribution is 0 and the kurtosis is 3.
+    a. Simulate a single sample of $n=50$ standard normal random variables. Use the bootstrap to compute the following quantities for *both* skewness and kurtosis:
         i. The standard error 
         i. The normal bootstrap c.i.
         i. The pivotal bootstrap c.i.
         i. The percentile bootstrap c.i.
-    a. Now we are ready to scale up. Repeat the previous part (b.) for $M=100$ times. For each bootstrap c.i. method, report how often the c.i.s cover the truth. 
-    Make sure the results are reader friendly. 
+    a. Now we are ready to scale up. Repeat part b.ii to b.iv for $M=100$ times. For each bootstrap c.i. method, report what percentage of the 100 c.i.s actually covered the true parameter.
     Explain what you find. 
 
 1. (Bootstrapping two-sample statistics)
-Consider the Uber Drives dataset [here]() TODO. 
-Download the csv file, and put it side-by-side your Rmd file. 
+Consider the Uber Drives dataset [here](uber.csv). 
+Download the csv file, and put it side-by-side to your Rmd file. 
 Then use `uber <- read.csv("uber.csv")` to read in the file.
-We will be using the `CATEGORY*` column, which reports the type of the trip, and `MILES*`, which reports the miles traveled the trip. 
+We will be using the category column, which reports the type of the trip, and the miles column, which reports the miles traveled the trip. 
 We are interested in comparing the business trips (defining Population 1) and the personal trips (defining Population 2).
 ```{r, eval=FALSE, include=FALSE}
 library(tidyverse)
@@ -47,47 +47,52 @@ ggplot(uber, aes(x=`MILES.`, y=`..density..`, fill=`CATEGORY.`)) +
   xlim(c(-10, 100))
 ```
 
-    a. Provide an estimate for the difference $\mu_1 - \mu_2$ between the mean miles of Population 1 and 2. Call this estimate $\hat{\mu}_1 - \hat\mu_2$.
+    a. Provide a point estimate of the difference $\mu_1 - \mu_2$ between the population means. Call this estimate $\hat{\mu}_1 - \hat\mu_2$.
 
-    a. Provide an estimate of the standard error of $\hat{\mu}_1 - \hat\mu_2$ using formulas you learned from statistics courses. You may assume observations are independent and the two populations have the same standard deviation.
+    a. Provide a point estimate of the standard error for $\hat{\mu}_1 - \hat\mu_2$ using formulas you learned from statistics courses. You may assume observations are independent and the two populations have the same standard deviation.
 
     a. Now estimate the standard error using the bootstrap. How does this compare to your answer from (b)?
 
     a. Construct a 95\% confidence interval for the difference in the means. Compare it to the results obtained using `t.test`. 
 
-    a. Provide an estimate for the difference between the *median* miles of Population 1 and 2. Call this estimate $\hat{\theta}_1 - \hat\theta_2$.
+    a. Provide a point estimate for the difference between the *median* miles of Population 1 and 2. Call this estimate $\hat{\theta}_1 - \hat\theta_2$.
 
-    a. Now estimate the standard error of $\hat{\theta}_1 - \hat\theta_2$ using bootstrap. Also construct a bootstrap c.i. Comment on your findings.
+    a. Now estimate the standard error of $\hat{\theta}_1 - \hat\theta_2$ using the bootstrap. Also construct a bootstrap c.i. 
 
-1. (Permutation one-/paired-sample test) We are going to implement the one-sample permutation test and compare with the $t$-test. Suppose we have available i.i.d. $X_1,\dots,X_n$ from distribution $F$.
+1. (Permutation one-/paired-sample test) We are going to implement the one-sample permutation test and compare with the $t$-test. Suppose we have available i.i.d. $X_1,\dots,X_n$ from an unknown distribution $F$.
 
-    a. Implement a function to conduct the one-sample permutation test for 
+    a. Implement a function to conduct a one-sample permutation test for 
     $$H_0: F \text{ is symmetric about } 3 \quad H_A: H_0 \text{ is not true}.$$
-    Write some unit tests to make sure your function is correct.
+    Generate some data of your choice, and write at least two unit tests to make sure your function is correct.
     
-    a. A study is designed to compare the effects of two drugs in increasing the hours of sleep. There were 10 subjects, each has taken both drugs and have the sleep hours measured. The data can be obtained as follows.
+    a. A study is designed to compare the effects of two drugs on increasing the hours of sleep. There were 10 subjects, each has taken both drugs and have the sleep hours measured. The data can be obtained as follows.
         ```{r}
         drug1 <- sleep$extra[sleep$group == 1]
         drug2 <- sleep$extra[sleep$group == 2]
         ```
   
-        Let $(X_i, Y_i)$ be the measurements obtained for the $i$th subject, and $\mu_1$ and $\mu_2$ be the mean of the $X_i$ and $Y_i$, respectively. 
+        Let $(X_i, Y_i)$ be the measurements obtained for the $i$th subject for drug 1 and drug 2, respectively, and $\mu_1$ and $\mu_2$ be the mean of the $X_i$ and $Y_i$. 
         Test 
-        $$H_0: \mu_1=\mu_2 \quad\text{vs}\quad \mu_1\ne\mu_2$$
+        $$H_0: \mu_1=\mu_2 \quad\text{vs}\quad H_A: \mu_1\ne\mu_2$$
         using the permutation test.
       
-    a. Generate a sample of observations from various distributions with mean $\mu$ and sample size $n$. Test at the $\alpha=0.1$ significance level and report your result. Use
+    a. In this and the next questions you are going to perform a simulation study to investigate the size and power of the one-sample permutation test. In this question, you will investigate a number of different scenarios. In each scenario, you will generate a single sample of $n=20$ observations. Perform 
+        - both the one-sample permutation test and the one-sample $t$-test for 
+        $$H_0: \mu = 3 \quad \text{vs} \quad H_A: \mu \ne 3$$
+        at the $\alpha=0.1$ significance level. 
+    
+        Consider all combinations of the following settings:
+        - let $F$ be either $N(\mu, 1)$ or $\text{Exponential(λ=1/μ)}$, and
+        - set the true mean $\mu$ to either $3$ or $4$
         
-        - both the permutation and the $t$-test to test the location null hypothesis,
-        - let $F$ be either $N(\mu, 1)$ or $\text{Exponential(rate=1/μ)}$,
-        - $\mu$ be either $3$ or $4$, and
-        - $n$ be either 10, 20, or 50.
+        Report your result in a reader-friendly manner.
         
-    a. Repeat the last part for $M=100$ times. Report the proportion of times each test rejects, and explain the results. Make sure the results are reader friendly.
+    a. Repeat the last question for $M=100$ times. Report the proportion of times each test rejects in each scenario. Explain what you find in terms of size and power for the two tests compared. Make sure the results are reader friendly.
 
-1. The permutation correlation test always control the size of the test below the nominal level if the $X$ and $Y$ are independent under $H_0$. 
-However, this property may not hold if $X$ and $Y$ are uncorrelated but dependent under $H_0$. 
-Let $(X_1,Y_1),\dots,(X_n,Y_n)$ be $n$ pairs of i.i.d. observations following the same distribution as $(X,Y)$, where the distribution for the latter is define as follows:
+1. (Optional) The permutation correlation test controls the size of the test below the nominal level if the $X$ and $Y$ are *independent* under $H_0$ without any other assumptions (e.g., no normality assumptions, no sample size requirements, etc). 
+However, this property may not hold if $X$ and $Y$ are *uncorrelated but dependent* under $H_0$. 
+Let $(X_1,Y_1),\dots,(X_n,Y_n)$ be $n$ pairs of i.i.d. observations following the same distribution as $(X,Y)$. 
+The probability mass function for $(X,Y)$ is define as follows:
 $$P((X,Y)=(x,y)) = \begin{cases}
 1/2 - 1/n,  & \text{if } (x,y)=(0, 0) \\
 1/2,        & \text{if } (x,y)=(1, 1) \\
