@@ -36,7 +36,7 @@ knitr::opts_chunk$set(fig.height=4, fig.width=4, fig.align='center')
 
 - Widely appliable: 
   - They do not require knowledge about the form of the underlying distribution
-  - Permutation tests work for any finite sample size, unlike the bootstrap and parametric tests which rely on asymptotics
+  - Permutation tests work for any finite sample size, unlike the bootstrap and parametric tests which rely on a large sample€€€
 
 - Most of the times, permutation tests are "exact". Namely, they have size exactly equal to the nominal level $\alpha$. So it is neither over-conservative nor over-liberal
 

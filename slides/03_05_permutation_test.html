@@ -41,7 +41,7 @@ class: center, middle, inverse, title-slide
 
 - Widely appliable: 
   - They do not require knowledge about the form of the underlying distribution
-  - Permutation tests work for any finite sample size, unlike the bootstrap and parametric tests which rely on asymptotics
+  - Permutation tests work for any finite sample size, unlike the bootstrap and parametric tests which rely on a large sample€€€
 
 - Most of the times, permutation tests are "exact". Namely, they have size exactly equal to the nominal level `\(\alpha\)`. So it is neither over-conservative nor over-liberal
 
@@ -160,7 +160,7 @@ TPerm &lt;- map_dbl(seq_len(B), function(i) {
   abs(mean(xPerm) - mean(yPerm))
 })
 (pv &lt;- mean(TPerm &gt;= t0))
-## [1] 0.269
+## [1] 0.303
 ```
 So there is no evidence that the treatment is effective.
 
