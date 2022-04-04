@@ -20,21 +20,18 @@ class: center, middle, inverse, title-slide
 
 ---
 
-class: big, middle
 
 
-
-## Permutation Tests
-
----
 
 ## Outline
 
-- Sampling distribution
+- Permutation two-sample test
 
-- The bootstrap
+- Permutation test of correlation
 
-- Bootstrap confidence intervals
+- Permutation one-sample test
+
+- Properties
 
 ---
 
@@ -42,10 +39,15 @@ class: big, middle
 
 - Permutation tests are a class of *nonparametric* hypothesis tests
 
-- They do not require knowledge about the form of the underlying distribution
+- Widely appliable: 
+  - They do not require knowledge about the form of the underlying distribution
+  - Permutation tests work for any finite sample size, unlike the bootstrap and parametric tests which rely on asymptotics
 
-- Again, permutation tests rely on resampling the data. More precisely, permutating the observations
+- Most of the times, permutation tests are "exact". Namely, they have size exactly equal to the nominal level `\(\alpha\)`. So it is neither over-conservative nor over-liberal
 
+- Again, permutation tests rely on resampling the data, so it is like the bootstrap, a resampling method
+
+    - More precisely, we are now permutating the observations
 ---
 class: big, middle
 
@@ -54,7 +56,7 @@ class: big, middle
 ---
 
 ## A first task: Two-sample test
-We have the survival times for two groups of mice: `x` for 7 mice in the treatment group and `y` for 8 mice in the control group. We would like to tell whether the treatment affects survival time.
+We have the survival times for 7 mice in the treatment group stored in `x` and 8 mice in the control group stored in `y`. We would like to tell whether the treatment affects survival time.
 
 ```r
 x &lt;- c(94, 197, 16, 38, 99, 144, 23)
@@ -68,16 +70,16 @@ It is hard to tell whether the distributions may be normal, so applying a `\(t\)
 
 Instead, we test 
 `$$H_0: F_X = F_Y \quad \text{vs}\quad H_A: F_X \ne F_Y,$$`
-where `\(F_X\)` and `\(F_Y\)` are the distribution in the treamtent and the control group, resp.
+where `\(F_X\)` and `\(F_Y\)` are the distributions for the treamtent and the control groups, resp.
 Perform the following thought experiment:
 
-- If the treatment is effectless `\((H_0)\)`, then all mice are equivalent, and their id and groups are superficial (just labels)
+- If the treatment is effectless `\((H_0)\)`, then all mice are equivalent, and their id and groups are exchangeable (just labels)
 
-- In this case, the label is arbitrary. Although in the real world, the first mouse has value 94, we could as well label any other mouse as "the first mouse". So any value in `x` and `y` are as likely to be the survival time for the first mouse
+- In this case, the label is arbitrary. Although in the real world, the first mouse has value 94, we could as well label any other mouse as "the first mouse". Any value in `x` and `y` are as likely to be the value for the first mouse if `\(H_0\)` is true
 
-- This means any random selection of 7 values from the combined data is an equal likely choice for the values in the control group
+- This means any choice of 7 values from the combined data is equal likely  to form the treatment group; the rest form the control group
 
-- In summary, under `\(H_0\)`, the dataset we observe is just one possibility out of many equally likely ones obtained by shuffling the labels for the mice
+- In summary, under `\(H_0\)`, any permutation of the pooled values is equally likely to be observed
 
 - Thus, *if we randomly permute the pooled values, we are effectively doing a simulation where data come from `\(H_0\)`*
 
@@ -101,61 +103,46 @@ Perform the following thought experiment:
 
 ## The permutation distribution
 
-To make idea precise, here is a toy two-sample test example. Sample 1 is `\((X_1,X_2) = (1,3)\)` and Sample 2 is `\(Y_1 = 9\)`. The permutated observations for `\((X_1, X_2, Y_1)\)` are:
+To make idea precise, here is a toy two-sample test example. Sample 1 is `\((X_1,X_2) = (1,3)\)` and Sample 2 is `\(Y_1 = 9\)`. Consider test statistic 
+`$$T(x_1,x_2,y_1) = y_1 / 1 - (x_1 + x_2) / 2.$$`
+The permutated observations for `\((X_1, X_2, Y_1)\)` are:
 
 |Permutation | `\(T_\text{perm}\)` | Probability |
 |:-----:|:------:|:------:|
-|(1,9,3)|2|1/6|
-|(9,1,3)|2|1/6|
 |(1,3,9)|7|1/6|
 |(3,1,9)|7|1/6|
+|(1,9,3)|2|1/6|
+|(9,1,3)|2|1/6|
 |(3,9,1)|5|1/6|
 |(9,3,1)|5|1/6|
 
-The observed value is (1,9,3), so the observed test statistic is `\(t_0=7\)`. The p-value is 
+The observed value is (1,3,9), so the observed test statistic is `\(t_0=7\)`. The p-value is 
 `$$P(T_\text{perm} \ge t_0) = 2/6.$$`
 
 ---
 
-## Approximating the permutation distribution
+## Approximating the permutation dist.
 
 |Sample sizes | # of permutations |
 |:-----:|:------:|
-| `\(n_1 = 2\)`, `\(n_2=1\)` | 3 |
+| `\(n_1 = 2\)`, `\(n_2=1\)` | 6 |
 | `\(n_1 = 4\)`, `\(n_2=2\)` | 720 |
 | `\(n_1 = 6\)`, `\(n_2=3\)` | 362880 |
 
 - The number of permutation increases dramatically as the sample sizes increase, so we cannot enumerate all possible permutations
 
-- Fortunately, since `\(P(T_\text{perm} \ge t_0) = E (\mathbf{1}\{x \ge t_0 \})\)`, we can again use the Monte Carlo integration to approximate the `\(p\)`-value (very closely)
+- Fortunately, since `\(P(T_\text{perm} \ge t_0) = E (\mathbf{1}\{T_{\text{perm}} \ge t_0 \})\)`, we can again use the Monte Carlo integration to approximate the `\(p\)`-value (very closely)
 
 - In practice, generate a large number `\(B\)` of permutations (again, at least 500), and obtain permutation test statistics `\(T_{\text{perm},b}\)` for `\(b=1,\dots,B\)`. Then the `\(p\)`-value is approximated by 
 `$$P(T_\text{perm} \ge t_0) \approx \frac{1}{B}\sum_{b=1}^B \mathbf{1}\{T_{\text{perm},b} \ge t_0\}$$`
 
 ---
 
-## The permutation test algorithm
-
-Putting things all together, the algorithm for two-sample permutation test is:
-
-1. Compute the observed test statistic
-`$$t_0 = T(X_1,\dots, X_{n_1}, Y_1,\dots,Y_{n_2})$$`
-
-1. In the `\(b\)`th iteration, randomly permute `\((X_1,\dots, X_{n_1}, Y_1,\dots,Y_{n_2})\)` to obtain `\((X_{1b},\dots, X_{n_1b}, Y_{1b},\dots,Y_{n_2b})\)`. Calculate the permutation test statistic
-`$$T_{\text{perm},b} = T(X_{1b},\dots, X_{n_1b}, Y_{1b},\dots,Y_{n_2b})$$`
-
-1. Repeat the last step `\(B\)` times.
-
-1. The approximate permutation `\(p\)`-value is 
-`$$\frac{1}{B}\sum_{b=1}^B \mathbf{1}\{T_{\text{perm},b} \ge t_0\}$$`
-
----
-
 ## Mouse data example
 
 The two-sample test hypothesis is 
-`$$H_0: F_X = F_Y \quad \text{vs}\quad F_X \ne F_Y,$$`
-a frequently used test statistic is 
+`$$H_0: F_X = F_Y \quad \text{vs}\quad F_X \ne F_Y.$$`
+For this two-sample test, apply test statistic
 `$$T(X_1,\dots, X_{n_1}, Y_1,\dots,Y_{n_2}) = |\bar{X} - \bar{Y}|.$$`
 
 
@@ -176,6 +163,41 @@ TPerm &lt;- map_dbl(seq_len(B), function(i) {
 ## [1] 0.269
 ```
 So there is no evidence that the treatment is effective.
+
+---
+
+## The permutation test algorithm
+
+Putting things all together, the two-sample permutation test is:
+
+1. Choose a two-sample test statistic `\(T(x_1,\dots,x_{n_1},y_1,\dots,y_{n_2})\)`. E.g., the difference in the sample mean, or the ratio of sample means, etc
+
+1. Compute the observed test statistic
+`$$t_0 = T(X_1,\dots, X_{n_1}, Y_1,\dots,Y_{n_2})$$`
+
+1. In the `\(b\)`th iteration, randomly *permute* `\((X_1,\dots, X_{n_1}, Y_1,\dots,Y_{n_2})\)` to obtain `\((X_{1b},\dots, X_{n_1b}, Y_{1b},\dots,Y_{n_2b})\)`. Calculate the permutation test statistic
+`$$T_{\text{perm},b} = T(X_{1b},\dots, X_{n_1b}, Y_{1b},\dots,Y_{n_2b})$$`
+
+1. Repeat the last step `\(B\)` times.
+
+1. The approximate permutation `\(p\)`-value is 
+`$$\frac{1}{B}\sum_{b=1}^B \mathbf{1}\{T_{\text{perm},b} \ge t_0\}$$`
+
+---
+
+class: inverse
+
+## Your turn
+
+Go back to mouse survival example. Start with 
+```
+x &lt;- c(94, 197, 16, 38, 99, 144, 23)
+y &lt;- c(52, 104, 146, 10, 51, 30, 40, 27, 46)
+```
+
+&lt;img src="images/blue.png" width=20&gt; Apply the permutation test to investigate whether the treament and the control groups differ. This time, use test statistic
+`$$T(x_1,\dots,x_{n_1},y_1,\dots,y_{n_2}) = |s_1 - s_2|,$$`
+where `\(s_1\)` is the sample standard deviation of `\(x_1,\dots,x_{n_1}\)` and `\(s_2\)` is the sample standard deviation of `\(y_1,\dots,y_{n_2}\)`
 
 ---
 class: big, middle
@@ -201,11 +223,11 @@ The test statistic is the sample correlation
 
 ---
 
-- To mimic `\(H_0\)`, the permutation test will *randomly pair up the `\(X_i\)` and the `\(Y_i\)`*
+- To mimic `\(H_0\)`, the permutation test will break up the pairs `\((X_i, Y_i)\)` and *randomly pair up the `\(X_i\)` and the `\(Y_i\)`*
+    - We are *not* shuffling the pairs `\((X_i, Y_i)\)` together! This won't change the sample correlation at all
 
-- Actually, we are simulating the scenario where `\(X\)` and `\(Y\)` are independent. So this is what `\(H_0\)` should be, indeed
+- We are actually testing `\(H_0:\)` `\(X\)` and `\(Y\)` are independent, since we are simulating that scenario (picking which `\(X\)` is independent of `\(Y\)`)
 
-- Not shuffling the two in a pair `\((X_i, Y_i)\)` together! This won't change the sample correlation at all
 
 
 ```r
@@ -214,7 +236,7 @@ n &lt;- length(lsat)
 t0 &lt;- cor(lsat, gpa)
 TPerm &lt;- map_dbl(seq_len(B), function(i) {
   ind &lt;- sample(n)
-  xPerm &lt;- lsat[ind] # Just shuffling the first entries is enough
+  xPerm &lt;- lsat[ind] # Just shuffling the X is enough
   cor(xPerm, gpa)
 })
 (pv &lt;- mean(TPerm &gt;= t0))
@@ -249,19 +271,62 @@ class: big, middle
 
 Suppose we are given `\(X_1,\dots,X_n\)`, and `\(\theta\)` is a location parameter of `\(X\)` ("the center", say the mean).
 You may wonder whether the permutation test can be used to test a one-sample location hypothesis
-`$$H_0: \theta = \theta_0 \quad\text{vs}\quad H_0: \theta\ne \theta_0$$`
+`$$H_0: \theta = \theta_0 \quad\text{vs}\quad H_A: \theta\ne \theta_0$$`
 for a given location `\(\theta_0\)`.
 
-The answer is yes, but we need an additional assumption that `\(X\)` is symmetrically distributed around its center `\(\theta\)`.
+The answer is yes, but we need an additional assumption that `\(X\)` is *symmetrically distributed* around its center `\(\theta\)`.
 
 Because of the symmetry, the distributions of `\(X_i-\theta\)` and `\(\theta - X_i\)` are the same. 
 The permutation test will generate permutation samples by randomly assigning the sign for the `\(i\)`th difference `\(X_i - \theta\)`.
 
 ---
+## Eg: Perm. one-sample test
 
-## Permutation one-sample tests
+Our dataset `\(X_1,\dots, X_{32}\)` contains the 1/4 mile time of randomly selected cars
 
-The algorithm is 
+```r
+X &lt;- mtcars$qsec
+hist(X, main="1/4 mile time")
+```
+
+&lt;img src="03_05_permutation_test_files/figure-html/unnamed-chunk-6-1.png" style="display: block; margin: auto;" /&gt;
+Data is reasonably symmetrical. 
+
+---
+
+Test hypothesis about the center `\(\mu\)`:
+`$$H_0: \mu = 20 \quad\text{vs}\quad H_A: \mu &lt; 20$$`
+
+The test statistic is 
+`$$T(X_1,\dots,X_n) = 20 - \bar{X},$$`
+so larger observed value indicates `\(H_A\)` is true.
+
+
+```r
+n &lt;- length(X)
+B &lt;- 2000
+mu0 &lt;- 20
+T &lt;- function(x) {
+  mu0 - mean(x)
+}
+t0 &lt;- T(X)
+TPerm &lt;- map_dbl(seq_len(B), function(i) {
+  sign &lt;- sample(c(-1, 1), n, replace=TRUE)
+  XPerm &lt;- (X - mu0) * sign + mu0
+  T(XPerm)
+})
+(pv &lt;- mean(TPerm &gt;= t0))
+```
+
+```
+## [1] 0
+```
+
+
+---
+
+## Perm. one-sample test algorithm
+
 1. Compute the observed test statistic
 `$$t_0 = T(X_1,\dots, X_{n})$$`
 
@@ -274,7 +339,7 @@ Obtain `\(X_{ib} = S_{ib}(X_{i} - \theta_0)  + \theta_0\)`, for `\(i=1,\dots,n\)
 1. The approximate permutation `\(p\)`-value is 
 `$$\frac{1}{B}\sum_{b=1}^B \mathbf{1}\{T_{\text{perm},b} \ge t_0\}$$`
 
-- Note: This algorithm works for paired-sample test as well. Just replace `\(X_i\)` by `\(X_i - Y_i\)`.
+- **Note**: This algorithm works for paired-sample test as well. Just replace `\(X_i\)` by `\(X_i - Y_i\)`.
 
 ---
 
@@ -293,22 +358,6 @@ Weaknesses:
 - Premutation tests could be less powerful than the `\(t\)`-test if the sample size is small
 
 - Permutation tests require more computation
-
----
-class: inverse
-
-## Your turn
-
-TODO
-
-&lt;img src="images/green.png" width=20&gt; Generate a random sample of size `\(n=10\)` from the following distributions: (a). Beta(1,2) and (b). Uniform(0,100)
-
-&lt;img src="images/green.png" width=20&gt; Sample 5 random rows from `iris` without replacement
-
-&lt;img src="images/green.png" width=20&gt; Randomly shuffle the 5 rows
-
-&lt;img src="images/green.png" width=20&gt; Sample 10 random rows from `iris` with replacement
-
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

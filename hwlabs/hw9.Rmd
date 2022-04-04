@@ -1,5 +1,5 @@
 ---
-title: 'Homework #8'
+title: 'Homework #9'
 output: html_document
 
 ---
@@ -12,6 +12,8 @@ knitr::opts_chunk$set(echo = TRUE)
 <!-- Remove any `View()` or `install.packages()` commands in your `Rmd` file. These commands will prevent the knitting of your file.  -->
 
 ## The Bootstrap and Permutation Tests
+
+**Note: Please set the confidence/significance level $\alpha = 0.1$ if that is unspecified in the question.**
 
 1. (Bootstrapping one-sample skewness and kurtosis)
 Let $X_1,\dots,X_n$ be i.i.d. observations. The population and sample skewness are, respectively, 
@@ -72,9 +74,8 @@ ggplot(uber, aes(x=`MILES.`, y=`..density..`, fill=`CATEGORY.`)) +
         ```
   
         Let $(X_i, Y_i)$ be the measurements obtained for the $i$th subject for drug 1 and drug 2, respectively, and $\mu_1$ and $\mu_2$ be the mean of the $X_i$ and $Y_i$. 
-        Test 
-        $$H_0: \mu_1=\mu_2 \quad\text{vs}\quad H_A: \mu_1\ne\mu_2$$
-        using the permutation test.
+        Apply the paired-sample permutation test to investigate the hypothesis
+        $$H_0: \mu_1=\mu_2 \quad\text{vs}\quad H_A: \mu_1\ne\mu_2.$$
       
     a. In this and the next questions you are going to perform a simulation study to investigate the size and power of the one-sample permutation test. In this question, you will investigate a number of different scenarios. In each scenario, you will generate a single sample of $n=20$ observations. Perform 
         - both the one-sample permutation test and the one-sample $t$-test for 
