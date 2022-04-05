@@ -76,7 +76,7 @@ Experiment with $n \in \{10, 50, 100, 200\}$ and $p \in \{0.01, 0.1, 0.5\}$.
 1. (Optional) We are going to test out whether the pseudorandom numbers generated in R can pass the randomness test.
 The *minimum distance test* (modified from [Wikipedia](https://en.wikipedia.org/wiki/Diehard_tests#Test_descriptions)) tests out whether the pseudorandom numbers follow a pattern that should hold true for true random numbers.
 
-    Repeat 100 times and generate 100 numbers: Choose $n = 8000$ random points uniformly distributed in a square of side 10000. 
+    Repeat 100 times and generate 100 numbers in total: Choose $n = 8000$ random points uniformly distributed in a square of side 10000. 
     Find $D$, the minimum distance between the $(n^2 − n) / 2$ pairs of different points, and obtain $E = 1 − \exp(−D^2 / 0.995)$.
     [Hint: Start with a smaller $n$ to make sure your code is correct. You may use `?dist`]
     
