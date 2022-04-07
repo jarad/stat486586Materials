@@ -50,3 +50,61 @@ TStar <- map_dbl(seq_len(B), function(b) {
 })
 hist(TStar)
 sd(TStar) * sqrt((n -1) / n)
+
+
+## Permutation test
+x <- c(94, 197, 16, 38, 99, 144, 23)
+y <- c(52, 104, 146, 10, 51, 30, 40, 27, 46)
+
+B <- 2000
+n1 <- length(x)
+n2 <- length(y)
+TFunc <- function(X, Y) {
+  abs(mean(X) - mean(Y))
+}
+t0 <- TFunc(x, y)
+xy <- c(x, y)
+TPerm <- map_dbl(seq_len(B), function(i) {
+  ind <- sample(n1 + n2, n1, replace=FALSE)
+  xPerm <- xy[ind]
+  yPerm <- xy[-ind]
+  TFunc(xPerm, yPerm)
+})
+hist(TPerm)
+abline(v=t0)
+
+pv <- mean(TPerm >= t0)
+pv
+
+
+
+# 
+t0 <- abs(sd(x) - sd(y))
+TPerm <- map_dbl(seq_len(B), function(b) {
+  perm <- sample(n1 + n2)
+  ind1 <- perm[seq_len(n1)]
+  ind2 <- perm[-seq_len(n1)]
+  XPerm <- xy[ind1]
+  YPerm <- xy[ind2]
+  abs(sd(XPerm) - sd(YPerm))
+})
+hist(TPerm)
+abline(v=t0)
+pv <- mean(TPerm >= t0)
+pv
+
+B <- 2000
+n <- length(lsat)
+t0 <- cor(lsat, gpa)
+TPerm <- map_dbl(seq_len(B), function(b) {
+  # Permute the sample
+  ind <- sample(n)
+  xPerm <- lsat[ind]
+  yPerm <- gpa
+  # calc the test statistic
+  cor(xPerm, yPerm)
+})
+hist(TPerm)
+abline(v=t0)
+pv <- mean(TPerm >= t0)
+pv
