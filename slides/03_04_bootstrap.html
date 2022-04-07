@@ -319,8 +319,8 @@ thetaStar &lt;- map_dbl(seq_len(B), function(i) {
   yStar &lt;- gpa[index]
   cor(xStar, yStar)
 })
-(sboot &lt;- sd(thetaStar))
-## [1] 0.1346896
+(sboot &lt;- sd(thetaStar) * sqrt((n -1) / n))
+## [1] 0.1301225
 ```
 
 ---
@@ -331,7 +331,7 @@ Construct the three bootstrap c.i.s
 # Normal method
 zz &lt;- qnorm(alpha / 2, lower.tail = FALSE)
 (normal &lt;- c(thetan - zz * sboot, thetan + zz * sboot))
-## [1] 0.5123877 1.0403613
+## [1] 0.521339 1.031410
 ```
 
 ```r
@@ -351,7 +351,7 @@ Since correlation coefficient must lie in `\([-1, 1]\)`, trim the c.i.s
 ```r
 trimCor &lt;- function(rho) pmin(pmax(rho, -1), 1)
 trimCor(normal)
-## [1] 0.5123877 1.0000000
+## [1] 0.521339 1.000000
 trimCor(pivotal)
 ## [1] 0.5868467 1.0000000
 trimCor(percentile)
@@ -383,8 +383,8 @@ Tnstar &lt;- map_dbl(seq_len(B), function(i) {
   Ystar &lt;- sample(Y, m, replace = TRUE)
   TnFunc(Xstar, Ystar)
 })
-(sboot &lt;- sd(Tnstar))
-## [1] 0.08984622
+(sboot &lt;- sd(Tnstar) * sqrt((n -1) / n))
+## [1] 0.08894322
 ```
 ---
 

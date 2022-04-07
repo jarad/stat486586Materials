@@ -296,7 +296,7 @@ thetaStar <- map_dbl(seq_len(B), function(i) {
   yStar <- gpa[index]
   cor(xStar, yStar)
 })
-(sboot <- sd(thetaStar))
+(sboot <- sd(thetaStar) * sqrt((n -1) / n))
 ```
 
 ---
@@ -347,7 +347,7 @@ Tnstar <- map_dbl(seq_len(B), function(i) {
   Ystar <- sample(Y, m, replace = TRUE)
   TnFunc(Xstar, Ystar)
 })
-(sboot <- sd(Tnstar))
+(sboot <- sd(Tnstar) * sqrt((n -1) / n))
 ```
 ---
 

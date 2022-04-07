@@ -36,9 +36,9 @@ knitr::opts_chunk$set(fig.height=4, fig.width=4, fig.align='center')
 
 - Widely appliable: 
   - They do not require knowledge about the form of the underlying distribution
-  - Permutation tests work for any finite sample size, unlike the bootstrap and parametric tests which rely on a large sample€€€
+  - Permutation tests work for any finite sample size, unlike the bootstrap and parametric tests which rely on a large sample
 
-- Most of the times, permutation tests are "exact". Namely, they have size exactly equal to the nominal level $\alpha$. So it is neither over-conservative nor over-liberal
+- Most of the times, permutation tests are *exact*. Namely, they have size exactly equal to the nominal level $\alpha$. So it is neither over-conservative nor over-liberal
 
 - Again, permutation tests rely on resampling the data, so it is like the bootstrap, a resampling method
 
@@ -67,23 +67,6 @@ It is hard to tell whether the distributions may be normal, so applying a $t$-te
 
 ---
 
-Instead, we test 
-$$H_0: F_X = F_Y \quad \text{vs}\quad H_A: F_X \ne F_Y,$$
-where $F_X$ and $F_Y$ are the distributions for the treamtent and the control groups, resp.
-Perform the following thought experiment:
-
-- If the treatment is effectless $(H_0)$, then all mice are equivalent, and their id and groups are exchangeable (just labels)
-
-- In this case, the label is arbitrary. Although in the real world, the first mouse has value 94, we could as well label any other mouse as "the first mouse". Any value in `x` and `y` are as likely to be the value for the first mouse if $H_0$ is true
-
-- This means any choice of 7 values from the combined data is equal likely  to form the treatment group; the rest form the control group
-
-- In summary, under $H_0$, any permutation of the pooled values is equally likely to be observed
-
-- Thus, *if we randomly permute the pooled values, we are effectively doing a simulation where data come from $H_0$*
-
----
-
 ## Obtaining $p$-value
 
 - Recall that the p-value is the probability for the test statistic $T_0$ to be more or equally extreme than the observed value under $H_0$
@@ -94,15 +77,42 @@ Perform the following thought experiment:
 
 - We don't know what is the sampling distribution, so we use simulation to approximate it
 
-- More precisely, we permute the labels of the observations. A realization $T_\text{perm}$ of the test statistic $T_0$ is obtained from a permutation. 
+---
 
-- The distribution of $T_\text{perm}$ is called the *permutation distribution*. It is used in place of the sampling distribution
+The permutation two sample test targets
+$$H_0: F_X = F_Y \quad \text{vs}\quad H_A: F_X \ne F_Y,$$
+where $F_X$ and $F_Y$ are the distributions for the treamtent and the control groups, resp.
+Perform the following thought experiment:
+
+- If the treatment is effectless $(H_0)$, then all mice are equivalent, and their id and groups are exchangeable (just labels)
+
+- In this case, the label is arbitrary. Although in the real world, the first mouse has value 94, we could as well label any other mouse as "the first mouse". Any value in `x` and `y` are as likely to be the value for the first mouse if $H_0$ is true
+
+- This means any sequence of 7 values from the combined data is equal likely to form the treatment group
+
+- In other words, we can line up the pooled values and let the first 7 numbers stand for the treament group and the rest the control group. Under $H_0$, any permutation of the pooled values is equally likely
+
+- Thus, *if we randomly permute the pooled values, we are effectively doing a simulation where data come from $H_0$*
+
+---
+
+.center[
+![:scale 45%](images/tailProbLily.jpg)
+]
+
+Fix a choice of the test statistic $T(X_1,\dots,X_{n_1},Y_1,\dots,Y_{n_2})$, e.g., $T=|\bar{X} - \bar{Y}|$. Let $t_0$ be the observed statistic.
+
+Approximate the null distribution using simulation:
+
+- Permute the observations (or equivalently, their labels). A realization $T_\text{perm}$ of the test statistic $T$ is obtained from a permutation. 
+
+- Repeat the previous step for many times. The distribution of $T_\text{perm}$ is called the *permutation distribution*. It is used in place of the sampling distribution
 
 ---
 
 ## The permutation distribution
 
-To make idea precise, here is a toy two-sample test example. Sample 1 is $(X_1,X_2) = (1,3)$ and Sample 2 is $Y_1 = 9$. Consider test statistic 
+To make idea precise, here is a toy example. Sample 1 is $(X_1,X_2) = (1,3)$ and Sample 2 is $Y_1 = 9$. Consider test statistic 
 $$T(x_1,x_2,y_1) = y_1 / 1 - (x_1 + x_2) / 2.$$
 The permutated observations for $(X_1, X_2, Y_1)$ are:
 
@@ -130,17 +140,18 @@ $$P(T_\text{perm} \ge t_0) = 2/6.$$
 
 - The number of permutation increases dramatically as the sample sizes increase, so we cannot enumerate all possible permutations
 
-- Fortunately, since $P(T_\text{perm} \ge t_0) = E (\mathbf{1}\{T_{\text{perm}} \ge t_0 \})$, we can again use the Monte Carlo integration to approximate the $p$-value (very closely)
+<!-- - Fortunately, since $P(T_\text{perm} \ge t_0) = E (\mathbf{1}\{T_{\text{perm}} \ge t_0 \})$, we can again use the Monte Carlo integration to approximate the $p$-value (very closely) -->
 
 - In practice, generate a large number $B$ of permutations (again, at least 500), and obtain permutation test statistics $T_{\text{perm},b}$ for $b=1,\dots,B$. Then the $p$-value is approximated by 
-$$P(T_\text{perm} \ge t_0) \approx \frac{1}{B}\sum_{b=1}^B \mathbf{1}\{T_{\text{perm},b} \ge t_0\}$$
+$$P(T_\text{perm} \ge t_0) \approx \frac{1}{B}\sum_{b=1}^B \mathbf{1}\{T_{\text{perm},b} \ge t_0\},$$
+where $\mathbf{1}\{\}$ is the indicator function
 
 ---
 
 ## Mouse data example
 
 The two-sample test hypothesis is 
-$$H_0: F_X = F_Y \quad \text{vs}\quad F_X \ne F_Y.$$
+$$H_0: F_X = F_Y \quad \text{vs}\quad H_A: F_X \ne F_Y.$$
 For this two-sample test, apply test statistic
 $$T(X_1,\dots, X_{n_1}, Y_1,\dots,Y_{n_2}) = |\bar{X} - \bar{Y}|.$$
 
@@ -167,7 +178,7 @@ So there is no evidence that the treatment is effective.
 
 Putting things all together, the two-sample permutation test is:
 
-1. Choose a two-sample test statistic $T(x_1,\dots,x_{n_1},y_1,\dots,y_{n_2})$. E.g., the difference in the sample mean, or the ratio of sample means, etc
+1. Choose a two-sample test statistic $T$. E.g., the difference in the sample mean, or the ratio of sample means, etc
 
 1. Compute the observed test statistic
 $$t_0 = T(X_1,\dots, X_{n_1}, Y_1,\dots,Y_{n_2})$$
@@ -211,7 +222,7 @@ lsat <- c(576,  635,  558,  578,  666,  580,  555,  661,  651,  605,  653,  575,
 gpa  <- c(3.39, 3.30, 2.81, 3.03, 3.44, 3.07, 3.00, 3.43, 3.36, 3.13, 3.12, 2.74, 2.76, 2.88, 2.96)
 ```
 
-The permutation test hypothesis is
+We would like to test hypothesis
 $$H_0: \rho = 0 \quad \text{vs}\quad H_A: \rho > 0.$$
 
 The test statistic is the sample correlation
@@ -222,7 +233,11 @@ $$T((X_1,Y_1),\dots,(X_n,Y_n)) = \hat\rho = \frac {\sum \limits _{i=1}^{n}(X_{i}
 - To mimic $H_0$, the permutation test will break up the pairs $(X_i, Y_i)$ and *randomly pair up the $X_i$ and the $Y_i$*
     - We are *not* shuffling the pairs $(X_i, Y_i)$ together! This won't change the sample correlation at all
 
-- We are actually testing $H_0:$ $X$ and $Y$ are independent, since we are simulating that scenario (picking which $X$ is independent of $Y$)
+- We are actually testing 
+
+    $$H_0: X \text{ and } Y \text{ are independent,}$$
+    
+    since we are simulating the scenario where $X$ and $Y$ are paired up independent of the values
 
 
 ```{r,collapse=TRUE}
