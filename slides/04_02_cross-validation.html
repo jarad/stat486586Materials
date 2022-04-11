@@ -29,7 +29,7 @@ class: center, middle, inverse, title-slide
 
     - Mean squared error
     
-    - bias-variance trade-off
+    - Bias-variance trade-off
 
 - Cross-validation
 
@@ -48,8 +48,9 @@ class: big, middle
 
 ## Measuring the quality of fit
 
-In the most general case, the relationship between `\(Y\)` and `\(X=(X_1,\dots,X_p)\)` follows
-`$$Y = f(X) + \epsilon.$$`
+In the most general case, the relationship between `\(Y\)` and `\(p\)` covariates `\(X=(X_1,\dots,X_p)\)` follows
+`$$Y = f(X) + \epsilon,$$`
+where `\(\epsilon\)` is a zero-mean measurement error independent of `\(X\)`.
 
 The underlying regression function `\(f\)` is unknown, but we can obtain an estimator `\(\hat{f}(x)\)` (e.g., the least squares estimate for multiple regression). 
 We can predict `\(Y\)` using 
@@ -63,21 +64,21 @@ which is the expected (long term average) squared error
 
 The accuracy of `\(\hat{Y}\)` for prediction `\(Y\)` depends on two quantities:
 
-- The *reducible* error, which can in principle be reduced to 0 given an appropriate model and a large sample
-
 - The *irreducible* error cannot be reduced in any ways. This is due to the intrinsic variability in the noise `\(\epsilon\)` which cannot be predicted. It could be sourced from unmeasured variables
+
+- The *reducible* error, which can in principle be reduced to 0 given an appropriate model and a large sample
 
 - It can be shown that
 $$
 `\begin{aligned}
-E(Y-\hat{Y})^2 &amp; = E[f(X) + \epsilon - \hat{f}(X)]^2 \\
+\text{MSE} = E(Y-\hat{Y})^2 &amp; = E[f(X) + \epsilon - \hat{f}(X)]^2 \\
 &amp; = \underbrace{E[f(X) - \hat{f}(X)]^2}_{\text{reducible}} + \underbrace{\mathrm{var}(\epsilon)}_{\text{irreducible}}
 \end{aligned}`
 $$
 
-- Modelers' goal is to minimize the reducible error
+- The modelers' goal is to minimize the reducible error
 
-- However, the MSE is again, unknown, and thus needs to be estimated
+- However, the MSE is unknown and thus needs to be estimated
 
 ---
 
@@ -89,13 +90,20 @@ If we knew MSE, we could use it to compare models.
 
 - It is possible to know MSE only if we simulated the data.
 
-- Data below is not quite linear
+---
+## Example: A simulated dataset
+We have simulated a dataset below, which has a nonlinear relationship between `\(Y\)` and `\(X\)`:
+
+`$$Y = \sin(2\pi X) + \epsilon$$`
+
 &lt;img src="04_02_cross-validation_files/figure-html/unnamed-chunk-1-1.png" style="display: block; margin: auto;" /&gt;
+
+Suppose we did not know the underlying model. What model to use?
 
 ---
 ## MSE in a simulation
 
-Fit polynomials with degree up to 9, and obtain the MSE, reducible errors, and irreducible errors
+Fit polynomial regression models with degree up to 9, and obtain the *true* MSE, reducible errors, and irreducible errors *from simulation*
 
 &lt;img src="04_02_cross-validation_files/figure-html/unnamed-chunk-3-1.png" style="display: block; margin: auto;" /&gt;
 
@@ -112,7 +120,7 @@ Fit polynomials with degree up to 9, and obtain the MSE, reducible errors, and i
 
 - A possible alternative is the *training MSE*
 `$$\frac{1}{n}\sum_{i=1}^n(Y_i - \hat{f}(X_i))^2,$$`
-evaluated at the training data
+evaluated at the training data. Also, `\(\hat{f}\)` is trained using the same data
 
 - But this won't work for evaluating the model, as we will see
 
@@ -140,21 +148,21 @@ where the average is taken over many new test observations `\((X_0, Y_0)\)`
     
 ---
 
-## Minimizing training MSE fails
+## Why minimizing training MSE fails
 
-- Minimizing training MSE might seem appealing since it looks like the test MSE
-
-- However, there is a fundamental problem: there is no guarantee that the method with the lowest training MSE will also have the lowest test MSE
+- Minimizing training MSE might seem appealing since it looks like the test MSE. But this approach just *fails*
     
 - The reason is that the training MSE is always smaller for a more flexible model
 
-- but a more flexible model does not necessarily mean a lower test MSE
+- But a more flexible model does not necessarily mean a lower test MSE
 
     - A model interpolating all the data points is going to give a 0 training error. But this will perform poorly given new data
     
+&lt;img src="04_02_cross-validation_files/figure-html/unnamed-chunk-4-1.png" style="display: block; margin: auto;" /&gt;
+    
 ---
 
-&lt;img src="04_02_cross-validation_files/figure-html/unnamed-chunk-4-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="04_02_cross-validation_files/figure-html/unnamed-chunk-5-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -194,9 +202,9 @@ $$
 ---
 
 Our simulation:
-&lt;img src="04_02_cross-validation_files/figure-html/unnamed-chunk-5-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="04_02_cross-validation_files/figure-html/unnamed-chunk-6-1.png" style="display: block; margin: auto;" /&gt;
 
-- In real life, it is generally not possible to compute the test MSE, bias, or variance 
+- Given a real dataset, it is generally not possible to compute the test MSE, bias, or variance exactly
 
 - Nevertheless, one should always keep the bias-variance trade-off in mind
 
@@ -211,7 +219,7 @@ class: big,middle
 
 - Our goal is to estimate the test MSE
 
-- The *validation set approach* is to randomly dividing the set of all observations into two parts, a *training set* and a *validation set* (or *hold-out set*)
+- The *validation set approach* is to randomly divide the set of all observations into two parts, a *training set* and a *validation set* (or *hold-out set*)
 
 - The model is fit on the training set, and the evaluation of model is done on the validation set
 
@@ -234,7 +242,7 @@ worse given fewer observations to train
     1. split the set of observations into two parts, a validation set having a single observation `\((X_1,Y_1)\)`, and a training set containing the rest `\(\{(X_2,Y_2),\dots,(X_n,Y_n)\}\)`
     1. Fit on the training set, and make prediction for the validation data. Evaluate test error on the validation data
     1. Repeat the procedure by holding out every original observation, one at a time, as the training set
-    1. Average test errors over all observations
+    1. Average test errors over all repeats
 .center[
 ![:scale 70%](images/LOOCV.png)
 ]
@@ -250,7 +258,7 @@ worse given fewer observations to train
 
 - The LOOCV estimate for the test MSE pools all `\(n\)` test errors, and is
 `$$\text{CV}_{(n)} = \frac{1}{n}\sum_{i=1}^n \text{MSE}_i.$$`
-By averaging, this test error has a smaller variability
+    - By averaging, this test error has a smaller variability
 
 - LOOCV can be used to evaluate any regression or classification methods
 
@@ -261,6 +269,7 @@ By averaging, this test error has a smaller variability
 Benefits of LOOCV over the validation set approach:
 
 - Less bias, since `\(n-1\)` observations are used for training each time
+  - We would like to evaluate the model performance using `\(n\)` obs
 
 - Less randomness, since the splits are non-random
     
@@ -280,10 +289,9 @@ Potential drawbacks of LOOCV:
 An alternative to LOOCV is *k-fold cross-validation* (CV). This approach involves 
 
 1. Randomly divide the set of observations into `\(k\)` groups, or *folds*, of approximately equal size
-1. The first fold is treated as a validation set, and the model is fit on the remaining `\(k-1\)` folds
-1. Evaluate the prediction on the validation set (held-out fold)
+1. The first fold is treated as a validation set, and the model is fit on the remaining `\(k-1\)` folds. Evaluate the prediction on the validation set (held-out fold)
 1. Repeat the previous process for each of the `\(k\)` folds
-1. Obtain `\(k\)`-fold CV estimate
+1. Average over the `\(k\)` folds and obtain `\(k\)`-fold CV estimate
 `$$\text{CV}_{(k)} = \frac{1}{k}\sum_{i=1}^n \text{MSE}_i.$$`
 
 - LOOCV is the same as the `\(n\)`-fold CV
@@ -309,6 +317,20 @@ The reason lies in bias-variance tradeoff.
 
 ---
 
+## A general way for supervised learning
+
+In fact, a learning task often involve the many models/options to choose from. The procedure often go as follows
+
+1. Define an objective to optimize (e.g., minimize MSE for regression, or minimize misclassification rate for classiciation)
+
+1. Define a fair way to evaluate each model (e.g., for supervised learning, MSE estimated by LOOCV or `\(k\)`-fold CV, *not* training MSE)
+
+1. Choose the model that perform the best according to your evaluation
+
+1. Fit the best model using all data
+
+---
+
 ## Case study: Evaluating polynomial regression
 
 Consider the wage data. Our goal is to predict the wage with age using a polynomial regression
@@ -316,6 +338,8 @@ Consider the wage data. Our goal is to predict the wage with age using a polynom
 `$$\text{wage}_i = \beta_0 + \beta_1\text{age}_i + ... + \beta_q\text{age}_i^q + \epsilon_i.$$` 
 
 For illustration, use just the first 200 observations for speed.
+
+---
 
 
 ```r
@@ -344,25 +368,44 @@ plot(qVec, MSECV, type="b", main="MSE estimated by LOOCV")
 Test error for `\(n=200\)` observations
 &lt;img src="04_02_cross-validation_files/figure-html/wageLOOCV-1.png" style="display: block; margin: auto;" /&gt;
 
-- Using the bias-variance trade-off principle, what `\(q\)` do you think will be selected when we include all `\(n=3000\)` observations?
-
-- TODO: cover `cv.lm`
+- Using the bias-variance trade-off principle, what `\(q\)` do you think will be selected when we include all `\(n=3000\)` observations? 
 
 ---
-class: inverse
+You can also use the `glm` function together with `cv.glm` in `library(boot)` to evaluate cross-validated MSE
 
-## Your turn
 
-TODO
+```r
+library(boot)
+q &lt;- 2
+m &lt;- glm(wage ~ poly(age, q), dat, family="gaussian")
+res &lt;- cv.glm(dat, m)
+res$delta[1] # LOOCV error
+```
 
-&lt;img src="images/green.png" width=20&gt; Generate a random sample of size `\(n=10\)` from the following distributions: (a). Beta(1,2) and (b). Uniform(0,100)
+```
+## [1] 1664.048
+```
 
-&lt;img src="images/green.png" width=20&gt; Sample 5 random rows from `iris` without replacement
+```r
+# 5-fold CV
+err5Fold &lt;- map_dbl(qVec, function(q) {
+  m &lt;- glm(wage ~ poly(age, q), dat, family="gaussian")
+  res &lt;- cv.glm(dat, m, K=5)
+  res$delta[1] # LOOCV error
+})
+err5Fold
+```
 
-&lt;img src="images/green.png" width=20&gt; Randomly shuffle the 5 rows
+```
+##  [1] 1818.707 1702.683 1673.183 1676.240 1730.482 1683.999 1705.674 1687.029
+##  [9] 1707.933 1822.983
+```
 
-&lt;img src="images/green.png" width=20&gt; Sample 10 random rows from `iris` with replacement
+```r
+plot(qVec, err5Fold, type="o")
+```
 
+&lt;img src="04_02_cross-validation_files/figure-html/unnamed-chunk-7-1.png" style="display: block; margin: auto;" /&gt;
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
