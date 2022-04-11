@@ -36,7 +36,7 @@ class: big, middle
 
 - Nonlinear regression
 
-- Model selection: Bias-variance tradeoff
+&lt;!-- - Model selection: Bias-variance tradeoff --&gt;
 
 
 ---
@@ -58,29 +58,47 @@ class: big, middle
         - E.g., hypothesis testing and confidence interval
 ---
 
-In a supervised learning task, you are given data `\((X_1,Y_1),\dots,(X_n,Y_n)\)`, where the `\(Y_i\)` are the response variable, either quantitative for a *regression* problem, or qualitative for a *classification* problem.
-The `\(X_i\)` are predictors which could be multivariate.
+In a supervised learning task, you are given data `\((X_1,Y_1),\dots,(X_n,Y_n)\)`.
 
-There are two main goals in supervised learning:
+- The `\(X_i\)` are predictors which could be multivariate
 
-- *Prediction*, where the goal is to obtain a prediction `\(\hat{Y}_i\)` of `\(Y_i\)` as close as possible.
+- The `\(Y_i\)` are the response variable
 
-- *Inference*, which is to understand the relationship between `\(X_i\)` and `\(Y_i\)`. The questions of interest are, e.g,
-
-    - Which predictor is associated with the response?
-    - What is the relationship between the response and each predictor?
-
-- Machine learning is a closely related, partially overlapping set of tools for solving the same problems as does statistical learning.
-
-|Statistical learning | Machine learning | 
-|:-------------------:|:-----------------|
-|.bigg[Inference] Prediction | Inference .bigg[Prediction]|
+| `\(Y_i\)`  | Problem| Example |
+|:-------------------:|:-----------------:|:-----------------:
+|quantitative | Regression| Wage: `\(50k\)`, `\(75k\)`, etc
+|qualitative | Classification| Stock price: *increases* or *decreases* on day `\(i\)`
 
 ---
 
-## The wage data
+There are two main goals in supervised learning:
 
-TODO
+- *Prediction*, where the goal is to obtain a prediction `\(\hat{Y}_i\)` of `\(Y_i\)` as close as possible. E.g., "is the stock price going up?"
+
+- *Inference*, which is to understand the relationship between `\(X_i\)` and `\(Y_i\)`. The questions of interest are, e.g,
+
+    - Which predictor is associated with the response? "What factors explain wage?"
+    - What is the relationship between the response and each predictor? Linear or nonlinear?
+
+---
+
+- Machine learning is a closely related, partially overlapping area for solving the same problems as does statistical learning.
+
+|Statistical learning | Machine learning |
+|:-------------------:|:-----------------:|
+|.bigg[Inference], Prediction | Inference, .bigg[Prediction]|
+
+---
+
+**Reference**: [An Introduction to Statistical Learning](https://www.statlearning.com/)
+
+.center[
+![:scale 45%](images/ISLR2.png)
+]
+
+---
+## E.g. for Regression: The wage data
+
 The wage data contains income survey information for 3000 male workers from the central Atlantic region in the US. There are many predictive factors of wage included in the dataset. 
 
 To obtain the `Wage` data, install the package `ISLR2` (just once) and load the package.
@@ -107,10 +125,6 @@ str(Wage)
 ```
 
 ---
-
-## The stock market data
-
----
 class: big, middle
 
 ## Linear regression
@@ -119,11 +133,11 @@ class: big, middle
 
 ## Quick review: Linear regression
 
-In a regression setting, the responses `\(Y_i\)` are continuous, which are related to `\(p\)` predictors `\(X_{i1},\dots, X_{ip}\)`.
+In a regression setting, the responses `\(Y_i\)` are continuous
 
 - The *simple linear regression* considers only a single predictor, i.e. `\(p=1\)`. The model is written as
 
-    `$$Y_i = \beta_0 + \beta_1 X_{i1} \epsilon_i$$`
+    `$$Y_i = \beta_0 + \beta_1 X_{i1} + \epsilon_i$$`
 
 - The *(multiple) linear regression* considers any number of predictors, i.e. `\(p \ge 1\)`. The model is written as
 
@@ -131,7 +145,7 @@ In a regression setting, the responses `\(Y_i\)` are continuous, which are relat
 
     for `\(i=1,\dots,n\)`. 
 
-- In both cases, the relationship between the response and each predictor is *linear*. I.e., a unit increase in `\(X_{i1}\)` always results in `\(\beta_1\)` units of increase in `\(Y_i\)`, fixing other predictors at *any* level
+- In both cases, the relationship between the response and each predictor is *linear*. I.e., a unit increase in `\(X_{i1}\)` is associated with `\(\beta_1\)` units of increase in `\(Y_i\)`, *no matter what the current value of `\(X_{i1}\)` is, fixing other predictors at any level*
 
 - If there are multiple predictors, the regression effect of `\(X_{i1}\)` is *difference* in the simple and the multiple  linear regression models. *One must consider the predictors jointly to see the true effects*
 
@@ -141,15 +155,15 @@ In a regression setting, the responses `\(Y_i\)` are continuous, which are relat
 
 - To fit a regression model, *least squares* fit aims to minimize the residual sum of square (RSS)
 `$$\text{RSS} \mathrel{=} \sum_{i=1}^n [Y_i - (\beta_0 + \beta_1 X_{i1} + \dots + \beta_p X_{ip})]^2$$`
-over `\((\beta_0,\dots,\beta_p)\)`.
+over `\((\beta_0,\dots,\beta_p)\)`
 
-- The solution is the *least squares estimation* of `\(\boldsymbol{\beta}\)` (refer to [a previous lecture](01_11_matrix.html#13)), defined as 
+- The solution is the *least squares estimation* of `\(\boldsymbol{\beta}=(\beta_0,\dots,\beta_p)\)` (refer to [a previous lecture](01_11_matrix.html#21)), defined as 
 `$$\hat{\boldsymbol{\beta}}=[\hat{\beta_{0}}\;\hat{\beta_{1}}\;\dots\;\hat{\beta_{p}}]^{T}=(\mathbf{X}^{T}\mathbf{X})^{-1}\mathbf{X}^T\mathbf{Y}$$`
 
 ---
 class: big, middle
 
-## Noninear regression
+## Nonlinear regression
 
 ---
 
@@ -171,22 +185,19 @@ where `\(f\)` is a *nonlinear* function.
 ## Polynomial regression
 
 
-
 In the remaining of the slides, consider the case where `\(p=1\)` and we have a single predictor `\(X_i = X_{i1}\)`. 
 
-- Polynomial regression extends the linear model by adding extra predictors, obtained by raising each of the predictor to a power.
+- Polynomial regression extends the linear model by including additional predictors obtained by raising the predictor to a power
 
 - We model the nonlinear relationship as
 
-`$$Y_i = \beta_0 + \beta_1 X_{i}^1 + \dots + \beta_p X_{i}^q + \epsilon_i.$$`
+`$$Y_i = \beta_0 + \beta_1 X_{i}^1 + \dots + \beta_p X_{i}^q + \epsilon_i$$`
 
-- For example, a cubic regression (degree 4) uses three variables, `\(X_i\)`, `\(X_i^2\)`, and `\(X_i^3\)` as predictors
+- For example, a cubic regression ( `\(q=3\)`, degree 4) uses three variables, `\(X_i\)`, `\(X_i^2\)`, and `\(X_i^3\)` as predictors
 
 - We need to estimate `\(q+1\)` parameters when fitting a degree `\(q+1\)` polynomial regression with a single predictor. We say the model fitting takes up `\(q+1\)` degrees of freedom (df)
-    - An intercept only model takes 1 df
+    - An intercept-only model takes 1 df
     - Fitting a cubic regression takes 4 df
-
-- If there are multiple predictors, polynomial regression includes higher-order power terms for one or more predictors
 
 ---
 For illustration, consider a single predictor and a linear model
@@ -237,21 +248,24 @@ lines(grid, yhat4$fit + 2 * yhat4$se , col="red", lwd=2, lty=2)
 &lt;img src="04_01_regression_files/figure-html/unnamed-chunk-4-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
+## Multiple predictors
 
-## Measuring the quality of fit
+- If there are multiple predictors, polynomial regression includes higher-order power terms for one or more predictors. 
 
-In the most general case, assume the relationship between `\(Y\)` and `\(X=(X_1,\dots,X_p)\)` follows
-`$$Y = f(X) + \epsilon.$$`
+    E.g., age nonlinear effect + year of survey effect:
+`$$\text{wage}_i = \beta_0 + \beta_1\text{age}_i + \beta_2\text{age}_i^2 + \beta_3\text{age}_i^3 + \beta_4\text{age}_i^4 + \beta_5 \text{year} + \epsilon_i$$` 
 
-The underlying regression function `\(f\)` is unknown, but we can obtain an estimator `\(\hat{f}(x)\)` (e.g., the least squares estimate for multiple regression). 
-We can predict `\(Y\)` using 
-`$$\hat{Y} = \hat{f}(X).$$`
+
 ---
+class: inverse
 
-## How many degrees should I use?
+## Your turn
 
+Start with the `Wage` data in `library(ISLR2)`
 
+&lt;img src="images/green.png" width=20&gt; Use a cubic regression model to explain the `wage` response using `age` as a predictor. Also include the education levels as the second predictor.
 
+&lt;img src="images/green.png" width=20&gt; Visualize the age effect, and compare it with the model without including education as a predictor.
 ---
 
 ## Regression splines
@@ -271,23 +285,23 @@ It has 8 degrees of freedom.
 
 - Using more knots leads to a more flexible function
 
-- Unfortunately, the piecewise cubic fit looks bad (discontinuous)
-
-- A fix is to require that the cubic functions connect *smoothly* at the knot
-
 ---
 
 ![](images/cubicSplines.png)
 
 ---
 
+- Unfortunately, the piecewise cubic fit (upper left) is discontinuous and looks bad
+
+- A fix is to require that the cubic functions connect *smoothly* at the knot
+
 - In the upper right plot, we added a contraint that the two pieces must connect at the knot. Now has 7 df. Better, but somewhat bizarre
 
 - In the lower left plot, we have added two more constraints: The first and second derivatives must match up at the knot. Now has 5 df. Now the result is very smooth. 
 
-- This results in a *cubic spline* function. It is a piecewise cubic (4th degree) function, and the derivatives up to 2nd order must agree at the knot
+- This results in a *cubic spline* function. It is a *piecewise cubic* (4th degree) function, and the derivatives up to 2nd order must agree at the knot
 
-- Analogously, the lower right is a *linear spline*. It is a piecewise linear (2nd degree) function, and it must be continuous at the knot (0th order derivatives agree)
+- Analogously, the lower right is a *linear spline*. It is a *piecewise linear* (2nd degree) function, and it must be continuous at the knot (0th order derivatives agree)
 
 ---
 
@@ -312,10 +326,19 @@ where
 - The formula means that, again, regression splines can be implemented by multiple linear regression
 
 ---
-
+To implement cubic spline, either program it yourself, or use the `bs()` function
 
 ```r
 library(splines)
+# Program it
+cubic &lt;- function(x, xi) {
+  pmax((x - xi)^3, 0)
+}
+mSpl0 &lt;- lm(wage ~ age + I(age^2) + I(age^3) + 
+              cubic(age, 25) + cubic(age, 40) + cubic(age, 60), 
+            data=Wage)
+
+# Use bs()
 mSpl &lt;- lm(wage ~ bs(age , knots = c(25, 40, 60)), data = Wage)
 yhatSpl &lt;- predict(mSpl , newdata = list(age = grid), se = TRUE)
 plot(Wage$age, Wage$wage, col = "gray", pch=".")
@@ -324,22 +347,13 @@ lines(grid, yhatSpl$fit + 2 * yhatSpl$se, lty = 2)
 lines(grid, yhatSpl$fit - 2 * yhatSpl$se, lty = 2)
 ```
 
-&lt;img src="04_01_regression_files/figure-html/unnamed-chunk-5-1.png" style="display: block; margin: auto;" /&gt;
-
 ---
-class: inverse
 
-## Your turn
 
-TODO
-
-&lt;img src="images/green.png" width=20&gt; Generate a random sample of size `\(n=10\)` from the following distributions: (a). Beta(1,2) and (b). Uniform(0,100)
-
-&lt;img src="images/green.png" width=20&gt; Sample 5 random rows from `iris` without replacement
-
-&lt;img src="images/green.png" width=20&gt; Randomly shuffle the 5 rows
-
-&lt;img src="images/green.png" width=20&gt; Sample 10 random rows from `iris` with replacement
+.center[
+![](04_01_regression_files/figure-html/spl-1.png)
+]
+- Function values on the left and right boundaries are hardest to estimate. So look there to tell whether you have a good fit or not
 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>

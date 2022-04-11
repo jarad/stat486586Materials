@@ -171,7 +171,7 @@ TPerm &lt;- map_dbl(seq_len(B), function(i) {
   abs(mean(xPerm) - mean(yPerm))
 })
 (pv &lt;- mean(TPerm &gt;= t0))
-## [1] 0.2805
+## [1] 0.296
 ```
 So there is no evidence that the treatment is effective.
 
@@ -255,7 +255,7 @@ TPerm &lt;- map_dbl(seq_len(B), function(i) {
   cor(xPerm, gpa)
 })
 (pv &lt;- mean(TPerm &gt;= t0))
-## [1] 0.001
+## [1] 5e-04
 ```
 
 So we reject `\(H_0\)`, and conclude that the entrance score and GPA are positively correlated.
@@ -309,7 +309,7 @@ Data is reasonably symmetrical.
 
 ---
 
-Test hypothesis about the center `\(\mu\)`:
+Test hypothesis whether the center `\(\mu\)` equals `\(\mu_0=20\)`:
 `$$H_0: \mu = 20 \quad\text{vs}\quad H_A: \mu &lt; 20$$`
 
 The test statistic is 
@@ -362,7 +362,7 @@ Obtain `\(X_{ib} = S_{ib}(X_{i} - \theta_0)  + \theta_0\)`, for `\(i=1,\dots,n\)
 
 Strengths:
 
-- Permutation tests always control the type I error rate to be below the nominal level `\(\alpha\)` if the null hypothesis is true. So it is conservative enough
+- Permutation tests always control the type I error rate to be at the nominal level `\(\alpha\)` if the null hypothesis is true
 
 - Permutation tests do not require a distributional form. In particular, they do not require data to be normally distributed
 

@@ -300,7 +300,7 @@ Data is reasonably symmetrical.
 
 ---
 
-Test hypothesis about the center $\mu$:
+Test hypothesis whether the center $\mu$ equals $\mu_0=20$:
 $$H_0: \mu = 20 \quad\text{vs}\quad H_A: \mu < 20$$
 
 The test statistic is 
@@ -348,7 +348,7 @@ $$\frac{1}{B}\sum_{b=1}^B \mathbf{1}\{T_{\text{perm},b} \ge t_0\}$$
 
 Strengths:
 
-- Permutation tests always control the type I error rate to be below the nominal level $\alpha$ if the null hypothesis is true. So it is conservative enough
+- Permutation tests always control the type I error rate to be at the nominal level $\alpha$ if the null hypothesis is true
 
 - Permutation tests do not require a distributional form. In particular, they do not require data to be normally distributed
 
