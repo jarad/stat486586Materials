@@ -170,7 +170,7 @@ In the remaining of the slides, consider the case where $p=1$ and we have a sing
 
 - We model the nonlinear relationship as
 
-$$Y_i = \beta_0 + \beta_1 X_{i}^1 + \dots + \beta_p X_{i}^q + \epsilon_i$$
+$$Y_i = \beta_0 + \beta_1 X_{i}^1 + \dots + \beta_q X_{i}^q + \epsilon_i$$
 
 - For example, a cubic regression ( $q=3$, degree 4) uses three variables, $X_i$, $X_i^2$, and $X_i^3$ as predictors
 

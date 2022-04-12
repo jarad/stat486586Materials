@@ -40,7 +40,8 @@ Consider the Uber Drives dataset [here](uber.csv).
 Download the csv file, and put it side-by-side to your Rmd file. 
 Then use `uber <- read.csv("uber.csv")` to read in the file.
 We will be using the category column, which reports the type of the trip, and the miles column, which reports the miles traveled the trip. 
-We are interested in comparing the business trips (defining Population 1) and the personal trips (defining Population 2).
+We are interested in comparing the business trips (defining Population 1) and the personal trips (defining Population 2). 
+Note that the category column may contain more categories than just business and personal.
 ```{r, eval=FALSE, include=FALSE}
 library(tidyverse)
 uber <- read.csv("uber.csv")
@@ -59,7 +60,7 @@ ggplot(uber, aes(x=`MILES.`, y=`..density..`, fill=`CATEGORY.`)) +
 
     a. Provide a point estimate for the difference between the *median* miles of Population 1 and 2. Call this estimate $\hat{\theta}_1 - \hat\theta_2$.
 
-    a. Now estimate the standard error of $\hat{\theta}_1 - \hat\theta_2$ using the bootstrap. Also construct a bootstrap c.i. 
+    a. Now estimate the standard error of $\hat{\theta}_1 - \hat\theta_2$ using the bootstrap. Also construct a 95\% bootstrap c.i. 
 
 1. (Permutation one-/paired-sample test) We are going to implement the one-sample permutation test and compare with the $t$-test. Suppose we have available i.i.d. $X_1,\dots,X_n$ from an unknown distribution $F$.
 

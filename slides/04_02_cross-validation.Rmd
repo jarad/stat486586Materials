@@ -208,7 +208,8 @@ the model.
 $$\mathrm{Ave}(Y_0 - \hat{f}(X_0))^2,$$
 where the average is taken over many new test observations $(X_0, Y_0)$
 
-- Our goal is to select the model that minimizes the test MSE
+- The test MSE is a good metric for the model performance 
+- When selecting a model, our goal is to select the one that minimizes the test MSE
 
 - Sometimes, there is a test dataset available. I.e., there is a separate dataset which you did not use to fit the data. You can then evaluate the test MSE using the test dataset
 
@@ -229,7 +230,7 @@ where the average is taken over many new test observations $(X_0, Y_0)$
     
 ```{r, echo=FALSE, fig.height=4, fig.width=5}
 plot(X, Y, type="o", pch=16, main="The most flexible model")
-points(0.46, -0.5, pch="x", col="red", cex=2)
+points(0.45, -0.5, pch="x", col="red", cex=2)
 ```
     
 ---

@@ -139,7 +139,8 @@ the model.
 `$$\mathrm{Ave}(Y_0 - \hat{f}(X_0))^2,$$`
 where the average is taken over many new test observations `\((X_0, Y_0)\)`
 
-- Our goal is to select the model that minimizes the test MSE
+- The test MSE is a good metric for the model performance 
+- When selecting a model, our goal is to select the one that minimizes the test MSE
 
 - Sometimes, there is a test dataset available. I.e., there is a separate dataset which you did not use to fit the data. You can then evaluate the test MSE using the test dataset
 
@@ -397,8 +398,8 @@ err5Fold
 ```
 
 ```
-##  [1] 1818.707 1702.683 1673.183 1676.240 1730.482 1683.999 1705.674 1687.029
-##  [9] 1707.933 1822.983
+##  [1] 1818.707 1702.683 1673.183 1676.240 1730.482 1683.999
+##  [7] 1705.674 1687.029 1707.933 1822.983
 ```
 
 ```r
