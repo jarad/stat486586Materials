@@ -61,9 +61,10 @@ which is the expected (long term average) squared error
 
 The accuracy of $\hat{Y}$ for prediction $Y$ depends on two quantities:
 
+- The *reducible* error, which can in principle be reduced to 0 given an appropriate model and a large sample
+
 - The *irreducible* error cannot be reduced in any ways. This is due to the intrinsic variability in the noise $\epsilon$ which cannot be predicted. It could be sourced from unmeasured variables
 
-- The *reducible* error, which can in principle be reduced to 0 given an appropriate model and a large sample
 
 - It can be shown that
 $$
@@ -75,7 +76,6 @@ $$
 
 - The modelers' goal is to minimize the reducible error
 
-- However, the MSE is unknown and thus needs to be estimated
 
 ---
 
@@ -86,6 +86,8 @@ If we knew MSE, we could use it to compare models.
 - E.g., choose the degree in a polynomial regression, or the number of knots in a spline regression
 
 - It is possible to know MSE only if we simulated the data.
+
+- However, the MSE is unknown and thus needs to be estimated
 
 ---
 ## Example: A simulated dataset
@@ -178,6 +180,9 @@ plotDat %>%
 
 - Thus using a polynomial regression up to a cubic term $q=3$ is the best choise
 - There is a considerable window of $q$ that results in similar results
+
+---
+## Demo
 
 ---
 
