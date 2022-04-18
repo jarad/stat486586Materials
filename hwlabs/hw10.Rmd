@@ -1,0 +1,18 @@
+---
+title: 'Homework #10'
+output: html_document
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<!-- ## A useful note -->
+<!-- Remove any `View()` or `install.packages()` commands in your `Rmd` file. These commands will prevent the knitting of your file.  -->
+
+## Statistical learning
+
+**Note: 
+
+1. 123

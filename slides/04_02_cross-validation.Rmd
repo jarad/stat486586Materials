@@ -315,8 +315,13 @@ class: big,middle
 ![:scale 70%](images/validationSet.png)
 ]
 
-- Two potential drawbacks:
+---
+
+- Advantage: Erorrs are evaluated on a dataset *independent* of the training data, so no memorization (unlike the training MSE)
+
+- Drawbacks:
     - The estimate of the test error rate can be highly variable, depending on the split
+    
     - Tend to underestimate the test error, since methods tend to perform
 worse given fewer observations to train
 
@@ -326,14 +331,13 @@ worse given fewer observations to train
 
 *Leave-one-out cross-validation* (LOOCV) addresses the drawbacks of the validation set approach.
 
-- LOOCV 
-    1. split the set of observations into two parts, a validation set having a single observation $(X_1,Y_1)$, and a training set containing the rest $\{(X_2,Y_2),\dots,(X_n,Y_n)\}$
-    1. Fit on the training set, and make prediction for the validation data. Evaluate test error on the validation data
-    1. Repeat the procedure by holding out every original observation, one at a time, as the training set
-    1. Average test errors over all repeats
 .center[
-![:scale 70%](images/LOOCV.png)
+![:scale 60%](images/LOOCV.png)
 ]
+1. split the set of observations into two parts, a validation set having a single observation $(X_1,Y_1)$, and a training set containing the rest $\{(X_2,Y_2),\dots,(X_n,Y_n)\}$
+1. Fit on the training set, and make prediction for the validation data. Evaluate test error on the validation data
+1. Repeat the procedure by holding out every original observation, one at a time, as the training set
+1. Average test errors over all repeats
 
 ---
 
@@ -348,7 +352,7 @@ worse given fewer observations to train
 $$\text{CV}_{(n)} = \frac{1}{n}\sum_{i=1}^n \text{MSE}_i.$$
     - By averaging, this test error has a smaller variability
 
-- LOOCV can be used to evaluate any regression or classification methods
+<!-- - LOOCV can be used to evaluate any regression or classification methods -->
 
 ---
 
@@ -365,17 +369,24 @@ Potential drawbacks of LOOCV:
 
 - Expensive computation, since the model needs to be fit $n$ times
 
-- Just so you know, there is a magical formula to perform LOOCV in a single model fit. It applies to a wide range of linear models:
-$$\text{CV}_{(n)} = \frac{1}{n}\sum_{i=1}^n \left(\frac{Y_i-\hat{Y}_i}{1-h_i}\right)$$
+    - Just so you know, there is a magical formula to perform LOOCV in a *single* model fit. It only applies to a wide range of linear models:
+    $$\text{CV}_{(n)} = \frac{1}{n}\sum_{i=1}^n \left(\frac{Y_i-\hat{Y}_i}{1-h_{ii}}\right)$$
 
-- But still, in general, LOOCV requires $n$ model fits
+<!-- - But still, in general, LOOCV requires $n$ model fits -->
 
 ---
 
 ## $k$-fold cross-validation
 
-An alternative to LOOCV is *k-fold cross-validation* (CV). This approach involves 
+An alternative to LOOCV is *k-fold cross-validation* (CV). The figure illustrates the 5-fold CV:
 
+
+.center[
+![:scale 70%](images/kfoldCV.png)
+]
+
+---
+k-fold CV:
 1. Randomly divide the set of observations into $k$ groups, or *folds*, of approximately equal size
 1. The first fold is treated as a validation set, and the model is fit on the remaining $k-1$ folds. Evaluate the prediction on the validation set (held-out fold)
 1. Repeat the previous process for each of the $k$ folds
@@ -397,11 +408,14 @@ Advantages of $k$-fold CV:
 - More importantly, $k$-fold CV is more accurate for estimating the true test MSE curve than the LOOCV
 
 The reason lies in bias-variance tradeoff. 
-- When performing LOOCV, we are averaging the prediction made by $n$ fitted models
-  - Each model has a *very small bias* since they use all but 1 observations
-  - Each model differs by only $1$ observation, so they are highly correlated with each other
-  - The average test error of highly correlated variables will have a *high variability*
-- In contrast, the $k$ models fitted in $k$-fold CV are less correlated, so averaging is going to help more in reducing the variance, though the bias is slightly increased. Again, $k=5$ or $10$ are good choices in practice
+- When performing LOOCV, we are averaging the prediction made by $n$ highly correlated models
+  - small bias but large variance
+  <!-- - Each model has a *very small bias* since they use all but 1 observations -->
+  <!-- - Each model differs by only $1$ observation, so they are highly correlated with each other -->
+  <!-- - The average test error of highly correlated variables will have a *high variability* -->
+- In contrast, the models fitted in $5$-fold CV are less correlated
+  - larger bias but smaller variance
+<!-- , so averaging is going to help more in reducing the variance, though the bias is slightly increased. Again, $k=5$ or $10$ are good choices in practice -->
 
 ---
 
@@ -424,6 +438,8 @@ In fact, a learning task often involve the many models/options to choose from. T
 Consider the wage data. Our goal is to predict the wage with age using a polynomial regression
 
 $$\text{wage}_i = \beta_0 + \beta_1\text{age}_i + ... + \beta_q\text{age}_i^q + \epsilon_i.$$ 
+
+Our goal: Apply cross-validation to select the tuning parameter $q$ and achieve the smallest prediction error
 
 For illustration, use just the first 200 observations for speed.
 
@@ -448,6 +464,9 @@ MSEi <- map_dfr(seq_len(n), function(i) {
 })
 MSECV <- colMeans(MSEi)
 plot(qVec, MSECV, type="b", main="MSE estimated by LOOCV")
+
+qSelect <- qVec[which.min(MSECV)]
+finalModel <- lm(wage ~ poly(age, qSelect), Wage)
 ```
 
 ---
@@ -459,7 +478,9 @@ Test error for $n=200$ observations
 - Using the bias-variance trade-off principle, what $q$ do you think will be selected when we include all $n=3000$ observations? 
 
 ---
-You can also use the `glm` function together with `cv.glm` in `library(boot)` to evaluate cross-validated MSE
+We now include all $n=3000$ observations and use 5-fold CV for speed
+
+The `glm` function can be used together with `cv.glm` in `library(boot)` to evaluate cross-validated MSE
 
 ```{r}
 library(boot)
@@ -474,6 +495,9 @@ err5Fold <- map_dbl(qVec, function(q) {
   res <- cv.glm(dat, m, K=5)
   res$delta[1] # LOOCV error
 })
-err5Fold
+```
+
+---
+```{r, fig.height=5, fig.width=6}
 plot(qVec, err5Fold, type="o")
 ```
