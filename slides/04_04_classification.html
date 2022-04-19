@@ -68,6 +68,28 @@ a fair quantification of the model performance
 
 ---
 
+## Confusion matrix
+
+Given `\(n\)` observations, the confusion matrix is a tabulation of the predicted labels and the true labels
+
+.plainTable[
+|   | Actual positive | Actual negative|
+|:--:|:------:|:-----:|
+|Predicted positive | `\(a\)` | `\(b\)` |
+|Predicted negative | `\(c\)` | `\(d\)` |
+]
+
+Two summaries are obtained from the confusion matrix:
+
+- Sensitivity = True positive rate = `\(a / (a + c)\)`
+
+- Specificity = True negative rate = `\(d / (b + d)\)`
+
+- The higher the better for both
+
+- A method that predicts too many positive will have a high sensitivity but low specificity
+---
+
 ## The Bayes classifier
 
 The theoretical best classifier that minimizes the misclassification error is the *Bayes classifier* that assigns each observation to the most likely class,
@@ -91,9 +113,6 @@ is largest.
 - Nonetheless, the Bayes classifier offers an idea to frame the classification problem: We target to estimate the conditional probability `\(P(Y=j \mid X=x)\)`
 
 - There are many different ways to approach this, resulting in different classifiers
-
----
-
 
 ---
 
@@ -182,29 +201,6 @@ Solid: KNN; dashed: Bayes classifier
 
 ---
 
-## Confusion matrix
-
-The confusion matrix is a tabulation of the predicted labels and the true labels
-
-.plainTable[
-|   | Actual positive | Actual negative|
-|:--:|:------:|:-----:|
-|Predicted positive | `\(a\)` | `\(b\)` |
-|Predicted negative | `\(c\)` | `\(d\)` |
-]
-
-Two summaries are obtained from the confusion matrix:
-
-- Sensitivity = True positive rate = `\(a / (a + c)\)`
-
-- Specificity = True negative rate = `\(d / (b + d)\)`
-
-- The higher the better for both
-
-- A method that predicts too many positive will have a high sensitivity but low specificity
-
----
-
 Example: Credit card default
 
 The `Default` dataset in `library(ISLR2)` contains simulated information on ten thousand customers. Our goal is to predict defaults (`default`) on their credit card debt using student status (Yes or No, `student`), their credit balance (`balance`), and income (`income`)
@@ -213,6 +209,8 @@ We will use the `knn` function in `library(class)`.
 
 
 ```r
+library(ISLR2)
+library(class)
 dat &lt;- Default
 n &lt;- nrow(dat)
 testInd &lt;- sample(n, round(n / 2), replace=FALSE)
@@ -230,8 +228,8 @@ table(y[testInd], YHatKNN)
 ```
 ##      YHatKNN
 ##         No  Yes
-##   No  4715  118
-##   Yes  104   63
+##   No  4733   99
+##   Yes  111   57
 ```
 
 ```r
@@ -307,22 +305,22 @@ The log-likelihood is
 
 - In practice, the maximization problem is solved through efficient iterative algorithms
 
----
+&lt;!-- --- --&gt;
 
-## Multiple logistic regression
+&lt;!-- ## Multiple logistic regression --&gt;
 
-For `\(p\)` predictors, the multiple logistic regression is 
-`$$\log\left( \frac{P(Y=1 \mid X=x)}{P(Y=0 \mid X=x)} \right)= \beta_0 + \beta_1 X_1 + \dots + \beta_p X_p.$$`
+&lt;!-- For `\(p\)` predictors, the multiple logistic regression is  --&gt;
+&lt;!-- `$$\log\left( \frac{P(Y=1 \mid X=x)}{P(Y=0 \mid X=x)} \right)= \beta_0 + \beta_1 X_1 + \dots + \beta_p X_p.$$` --&gt;
 
-The probability of `\(Y = 1\)` given `\(X_1=x_1, \dots, X_p=x_p\)` is 
-`$$p =  \exp(p) / (1 + \exp(p)) = \frac{\exp(\beta_0 + \beta_1 x_1 + \dots + \beta_p x_p)}{\exp(\beta_0 + \beta_1 x_1 + \dots + \beta_p x_p)}$$`
+&lt;!-- The probability of `\(Y = 1\)` given `\(X_1=x_1, \dots, X_p=x_p\)` is  --&gt;
+&lt;!-- `$$p =  \exp(p) / (1 + \exp(p)) = \frac{\exp(\beta_0 + \beta_1 x_1 + \dots + \beta_p x_p)}{\exp(\beta_0 + \beta_1 x_1 + \dots + \beta_p x_p)}$$` --&gt;
 
-Let `\((\hat\beta_0, \dots, \hat\beta_p)\)` be the coefficient estimates. To make a prediction, 
-`$$\hat{p} =  \exp(\hat{p}) / (1 + \exp(\hat{p})) = \frac{\exp(\hat{\beta}_0 + \hat{\beta}_1 x_1 + \dots + \hat{\beta}_p x_p)}{(\exp(\hat{\beta}_0 + \hat{\beta}_1 x_1 + \dots + \hat{\beta}_p x_p)}$$`
+&lt;!-- Let `\((\hat\beta_0, \dots, \hat\beta_p)\)` be the coefficient estimates. To make a prediction,  --&gt;
+&lt;!-- `$$\hat{p} =  \exp(\hat{p}) / (1 + \exp(\hat{p})) = \frac{\exp(\hat{\beta}_0 + \hat{\beta}_1 x_1 + \dots + \hat{\beta}_p x_p)}{(\exp(\hat{\beta}_0 + \hat{\beta}_1 x_1 + \dots + \hat{\beta}_p x_p)}$$` --&gt;
 
-- Logistic regression is *very* flexible. You can add in any polynomial, spline, or interaction terms to model complex effects
+&lt;!-- - Logistic regression is *very* flexible. You can add in any polynomial, spline, or interaction terms to model complex effects --&gt;
 
-- Logistic regression can be extended to handle multi-class classification
+&lt;!-- - Logistic regression can be extended to handle multi-class classification --&gt;
 
 
 ---
@@ -359,22 +357,6 @@ m1CV$delta[1]
 
 # CV error with income is only slightly smaller. This may be due to randomness. So it is best not to include it for prediction.
 ```
-
----
-
-class: inverse
-
-## Your turn
-
-TODO
-
-&lt;img src="images/green.png" width=20&gt; Generate a random sample of size `\(n=10\)` from the following distributions: (a). Beta(1,2) and (b). Uniform(0,100)
-
-&lt;img src="images/green.png" width=20&gt; Sample 5 random rows from `iris` without replacement
-
-&lt;img src="images/green.png" width=20&gt; Randomly shuffle the 5 rows
-
-&lt;img src="images/green.png" width=20&gt; Sample 10 random rows from `iris` with replacement
 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
