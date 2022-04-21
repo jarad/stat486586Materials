@@ -322,7 +322,7 @@ class: big,middle
 - Drawbacks:
     - The estimate of the test error rate can be highly variable, depending on the split
     
-    - Tend to underestimate the test error, since methods tend to perform
+    - Tend to overestimate the test error, since methods tend to perform
 worse given fewer observations to train
 
 ---

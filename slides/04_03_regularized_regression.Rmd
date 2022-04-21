@@ -155,7 +155,7 @@ The `Credit` dataset in `library(ISLR2)` records variables for a number of credi
 - However, the ridge regression estimates are not scale invariant. The results would be dramatically different if income is measured in dollars rather than $1,000
 
 - Thus, the predictors are usually standaridized before input to the ridge regression using
-$$\tilde{X}_{ij} = \frac{X_{ij}}{\sqrt{n^{-1}\sum_{i=1}^n (X_{ij} - \bar{X}_j)^2}}$$
+$$\tilde{X}_{ij} = \frac{X_{ij} - \bar{X}_j}{\sqrt{n^{-1}\sum_{i=1}^n (X_{ij} - \bar{X}_j)^2}}$$
 This will make the shrinkage effect balanced for all predictors
 
 ---
