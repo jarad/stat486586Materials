@@ -38,6 +38,11 @@ class: center, middle, inverse, title-slide
 ![:scale 80%](images/tidyverse.png)
 
 ---
+class: big, middle 
+
+## tidyverse
+
+---
 
 ## `tidyverse`
 
@@ -65,11 +70,11 @@ class: big, middle
 
 ## Why `ggplot2`
 
-- Wildly popular package for statistical graphics: over 27 million downloads from CRAN from 2015 (almost 20 thousand times per day). 
+- Wildly popular package for statistical graphics: 29 million downloads last year 
 
-- Developed by Hadley Wickham (An ISU alumni, COPSS Presidents' Award receipient)
 
-- Ported to Python
+
+- Developed by Hadley Wickham (An ISU alumni, COPSS Presidents' Award recipient)
 
 - Designed to adhere to good graphical practices
 
@@ -77,10 +82,17 @@ class: big, middle
 
 - Constructs plots using the concept of layers
 
+- So good, ported to Python
+
 ---
 
-## Example by ggplot: Crime rates in 2018
-&lt;img src="05_01_ggplot_files/figure-html/unnamed-chunk-1-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+## Example: Crime rates in 2018
+&lt;img src="05_01_ggplot_files/figure-html/unnamed-chunk-2-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+class: big, middle
+
+## Grammar of graphics
 
 ---
 
@@ -88,17 +100,18 @@ class: big, middle
 
 A graphical representation (plot) consists of:
 
-1. **mappings** (`aes`):  data variables are mapped to graphical elements (x- and y-coordinate, color, shape, ...)
+1. **mappings** (`aes`):  which variables stands for what graphical elements (x- and y-coordinate, color, shape, ...)
 
-2. **layers**:  geometric elements (`geoms`, such as points, lines, rectangles, text, ...) and position adjustments (e.g. jitter points, side-by-side histograms)
+2. **layers** (`geoms`):  what type of plots/geometric elements , such as points, lines, rectangles, text, ...
+&lt;!-- and position adjustments (e.g. jitter points, side-by-side histograms) --&gt;
 
-3. **scales**: the mapping from data space to values in an aesthetic space (e.g. axis transformation; low value--blue, high value--red)
+3. scales: how exactly to use plotting symbols to represent data values (e.g. axis transformation; coloring: low value--blue, high value--red)
 
-4. **coordinate system** (`coord`): normally Cartesian, but pie charts use polar coordinates
+4. coordinate system (`coord`): normally Cartesian, but pie charts use polar coordinates
 
-5. **facetting**: for multiple plots (according to subsets) and their arrangement
+5. facetting: for multiple panels and their arrangement
 
-6. **theme**: fine-tune display items, such as font and its size, ...
+6. theme: fine-tune display items, such as labels, font, and its size, ...
 
 ---
 
@@ -109,7 +122,8 @@ Load libraries:
 
 ```r
 library(ggplot2)
-library(classdata) # not found? run devtools::install_github("xdaiisu/classdata")
+library(classdata) 
+# not found? run devtools::install_github("xdaiisu/classdata")
 ```
 
 ---
@@ -120,11 +134,12 @@ The `ggplot` function is the basic workhorse of ggplot2
 
 - Produces all plot types available with ggplot2
 
-- Allows for plotting options within the function statement
+- This is the "base layer". More layers can be added to it
+
+- Allows for plotting options
 
 - Creates an object that can be saved
 
-- Plot layers can be added to modify plot complexity
 
 ---
 
@@ -136,7 +151,7 @@ The `ggplot` function has the basic syntax:
 
 - `data`: dataset to be used
 
-- `mappings`: determines which variables are used for the x- and y-axis, color, linetype, etc. Done with `aes()`, which stands for aesthetic mappings
+- `mappings`: determines which variables are used for the x- and y-axis, color, linetype, etc. Specified using `aes()`, which stands for aesthetic mappings
 
 - `type`: determines type of the plot, e.g. `point`, `line`, `bar`, `histogram`
 
@@ -153,7 +168,7 @@ ggplot(data = fbiwide, aes(x = Burglary, y = Murder)) +
   geom_point() 
 ```
 
-&lt;img src="05_01_ggplot_files/figure-html/unnamed-chunk-3-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="05_01_ggplot_files/figure-html/unnamed-chunk-4-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -167,7 +182,7 @@ ggplot(aes(x = Burglary, y = Motor.vehicle.theft,
            color=Year), data=fbiwide) + geom_point() 
 ```
 
-&lt;img src="05_01_ggplot_files/figure-html/unnamed-chunk-4-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="05_01_ggplot_files/figure-html/unnamed-chunk-5-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 ## R demo...
@@ -179,17 +194,14 @@ class: inverse
 
 ## Your turn
 
-Work on the `cities` data in `library(classdata)`
-
-&lt;img src="images/blue.png" width=20&gt; Use barchart to represent the state populations. 
+Work on the `fbiwide` data in `library(classdata)`
 
 &lt;img src="images/green.png" width=20&gt; Draw a scatterplot of the number of burglaries by murders.
 
-&lt;img src="images/blue.png" width=20&gt; Adjust the numbers of the above scatterplot to show log transformed numbers. How can we interpret the numbers on the axes?
+&lt;img src="images/blue.png" width=20&gt; Under the log scale, draw a scatterplot of the number of burglaries by murders. Map the state variable to color. Why is this a terrible idea?
 
-&lt;img src="images/blue.png" width=20&gt; Draw a scatterplot of the log transformed number of burglaries by motor vehicle thefts. Map the state variable to colour. Why is this a terrible idea?
+&lt;img src="images/blue.png" width=20&gt; Use a barchart to represent the population of each state in 2015. 
 
-&lt;img src="images/blue.png" width=20&gt; Draw a scatterplot of the log transformed number of burglaries by motor vehicle thefts. Map Population to size. How do we interpret the output?
 
 ---
     
@@ -222,10 +234,19 @@ Some coordinate systems we will commonly use:
 - `coord_map`: Useful later for making maps
 
 ---
+## Showing one line for each state
+The `group=` aesthetics is required if you want to show one line for each state:
 
+```r
+ggplot(fbiwide, aes(x=Year, y=Murder, group=State)) + geom_line()
+```
+
+&lt;img src="05_01_ggplot_files/figure-html/unnamed-chunk-6-1.png" style="display: block; margin: auto;" /&gt;
+
+---
 ## Facetting: Display different subsets
 
-E.g., `facet_wrap` produces a long series of `facets` (panels) and wrap them around
+`facet_wrap` produces a long series of `facets` (panels) and wrap them around
 
 
 ```r
@@ -233,7 +254,7 @@ ggplot(aes(x = Year, y = Murder), data=fbiwide) + geom_line() +
     facet_wrap(~State)
 ```
 
-&lt;img src="05_01_ggplot_files/figure-html/unnamed-chunk-5-1.png" height="80%" style="display: block; margin: auto;" /&gt;
+&lt;img src="05_01_ggplot_files/figure-html/unnamed-chunk-7-1.png" height="80%" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -253,7 +274,7 @@ ggplot(aes(x = Year, y = Murder), data=fbiwide) + geom_line() +
 
 - Will need to experiment as to which one answers your question/tells the story best
 
-- Rule of thumb: comparisons of interest should be close together
+- Rule of thumb: What you want to compare should stay close together
 
 ---
 
@@ -263,11 +284,7 @@ ggplot(aes(x = Year, y = Murder), data=fbiwide) + geom_line() +
 
 - `... + xlab('Axis text'), ylab('Axis text')` to show axis labels
 
-- (TODO) More later
-
----
-
-## R demo...
+- Anything on the plot can be customized! Google what you want
 
 ---
 
@@ -281,9 +298,7 @@ Use the `fbiwide` data from the package `classdata` for this your turn.
 
 &lt;img src="images/green.png" width=20&gt; The numbers are dominated by the number of thefts in California, New York, and Texas. Use a log-scale for the y-axis. Does that help?
 
-The numbers are dominated by the number of thefts in California, New York, and Texas. Use a log-scale for the y-axis. Does that help?
-
-&lt;img src="images/blue.png" width=20&gt; Another approach to fix the domination by CA, TX and NY: Read up on the `scale=` parameter in `facet_wrap` to find a way to give each panel its own scale. Comment on the difference in the results.
+&lt;img src="images/blue.png" width=20&gt; Another approach to fix the dominance by CA, TX and NY: Read up on the `scale=` parameter in `facet_wrap` to find a way to give each panel its own scale. Comment on the difference in the results.
 
 
 ---
