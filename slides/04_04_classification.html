@@ -53,7 +53,7 @@ class: big,middle
 
 ---
 
-- Since we have qualitative response, the most common objective in classification is to minimize the *misclassification error rate*
+- Since we have qualitative response, the most common objective is to minimize the *misclassification error rate*
 `$$E[\mathrm{1}\{Y \ne \hat{Y}\}]$$`
 
 - There are other practically meaningful objectives, but we are going to focus only on the one above
@@ -63,14 +63,14 @@ class: big,middle
 Again, this is not a good quantifier of model performance
 
 - The *test error* rate for a set of new test observatisons `\((X_0,Y_0)\)` is
-`$$\text{average}(\mathrm{1}\{Y_0 \ne \hat{Y}_0\})$$`
-a fair quantification of the model performance 
+`$$\text{average}(\mathrm{1}\{Y_0 \ne \hat{Y}_0\}),$$`
+which is a fair quantification of the model performance 
 
 ---
 
 ## Confusion matrix
 
-Given `\(n\)` observations, the confusion matrix is a tabulation of the predicted labels and the true labels
+Given `\(n\)` observations, the confusion matrix (say, constructed using the test data) is a tabulation of the predicted labels and the true labels
 
 .plainTable[
 |   | Actual positive | Actual negative|
@@ -85,9 +85,12 @@ Two summaries are obtained from the confusion matrix:
 
 - Specificity = True negative rate = `\(d / (b + d)\)`
 
-- The higher the better for both
+- The goal is to have high sensitivity and specificity *at the same time*
 
-- A method that predicts too many positive will have a high sensitivity but low specificity
+- Not meaningful to have only one of them high:
+
+  - A method that predicts all positive will have sensitivity=1 but  specificity=0
+  - A method that predicts all negative will have sensitivity=0 but  specificity=1
 ---
 
 ## The Bayes classifier
@@ -99,18 +102,19 @@ given its predictor values
 `$$P(Y=j \mid X = x)$$`
 is largest
 
-- If we have two classes `\(j \in \{0, 1\}\)`, the Bayes classifier would predict class 1 if `$$P(Y = 1\mid X=X_0) &gt; 1/2$$` and class 0 otherwise
+- Suppose we have only two classes, so `\(j \in \{0, 1\}\)`. The Bayes classifier would predict class 1 if `$$P(Y = 1\mid X=x) &gt; 1/2,$$` 
+and class 0 otherwise
 
-- The error rate made by the Bayes classifier is the *Bayes error rate*. This is analogous to the irreducible error in the regression setting
+- The error rate made by the Bayes classifier is the *Bayes error rate*. This cannot be further reduced by improving the classifier
 
-- The Bayes classifier is unattainable gold standard
+- The Bayes classifier is unattainable gold standard, but useful for designing classifiers
 
 ---
 The Bayes classifier assigns a test obervation with predictors `\(x\)` to the class `\(j\)` for which
 `$$P(Y=j \mid X = x)$$`
 is largest.
 
-- Nonetheless, the Bayes classifier offers an idea to frame the classification problem: We target to estimate the conditional probability `\(P(Y=j \mid X=x)\)`
+- The Bayes classifier offers an idea to frame the classification problem: We target to estimate the conditional probability `\(P(Y=j \mid X=x)\)`
 
 - There are many different ways to approach this, resulting in different classifiers
 
@@ -126,9 +130,9 @@ so we can think about the conditional probability as a regression function `\(f(
 
 - Then why bother classification models? 
 
-    - The major reason lies in the *objectives*. Regression aims to minimize mean squared error (degree of difference), and classification aims to minimize misclassification (same or different, but not not the precise degree of difference). A regression model is optimal for the former but not the latter
+    - The major reason lies in the *objectives*. Regression aims to minimize mean squared error (degree of difference), and classification aims to minimize misclassification (any difference at all). A regression model is optimal for the former but not the latter
     
-    - If the response has multiple classes that are not ordered (e.g., diagnosis or ethnicity), regression cannot be used
+    - Regression cannot be applied if the response has multiple classes that are not ordered (e.g., multiple diagnosis or ethnicity)
     
     - Regression could produce probability estimates outside of `\([0,1]\)`
 
@@ -142,15 +146,15 @@ class: big,middle
 
 ## `\(K\)`-nearest neighbors
 
-- The `\(K\)`-nearest neighbors (KNN) classifier estimates the conditional probability for class `\(J\)` using 
+- The `\(K\)`-nearest neighbors (KNN) classifier: "If the predictors are alike, the response should also be similar"
+
+- KNN estimates the conditional probability for class `\(J\)` using 
 `$$\hat{P}(Y=j\mid X=x) = \frac{1}{K}\sum_{i\in \mathcal{N}_0} \mathrm{1}\{Y_i  = j\},$$`
 where `\(\mathcal{N}_0\)` is a neighborhood of `\(x\)` containing the `\(K\)`-nearest neighbors
 
-- "If the predictors are alike, the response should also be similar"
-
 ---
 
-- To make a prediction for `\(x\)` at the cross:&lt;/br&gt;
+- 3-NN prediction for `\(x\)` at the cross:&lt;/br&gt;
 .center[![:scale 35%](images/KNNSimple.png)]
 
 - The neighborhood contains 2 blue points and 1 orange point
@@ -163,14 +167,16 @@ where `\(\mathcal{N}_0\)` is a neighborhood of `\(x\)` containing the `\(K\)`-ne
 
 ---
 
-## Defining neighbors
+**Defining neighbors**
 
 Most often, the *Euclidean distance* is used to define the neighbors. 
 For `\(a = (a_1,\dots, a_p)\)` and `\(b = (b_1,\dots, b_p)\)`, the Euclidean distance (also refered to as the `\(l_2\)` distance) is
 `$$d(a, b) = \sqrt{\sum_{j=1}^n (a_j - b_j)^2}$$`
 
-- We will be focusing on the Euclidean distance, but there are many other alternatives, e.g. the Manhattan distance (the `\(l_1\)` distance) and the weighted Euclidean distance
-`$$d_w(a, b) = \sqrt{\sum_{j=1}^n w_j(a_j - b_j)^2},$$`
+- Alternatives include the Manhattan distance (the `\(l_1\)` distance) 
+`$$d_1(a, b) = \sum_{j=1}^n |a_j - b_j|,$$`
+and the weighted Euclidean distance
+`$$d_w(a, b) = \sqrt{\sum_{j=1}^n w_j(a_j - b_j)^2}$$`
 where `\(w_1,\dots, w_p\)` are nonnegative weights
 
 - Trying multiple distances could help improve prediction
@@ -228,8 +234,8 @@ table(y[testInd], YHatKNN)
 ```
 ##      YHatKNN
 ##         No  Yes
-##   No  4733   99
-##   Yes  111   57
+##   No  4703  125
+##   Yes  101   71
 ```
 
 ```r
@@ -249,27 +255,28 @@ class: big,middle
 Let `\(X\)` be a single predictor. 
 For the methodological discussion, let `\(Y \in \{0, 1\}\)` be the associated *binary* class label.
 
-The linear regression is
-`$$E(Y\mid X=x) = P(Y = 1 | X=x) = \beta_0 + \beta_1 x.$$`
-Instead, for classification, the logistic regression model is
-`$$\log\left( \frac{P(Y=1 \mid X=x)}{P(Y=0 \mid X=x)} \right)= \beta_0 + \beta_1 x.$$`
+- The linear regression is for a continuous response `\(Y\)`. Model:
+`$$E(Y\mid X=x) = \beta_0 + \beta_1 x.$$`
+- For classification, the logistic regression model is for a binary response `\(Y\)`. Model:
+`$$\log\left( \frac{P(Y=1 \mid X=x)}{P(Y=0 \mid X=x)} \right)= \log\left( \frac{P(Y=1 \mid X=x)}{1-P(Y=1 \mid X=x)} \right)=\beta_0 + \beta_1 x.$$`
 
 ---
 
 ## Comparing linear and logistic regression
 
-.center[![:scale 50%](images/linearLogistic.jpg)]
+.center[![:scale 100%](images/linearLogistic.png)]
 
 - The logistic regression probability is always between 0 and 1
 
-- It follows a *logistic curve*
+- The regression relationship follows a *logistic curve* 
+`$$P(Y=1\mid X=x) = \frac{e^{\beta_0+\beta_1 x}}{1 + e^{\beta_0+\beta_1 x}}$$`
 
 
 ---
 ## Logistic regression 
 
-The (simple) logistic regression model is
-`$$\log\left( \frac{P(Y=1 \mid X=x)}{P(Y=0 \mid X=x)} \right)= \beta_0 + \beta_1 x.$$`
+The logistic regression model with only 1 predictor is
+`$$\log\left( \frac{P(Y=1 \mid X=x)}{1-P(Y=1 \mid X=x)} \right)= \beta_0 + \beta_1 x.$$`
 
 Left-hand side:
 - Let `\(p = P(Y=1\mid X=x)\)` be the *probability* that `\(Y=1\)` occurs given `\(x\)`. The range is `\((0, 1)\)`
@@ -281,15 +288,14 @@ Left-hand side:
 Right-hand side: `\(\beta_0 + \beta_1 x\)`. The range is `\((-\infty, \infty)\)`
 
 ---
-The (simple) logistic regression model is
-`$$\log\left( \frac{P(Y=1 \mid X=x)}{P(Y=0 \mid X=x)} \right)= \beta_0 + \beta_1 x$$`
+`$$\log\left( \frac{P(Y=1 \mid X=x)}{1-P(Y=1 \mid X=x)} \right)= \beta_0 + \beta_1 x$$`
 
-Interpretation: 
-- The log-odds that `\(Y=1\)` occurs is increased by 1 for every unit of increase in `\(X\)`
+*Suppose that* `\(\beta_1 = 0.1\)`. Interpretation: 
+- The log-odds that `\(Y=1\)` occurs is increased by 0.1 for every unit of increase in `\(X\)`
 
-- The odds that `\(Y=1\)` occurs is increased by by `\(\exp(1) - 1=1.718\)` for every unit of increase in `\(X\)`
+- The odds for `\(Y=1\)` is increased by  `\(\exp(0.1) - 1\approx 0.1\)` fold, i.e., roughtly 10% for every unit of increase in `\(X\)`
 
-- *If `\(p\)` is very small*, then approximately the probability that `\(Y=1\)` occurs is increased by `\(1.718\)` for every unit of increase in `\(X\)`
+- *If `\(p\)` is very small*, then approximately the probability that `\(Y=1\)` occurs is increased by `\(0.1\)` for every unit of increase in `\(X\)`
 
 ---
 
@@ -301,7 +307,7 @@ The distribution of `\(Y_i\)` given `\(X_i\)` is bernoulli with
 The log-likelihood is 
 `$$\sum_{i=1}^n [Y_i(\beta_0 + \beta_1 X_i) - \log(1 + \exp(\beta_0 + \beta_1 X_i))].$$`
 
-- The coefficient estimates are obtained by the maximum likelihood estimatesion (MLE). 
+- The coefficient estimates are obtained by the maximum likelihood estimation (MLE). 
 
 - In practice, the maximization problem is solved through efficient iterative algorithms
 
@@ -331,33 +337,37 @@ Work on the `Default` dataset in `library(ISLR2)`.
 
 The `glm` function works very much like `lm`. Specify `glm(..., family=binomial)` to fit a logistic regression
 
+---
+.scroll-output[
 
 ```r
-summary(Credit)
-
 m &lt;- glm(default ~ ., Default, family=binomial)
 summary(m)
 # Predict prob of default
 p &lt;- predict(m, 
-  data.frame(student = "No", balance = 1000, income = 20000), 
-  type="response")
+             data.frame(student = "No", balance = 1000, income = 20000), 
+             type="response")
 # Predict default or not
 Yhat &lt;- ifelse(p &gt; 0.5, "Yes", "No")
+# Should we include income or not? Sometimes, even if a predictor is
+# insignificant in the model (for inference), it could still be helpful for
+# making prediction. We use CV to investigate the prediction errors with or
+# without income as a predictor
 
+library(boot)
 cost &lt;- function(Y, p) {
   mean(Y != (p &gt; 0.5))
 }
-
-# Should we include income or not? Sometimes, even if a predictor is insignificant in the model (for inference), it could still be helpful for making prediction
 mCV &lt;- cv.glm(Default, m, K=10, cost=cost)
 mCV$delta[1]
 m1 &lt;- glm(default ~ . - income, Default, family=binomial)
 m1CV &lt;- cv.glm(Default, m1, K=10, cost=cost)
 m1CV$delta[1]
-
-# CV error with income is only slightly smaller. This may be due to randomness. So it is best not to include it for prediction.
+# CV error with income is only slightly smaller. This might be due to
+# randomness. So it is best not to include it for prediction.
+# m1 is our final model
 ```
-
+]
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

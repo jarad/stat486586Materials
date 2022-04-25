@@ -354,18 +354,27 @@ yPredTest <- predict(ridgeTrain, newx = X[testInd, , drop=FALSE],
 testMSE <- colMeans((yPredTest - y[testInd])^2)
 plot(log(ridgeTrain$lambda), testMSE, type="l")
 
-# Use CV to select lambda, and then estimate the prediction error
-# Default: 10-fold
-ridgeCV <- cv.glmnet(X[trainInd, ], y[trainInd], alpha=0) # the glmnet.fit field is a fit for the full data. 
+  # Use CV to select lambda, and then estimate the prediction error
+  # Default: 10-fold; automatically implemented (no need to write from scratch if you use this function)
+  ridgeCV <- cv.glmnet(X[trainInd, ], y[trainInd], alpha=0) # the glmnet.fit field is a fit for the full data. 
 str(ridgeCV)
 plot(ridgeCV)
 lambda2 <- ridgeCV$lambda.min
 lambda3 <- ridgeCV$lambda.1se
+yPredTrain <- predict(ridgeCV, newx = X[trainInd, , drop=FALSE], 
+                      s=ridgeCV$lambda,
+                      type="response")
+trainMSERidge <- colMeans((yPredTrain - y[trainInd])^2)
 yPredTest <- predict(ridgeCV, newx = X[testInd, , drop=FALSE], 
-                     s=c(lambda2, lambda3),
+                     s=ridgeCV$lambda,
                      type="response")
 testMSERidge <- colMeans((yPredTest - y[testInd])^2)
-sqrt(testMSERidge)
+lines(log(ridgeCV$lambda), trainMSERidge, lty=1)
+lines(log(ridgeCV$lambda), testMSERidge, lty=2) 
+legend("bottomright", legend=c("CV MSE", "training MSE", "test MSE"), lty=c(1, 1, 2), col=c("red", "black", "black"))
+# red: CV estimate of test error; black: test set estimate
+
+# lambda.min better than lambda.1se
 
 ## The lasso
 lassoCV <- cv.glmnet(X[trainInd, ], y[trainInd], alpha=1, 
@@ -381,7 +390,7 @@ yPredTest <- predict(lassoCV, newx = X[testInd, , drop=FALSE],
                      s=c(lambda4, lambda5),
                      type="response")
 testMSELasso <- colMeans((yPredTest - y[testInd])^2)
-sqrt(testMSELasso)
+# In this example, the lambda.min choice is better than lambda.1se, but given a different dataset the relationship may be reversed
 # ridge has slightly better predictive performance
 
 # lasso solution paths
