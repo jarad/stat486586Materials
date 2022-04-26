@@ -323,78 +323,68 @@ The `glmnet` function performs both ridge regression and the lasso. Set
 ```{r, eval=FALSE}
 library(glmnet)
 library(classdata)
-library(glmnet)
-# glmnet needs a matrix input; convert to design matrix
+
 str(ames)
 
-X <- model.matrix(SalePrice ~ . - Neighborhood, ames)[, -(1:2), drop=FALSE]
+X <- model.matrix(SalePrice ~ . - Neighborhood, ames)
+X <- X[, -c(1, 2)]
 y <- ames$SalePrice
-ridge <- glmnet(X, y, alpha=0)
-
-beta <- coef(ridge)
+ridge <- glmnet(X, y, alpha=0) # X should not contain the intercept column
+beta <- coef(ridge) # 12 rows, 100 col
 dim(beta)
 ridge$lambda[59]
 beta[, 59]
 
-matplot(log(ridge$lambda), t(beta[-1, , drop=FALSE]), type="l", lwd=2)
-legend("topright", rownames(beta)[-1], col=1:6, lty=1:5, lwd=2)
+matplot(log(ridge$lambda), t(beta[-1, ]), type="l", lwd=2)
+legend("topright", rownames(beta)[-1], 
+       col=1:6, lty=1:5, lwd=2)
 
 lambda1 <- 50000
 beta1 <- predict(ridge, s=lambda1, type="coefficients")[, 1]
 resp <- predict(ridge, newx=X, s=lambda1, type="response")
 
-# Set aside a test set to estimate the prediction error
+# set aside a test set to estimate the prediction error
 set.seed(123)
-testInd <- sample(n, round(n/2), replace = FALSE)
+n <- nrow(X)
+testInd <- sample(n, round(n/2), replace=FALSE)
 trainInd <- setdiff(seq_len(n), testInd)
 
-ridgeTrain <- glmnet(X[trainInd, , drop=FALSE], y[trainInd], alpha=0)
-yPredTest <- predict(ridgeTrain, newx = X[testInd, , drop=FALSE], 
-                     type="response")
+ridgeTrain <- glmnet(X[trainInd, ], y[trainInd], alpha=0)
+yPredTest <- predict(ridgeTrain, newx=X[testInd, ], type="response")
+str(yPredTest)
 testMSE <- colMeans((yPredTest - y[testInd])^2)
 plot(log(ridgeTrain$lambda), testMSE, type="l")
 
-  # Use CV to select lambda, and then estimate the prediction error
-  # Default: 10-fold; automatically implemented (no need to write from scratch if you use this function)
-  ridgeCV <- cv.glmnet(X[trainInd, ], y[trainInd], alpha=0) # the glmnet.fit field is a fit for the full data. 
+# CV
+ridgeCV <- cv.glmnet(X[trainInd, ], y[trainInd], alpha=0)
 str(ridgeCV)
 plot(ridgeCV)
 lambda2 <- ridgeCV$lambda.min
 lambda3 <- ridgeCV$lambda.1se
-yPredTrain <- predict(ridgeCV, newx = X[trainInd, , drop=FALSE], 
-                      s=ridgeCV$lambda,
-                      type="response")
-trainMSERidge <- colMeans((yPredTrain - y[trainInd])^2)
-yPredTest <- predict(ridgeCV, newx = X[testInd, , drop=FALSE], 
-                     s=ridgeCV$lambda,
-                     type="response")
+yPredTest <- predict(ridgeCV, newx = X[testInd, ], 
+        s = c(lambda2, lambda3), type="response")
+str(yPredTest)
+
 testMSERidge <- colMeans((yPredTest - y[testInd])^2)
-lines(log(ridgeCV$lambda), trainMSERidge, lty=1)
-lines(log(ridgeCV$lambda), testMSERidge, lty=2) 
-legend("bottomright", legend=c("CV MSE", "training MSE", "test MSE"), lty=c(1, 1, 2), col=c("red", "black", "black"))
-# red: CV estimate of test error; black: test set estimate
 
-# lambda.min better than lambda.1se
-
-## The lasso
-lassoCV <- cv.glmnet(X[trainInd, ], y[trainInd], alpha=1, 
-                     lambda=10^seq(2, 5, length.out=100))
+# The lasso
+lassoCV <- cv.glmnet(X[trainInd, ], y[trainInd], alpha=1)
 plot(lassoCV)
 lambda4 <- lassoCV$lambda.min
 lambda5 <- lassoCV$lambda.1se
-betaMin <- predict(lassoCV, s="lambda.min", type="coefficients")
-beta1se <- predict(lassoCV, s="lambda.1se", type="coefficients")
-betaAll <- predict(lassoCV$glmnet.fit, type="coefficients")
-
-yPredTest <- predict(lassoCV, newx = X[testInd, , drop=FALSE], 
+betaMin <- predict(lassoCV, s="lambda.min",
+                   type="coefficients")
+beta1se <- predict(lassoCV, s="lambda.1se",
+                   type="coefficients")
+yPredTest <- predict(lassoCV, newx=X[testInd, ], 
                      s=c(lambda4, lambda5),
                      type="response")
 testMSELasso <- colMeans((yPredTest - y[testInd])^2)
-# In this example, the lambda.min choice is better than lambda.1se, but given a different dataset the relationship may be reversed
-# ridge has slightly better predictive performance
+testMSELasso
+testMSERidge
 
-# lasso solution paths
-matplot(log(lassoCV$lambda), t(betaAll[-1, , drop=FALSE]), type="l", lwd=2)
-legend("bottomright", rownames(beta)[-1], col=1:6, lty=1:5, lwd=2)
+betaAll <- predict(lassoCV$glmnet.fit, type="coefficients")
+matplot(log(lassoCV$lambda), t(betaAll[-1, ]), type="l", lwd=2)
+legend("bottomright", rownames(beta)[-1], col=1:6, lty=1:5)
 ```
 ]
