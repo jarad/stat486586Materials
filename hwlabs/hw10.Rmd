@@ -34,7 +34,7 @@ knitr::opts_chunk$set(echo = TRUE)
     In each simulation repeat, do:
       - Generate a set of $n=100$ for the training set, and $m=500$ for the test set
       - You are going fit both ridge regression and the lasso to the training data including *all* covariates
-      - Apply regularization parameter $\lambda \in \{0.1, 1, 10, 100, 1000\}$
+      - Apply regularization parameter $\lambda \in \{10^{-3}, 10^{-2}, \dots, 10^{5}\}$
       - Evaluate the test MSE of the model using the test set for both models and all $\lambda$
     
     Repeat the previous process for $B=200$ simulation repeats, and average the test MSE as the final estimate of the test MSE. 
@@ -44,10 +44,8 @@ knitr::opts_chunk$set(echo = TRUE)
 1. In this exercise, we will predict the number of applications received (`Apps`)
 using the other variables in the `College` data set in `library(ISLR2)`.
 
-    a. Fit a ridge regression model on the training set, with λ chosen
-  by cross-validation. Report the CV error obtained.
-    a. Fit a lasso model on the training set, with λ chosen by cross-validation.
-  Report the CV error obtained and the non-zero coefficient estimates.
+    a. Fit a ridge regression model on the training set. Choose λ by 10-fold cross-validation following i. the MSE minimization and ii. the one-standard error rules. Report the CV error using the two rules.
+    a. Fit a lasso model on the training set. Choose λ by 10-fold cross-validation following i. the MSE minimization and ii. the one-standard error rules. Report the CV error and the non-zero coefficient estimates using the two rules.
     a. Use both the ridge and the lasso models, predict the number of applications received by a hypothetical university. 
     The hypothetical university is public, and the rest of the predictor values are set to the corresponding average values in the dataset.
   
@@ -56,4 +54,4 @@ using the other variables in the `College` data set in `library(ISLR2)`.
     a. Use the full data set to perform a logistic regression with `Direction` as the response and the five lag variables plus `Volume` as predictors. Use the `summary` function to print the results. Do any of the predictors appear to be statistically significant? If so, which ones?
     a. Compute the confusion matrix and overall fraction of correct predictions. Explain what the confusion matrix is telling you about the types of mistakes made by logistic regression.
     a. Now fit the logistic regression model using a training data period from 1990 to 2008, with `Lag2` as the only predictor. Compute the confusion matrix and the overall fraction of correct predictions for the held out data (that is, the data from 2009 and 2010).
-    a. Repeat the last part using KNN with $K$ chosen using cross-validation.
+    a. Use the same training and test data as in the last part, but this time using the KNN classifier. Choose $K$ using the training set and the leave-one-out cross-validation.

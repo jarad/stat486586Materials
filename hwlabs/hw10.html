@@ -400,7 +400,7 @@ test set</li>
 <li>You are going fit both ridge regression and the lasso to the
 training data including <em>all</em> covariates</li>
 <li>Apply regularization parameter <span class="math inline">\(\lambda
-\in \{0.1, 1, 10, 100, 1000\}\)</span></li>
+\in \{10^{-3}, 10^{-2}, \dots, 10^{5}\}\)</span></li>
 <li>Evaluate the test MSE of the model using the test set for both
 models and all <span class="math inline">\(\lambda\)</span></li>
 </ul>
@@ -413,11 +413,13 @@ to the underlying data generation?</p></li>
 received (<code>Apps</code>) using the other variables in the
 <code>College</code> data set in <code>library(ISLR2)</code>.</p>
 <ol style="list-style-type: lower-alpha">
-<li>Fit a ridge regression model on the training set, with λ chosen by
-cross-validation. Report the CV error obtained.</li>
-<li>Fit a lasso model on the training set, with λ chosen by
-cross-validation. Report the CV error obtained and the non-zero
-coefficient estimates.</li>
+<li>Fit a ridge regression model on the training set. Choose λ by
+10-fold cross-validation following i. the MSE minimization and ii. the
+one-standard error rules. Report the CV error using the two rules.</li>
+<li>Fit a lasso model on the training set. Choose λ by 10-fold
+cross-validation following i. the MSE minimization and ii. the
+one-standard error rules. Report the CV error and the non-zero
+coefficient estimates using the two rules.</li>
 <li>Use both the ridge and the lasso models, predict the number of
 applications received by a hypothetical university. The hypothetical
 university is public, and the rest of the predictor values are set to
@@ -440,7 +442,9 @@ types of mistakes made by logistic regression.</li>
 from 1990 to 2008, with <code>Lag2</code> as the only predictor. Compute
 the confusion matrix and the overall fraction of correct predictions for
 the held out data (that is, the data from 2009 and 2010).</li>
-<li>Repeat the last part using KNN with <span class="math inline">\(K\)</span> chosen using cross-validation.</li>
+<li>Use the same training and test data as in the last part, but this
+time using the KNN classifier. Choose <span class="math inline">\(K\)</span> using the training set and the
+leave-one-out cross-validation.</li>
 </ol></li>
 </ol>
 </div>

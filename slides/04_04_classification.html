@@ -213,35 +213,39 @@ The `Default` dataset in `library(ISLR2)` contains simulated information on ten 
 
 We will use the `knn` function in `library(class)`.
 
+---
+.scroll-output[
 
 ```r
 library(ISLR2)
 library(class)
+library(purrr)
 dat &lt;- Default
 n &lt;- nrow(dat)
 testInd &lt;- sample(n, round(n / 2), replace=FALSE)
 trainInd &lt;- setdiff(seq_len(n), testInd)
-
 X &lt;- model.matrix(default ~ ., dat)[, -1, drop=FALSE]
 # Standardize the continuous variables to make them on the same scale
 X[, c("balance", "income")] &lt;- apply(X[, c("balance", "income")], 2, scale)
 y &lt;- dat$default
 
-YHatKNN &lt;- knn(X[trainInd, ], X[testInd, ], y[trainInd])
-table(y[testInd], YHatKNN)
-```
+# Select K
+candidate &lt;- seq(1, 100, by=5)
+cvErr &lt;- map_dbl(candidate, function(K) {
+  YHatKNNCV &lt;- knn.cv(X[trainInd, ], y[trainInd], k=K)
+  mean(YHatKNNCV != y[trainInd])
+})
+plot(candidate, cvErr)
+KChosen &lt;- candidate[which.min(cvErr)]
 
-```
-##      YHatKNN
-##         No  Yes
-##   No  4719  125
-##   Yes   84   72
-```
 
-```r
-# TODO: calc sens, spec
+YHatKNN &lt;- knn(X[trainInd, ], X[testInd, ], y[trainInd], k=KChosen)
+# Confusion matrix
+table(YHatKNN, truth=y[testInd])
+# Misclassification rate:
+mean(YHatKNN != y[testInd])
 ```
-
+]
 ---
 
 class: big,middle

@@ -113,19 +113,17 @@ ggplot(fbiwide, aes(x = Motor.vehicle.theft)) +
 
 &lt;img src="05_02_ggplot_types_files/figure-html/unnamed-chunk-3-1.png" style="display: block; margin: auto;" /&gt;
 
----
+&lt;!-- ## Histograms  --&gt;
 
-## Histograms 
+&lt;!-- What do we look for? --&gt;
 
-What do we look for?
+&lt;!-- - Shape of the distribution --&gt;
 
-- Shape of the distribution
+&lt;!-- - Symmetry/Skewness --&gt;
 
-- Symmetry/Skewness
+&lt;!-- - Modes, Groups  (big pattern: where is the bulk of the data?) --&gt;
 
-- Modes, Groups  (big pattern: where is the bulk of the data?)
-
-- Gaps &amp; Outliers (deviation from the big pattern: where are the other points?)
+&lt;!-- - Gaps &amp; Outliers (deviation from the big pattern: where are the other points?) --&gt;
 
 ---
 
@@ -171,7 +169,7 @@ ggplot(fbi2018, aes(x = Type, weight=Count)) + geom_bar() + coord_flip()
 
 - If the x-labels overlap, one can switch the x- and y-axes using `coord_flip()`
 
-- The bars need to be ordered consciously
+- The bars need to be ordered consciously by potentially redefining the factor levels
 
 ---
 class: big, middle
@@ -192,21 +190,19 @@ ggplot(iowa, aes(x=Robbery, y=Murder)) + geom_point()
 
 &lt;img src="05_02_ggplot_types_files/figure-html/unnamed-chunk-5-1.png" style="display: block; margin: auto;" /&gt;
 
----
+&lt;!-- ## Review - Interpreting Scatterplots --&gt;
 
-## Review - Interpreting Scatterplots
+&lt;!-- - Big patterns --&gt;
 
-- Big patterns
+&lt;!--     - Form and direction --&gt;
 
-    - Form and direction
+&lt;!--     - Strength --&gt;
 
-    - Strength
+&lt;!-- - Small patterns --&gt;
 
-- Small patterns
+&lt;!-- - Deviations from the pattern --&gt;
 
-- Deviations from the pattern
-
-    - Outliers
+&lt;!--     - Outliers --&gt;
 
 ---
 class: big, middle
@@ -254,7 +250,7 @@ ggplot(dat, aes(x = log10(Count), fill=Type)) +
 ---
 
 ## Stacked barcharts
-A stacked barchart visualizes one discrete (e.g., State) vs one continuous (Count)
+A stacked barchart visualizes one discrete (e.g., State) vs one continuous variable (storing the Count)
 
 
 ```r

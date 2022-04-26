@@ -15,7 +15,7 @@ output:
 
 ```{r xaringan-tile-view, echo=FALSE}
 xaringanExtra::use_tile_view()
-knitr::opts_chunk$set(fig.height=4, fig.width=4, fig.align='center', message=FALSE)
+knitr::opts_chunk$set(fig.height=4, fig.width=4, fig.align='center', message=FALSE, cache=TRUE)
 ```
 
 ## Outline
@@ -99,19 +99,17 @@ ggplot(fbiwide, aes(x = Motor.vehicle.theft)) +
     ggtitle(paste0("binwidth = ", bw))
 ```
 
----
+<!-- ## Histograms  -->
 
-## Histograms 
+<!-- What do we look for? -->
 
-What do we look for?
+<!-- - Shape of the distribution -->
 
-- Shape of the distribution
+<!-- - Symmetry/Skewness -->
 
-- Symmetry/Skewness
+<!-- - Modes, Groups  (big pattern: where is the bulk of the data?) -->
 
-- Modes, Groups  (big pattern: where is the bulk of the data?)
-
-- Gaps & Outliers (deviation from the big pattern: where are the other points?)
+<!-- - Gaps & Outliers (deviation from the big pattern: where are the other points?) -->
 
 ---
 
@@ -149,7 +147,7 @@ ggplot(fbi2018, aes(x = Type, weight=Count)) + geom_bar() + coord_flip()
 
 - If the x-labels overlap, one can switch the x- and y-axes using `coord_flip()`
 
-- The bars need to be ordered consciously
+- The bars need to be ordered consciously by potentially redefining the factor levels
 
 ---
 class: big, middle
@@ -167,21 +165,19 @@ iowa <- fbiwide[fbiwide$State == 'Iowa', ]
 ggplot(iowa, aes(x=Robbery, y=Murder)) + geom_point()
 ```
 
----
+<!-- ## Review - Interpreting Scatterplots -->
 
-## Review - Interpreting Scatterplots
+<!-- - Big patterns -->
 
-- Big patterns
+<!--     - Form and direction -->
 
-    - Form and direction
+<!--     - Strength -->
 
-    - Strength
+<!-- - Small patterns -->
 
-- Small patterns
+<!-- - Deviations from the pattern -->
 
-- Deviations from the pattern
-
-    - Outliers
+<!--     - Outliers -->
 
 ---
 class: big, middle
@@ -223,7 +219,7 @@ ggplot(dat, aes(x = log10(Count), fill=Type)) +
 ---
 
 ## Stacked barcharts
-A stacked barchart visualizes one discrete (e.g., State) vs one continuous (Count)
+A stacked barchart visualizes one discrete (e.g., State) vs one continuous variable (storing the Count)
 
 ```{r, fig.width=6}
 neigh <- fbi2018[fbi2018$State %in% c('Iowa', 'Nebraska'), ]
