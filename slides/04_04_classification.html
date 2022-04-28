@@ -294,7 +294,9 @@ Right-hand side: `\(\beta_0 + \beta_1 x\)`. The range is `\((-\infty, \infty)\)`
 ---
 `$$\log\left( \frac{P(Y=1 \mid X=x)}{1-P(Y=1 \mid X=x)} \right)= \beta_0 + \beta_1 x$$`
 
-*Suppose that* `\(\beta_1 = 0.1\)`. Interpretation: 
+&lt;/br&gt;
+Suppose that `\(\beta_1 = 0.1\)`. The interpretation is:
+
 - The log-odds that `\(Y=1\)` occurs is increased by 0.1 for every unit of increase in `\(X\)`
 
 - The odds for `\(Y=1\)` is increased by  `\(\exp(0.1) - 1\approx 0.1\)` fold, i.e., roughtly 10% for every unit of increase in `\(X\)`
@@ -306,7 +308,7 @@ Right-hand side: `\(\beta_0 + \beta_1 x\)`. The range is `\((-\infty, \infty)\)`
 ## Fitting a simple logistic regresion
 
 We are given independent observations `\((X_1, Y_1), \dots, (X_n, Y_n)\)`. 
-The distribution of `\(Y_i\)` given `\(X_i\)` is bernoulli with 
+Then `\(Y_i\)` given `\(X_i\)` follows a Bernoulli distribution with 
 `$$p = \text{logit}^{-1}(p) = \exp(p) / (1 + \exp(p)).$$`
 The log-likelihood is 
 `$$\sum_{i=1}^n [Y_i(\beta_0 + \beta_1 X_i) - \log(1 + \exp(\beta_0 + \beta_1 X_i))].$$`
