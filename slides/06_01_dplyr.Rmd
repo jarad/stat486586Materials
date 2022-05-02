@@ -15,7 +15,7 @@ output:
 
 ```{r xaringan-tile-view, echo=FALSE}
 xaringanExtra::use_tile_view()
-knitr::opts_chunk$set(fig.height=4, fig.width=4, fig.align='center', message=FALSE)
+knitr::opts_chunk$set(fig.height=4, fig.width=4, fig.align="center", message=FALSE)
 ```
 
 ## Outline
@@ -54,13 +54,11 @@ There are a couple of primary `dplyr` *verbs*, representing distinct data analys
 
 ## Common structure
 
-Functions in `tidyverse` have `data` as their first argument. E.g.,
+Functions in `dplyr` have a data frame as their first input. The outputs are also data frames. E.g.,
 
+- `select(fbi, Year, State)`
 
-`ggplot(fbi, aes(x = Year, y = Count)) + geom_point()`
-
-
-`filter(fbi, Year>=2017 & State=="Iowa")`
+- `filter(fbi, Year >= 2017 & State == "Iowa")`
 
 
 ---
@@ -194,17 +192,16 @@ head(mutate(fbi, Rate = Count/Population*1000))
 ## Using the pipe `%>%`
 
 ```
-dat <- filter(fbi, Type=="Murder.and.nonnegligent.Manslaughter")
-ggplot(data = dat, aes(x = Year, y = Count)) + geom_point()
+dat <- select(fbi, -Abb)
+dat1 <- filter(dat, State == "Iowa" & Year == 2017)
 ```
 
 becomes
 
 ```
 fbi %>% 
-  filter(Type=="Murder.and.nonnegligent.Manslaughter") %>%
-  ggplot(aes(x = Year, y = Count)) + 
-    geom_point()
+  select(-Abb) %>%
+  filter(State == "Iowa" & Year == 2017)
 ```
 
 ---
@@ -240,8 +237,9 @@ summarize (or aggregates) observations into a (set of) one-number statistic(s):
 
 ```{r}
 summarize(fbi, 
-  mean_rate = mean(Count/Population*1000, na.rm=TRUE), 
-  sd_rate = sd(Count/Population*1000, na.rm = TRUE))
+          mean = mean(Count, na.rm=TRUE),
+          sd = sd(Count, na.rm=TRUE),
+          nrows = n())
 ```
 
 ---
@@ -249,11 +247,14 @@ summarize(fbi,
 ## `group_by`: Do something for each level
 
 ```{r}
-fbi2017 <- fbi %>% filter(Year == 2017)
+fbi2017 <- fbi %>% 
+  select(State, Year, Type, Count) %>% 
+  filter(Year == 2017 & 
+           Type != "Legacy.rape")
 fbi2017 %>%
-    group_by(Type) %>%
-    summarize(mean_rate = mean(Count/Population*1000, na.rm=TRUE), 
-              sd_rate = sd(Count/Population*1000, na.rm = TRUE))
+  group_by(Type) %>% 
+  summarize(mean = mean(Count, na.rm=TRUE),
+            sd = sd(Count, na.rm=TRUE)) 
 ```
 
 ---

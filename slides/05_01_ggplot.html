@@ -231,17 +231,7 @@ Some coordinate systems we will commonly use:
 
 - `coord_flip`: Flip x- and y-axis
 
-- `coord_map`: Useful later for making maps
-
----
-## Showing one line for each state
-The `group=` aesthetics is required if you want to show one line for each state:
-
-```r
-ggplot(fbiwide, aes(x=Year, y=Murder, group=State)) + geom_line()
-```
-
-&lt;img src="05_01_ggplot_files/figure-html/unnamed-chunk-6-1.png" style="display: block; margin: auto;" /&gt;
+&lt;!-- - `coord_map`: Useful later for making maps --&gt;
 
 ---
 ## Facetting: Display different subsets
@@ -254,7 +244,7 @@ ggplot(aes(x = Year, y = Murder), data=fbiwide) + geom_line() +
     facet_wrap(~State)
 ```
 
-&lt;img src="05_01_ggplot_files/figure-html/unnamed-chunk-7-1.png" height="80%" style="display: block; margin: auto;" /&gt;
+&lt;img src="05_01_ggplot_files/figure-html/unnamed-chunk-6-1.png" height="80%" style="display: block; margin: auto;" /&gt;
 
 ---
 
@@ -262,11 +252,21 @@ ggplot(aes(x = Year, y = Murder), data=fbiwide) + geom_line() +
 
 - `facet_wrap` has formula specification `~ variables` 
 
-    - Great for visualizing one factor
+    - Great for visualizing *one factor*
 
 - `facet_grid` has formula specification: `rows ~ cols`
 
-    - Great for visualizing all combinations of two factors
+    - Great for visualizing all *combinations of two factors*
+
+---
+## What about all lines in one panel?
+The `group=` aesthetics is required if you want to show one line for each state in the same figure:
+
+```r
+ggplot(fbiwide, aes(x=Year, y=Murder, group=State)) + geom_line()
+```
+
+&lt;img src="05_01_ggplot_files/figure-html/unnamed-chunk-7-1.png" style="display: block; margin: auto;" /&gt;
 
 ---
 

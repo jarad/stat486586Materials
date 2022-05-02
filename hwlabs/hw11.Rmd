@@ -1,0 +1,42 @@
+---
+title: 'Homework #11'
+output: html_document
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## A useful note
+Remove any `View()` or `install.packages()` commands in your `Rmd` file. These commands will prevent RStudio from knitting your file. 
+
+
+## Penguins (again!)
+For this part we will use the `penguins` data set like in Homework 2, but this time you will be using `ggplot2` for making the graphics, and `dplyr` for working with data frames. 
+Please use `ggplot2` and `dplyr` exclusively and refrain from using the basic R plots and data frame manipulation for this homework.
+You are encouraged to use the pipe operation `%>%` but this is not required.
+
+To get the dataset ready, first install the library `palmerpenguins` using `install.packages('palmerpenguins')`. 
+You can then access the data by loading the package using `library(palmerpenguins)`. 
+
+The `penguins` data includes size measurements for adult penguins near Palmer Station, Antarctica.
+For more details, check out `?penguins`.
+
+1. Perform the following data manipulation using `dplyr`
+
+    a. Find the species of the 5 largest penguins in terms of body mass. (Hint: use `arrange`, `select`, and `head`)
+
+    a. Find the mean and median of the body mass for all the penguins.
+    
+    a. Find the means and medians of the body mass for the penguins grouped by species.
+
+    a. Create a data frame containing all the female penguins with bill length at least 55mm. Keep only the `species` and `sex` columns. Print out the data frame.
+    
+1. Create the following graphics using `ggplot2`
+    a. Create a histogram for the body mass. Make sure to label the x-, y-axis, and title.
+    a. Create a side-by-side boxplot for the body mass of the penguins grouped by sex. 
+    a. Create a barchart to display the number of penguins with different species.
+    a. Create a scatterplot for body mass versus flipper length. Use color to indicate sex. Also add nonlinear regression curves (one for each sex) to the plot. (Note: A versus B usually means A is shown on the y-axis and B is on the x-axis)
+
+<!-- 6. [*Optional for STAT 486 students but required for STAT 586 students*] Which island has the largest penguins? Use graphs *and* summary statistics to answer this question. Make sure to explain how you define what does "the largest" mean. -->

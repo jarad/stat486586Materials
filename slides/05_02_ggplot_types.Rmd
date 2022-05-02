@@ -81,7 +81,7 @@ ggplot(fbi2018, aes(y = log10(Count))) + geom_boxplot()
 bw <- 5000
 ggplot(fbiwide, aes(x = Motor.vehicle.theft)) + 
     geom_histogram(binwidth=bw) + 
-    ggtitle(paste0("binwidth = ", bw))
+    ggtitle(stringr::str_c("binwidth = ", bw))
 ```
 
 ---
@@ -96,7 +96,7 @@ Use the `binwidth=bw` optional argument to change the binwidth:
 bw <- 1000
 ggplot(fbiwide, aes(x = Motor.vehicle.theft)) + 
     geom_histogram(binwidth=bw) + 
-    ggtitle(paste0("binwidth = ", bw))
+    ggtitle(stringr::str_c("binwidth = ", bw))
 ```
 
 <!-- ## Histograms  -->
@@ -136,7 +136,8 @@ ggplot(fbiwide, aes(x = Motor.vehicle.theft)) +
 
 ```{r, fig.height=2, fig.width=7}
 ggplot(fbi2018, aes(x = Type)) + geom_bar() # Shows the frequency
-ggplot(fbi2018, aes(x = Type, weight=Count)) + geom_bar() + coord_flip()
+ggplot(fbi2018, aes(x = Type, weight=Count)) + geom_bar() + 
+  coord_flip()
 ```
 
 ---
@@ -160,9 +161,14 @@ class: big, middle
 
 A scatterplot shows the relationship between two continuous variables 
 
+- `geom_smooth()` adds a non-linear regression line
+- `geom_smooth(method = "lm")` adds a linear regression line
+
 ```{r}
 iowa <- fbiwide[fbiwide$State == 'Iowa', ]
-ggplot(iowa, aes(x=Robbery, y=Murder)) + geom_point()
+ggplot(iowa, aes(x=Robbery, y=Murder)) + 
+  geom_point() + 
+  geom_smooth()
 ```
 
 <!-- ## Review - Interpreting Scatterplots -->
@@ -206,7 +212,7 @@ ggplot(fbi2018, aes(x = Type, y = log10(Count))) +
 
 ## Side-by-side Histogram
 
-A *side-by-side histogram* works well comparing a small number of distributions. 
+A *side-by-side histogram* works well comparing a small number of distributions (up to 4). 
 
 - Note: Use the `fill=` aesthetics, but not `color=`
 
@@ -234,13 +240,13 @@ class: inverse
 
 ## Your turn
 
-Use the `fbi` dataset and `ggplot2` package to answer the following questions. 
+We now switch gear and work with a slightly different `fbi` dataset in `library(classdata)`. Create visualizations using the `ggplot2` package.
 
-<img src="images/green.png" width=20> Compare the distribution of the number of robberies in all states: Using ggplot2, display a side-by-side boxplot of the number of robberies by state. What does each data point stand for? 
+<img src="images/green.png" width=20> Compare the distribution of the number of robberies in all states: Using ggplot2, display a side-by-side boxplot of the number of robberies by state. Make sure you understand what does each data point stand for.
 
-<img src="images/blue.png" width=20> How does the distribution of the number of thefts (over the states) compare with that of burglary? Visualize using a side-by-side histogram. 
+<img src="images/blue.png" width=20> How does the distribution of the number of thefts (over the states) compare with that of burglary? Visualize using a side-by-side histogram.
 
-<img src="images/green.png" width=20> Visualize the number of violent crimes in 2018. The x-axis should show the state and the height of the bars should show the number of reports (use `aes(..., weight=)`). 
+<img src="images/green.png" width=20> Visualize the number of violent crimes in 2018. The x-axis should show the states and the height of the bars should show the number of reports (use `aes(..., weight=)`). 
 
 <img src="images/green.png" width=20> Continuing the last question, now color bars by `Type`.
 

@@ -59,13 +59,11 @@ There are a couple of primary `dplyr` *verbs*, representing distinct data analys
 
 ## Common structure
 
-Functions in `tidyverse` have `data` as their first argument. E.g.,
+Functions in `dplyr` have a data frame as their first input. The outputs are also data frames. E.g.,
 
+- `select(fbi, Year, State)`
 
-`ggplot(fbi, aes(x = Year, y = Count)) + geom_point()`
-
-
-`filter(fbi, Year&gt;=2017 &amp; State=="Iowa")`
+- `filter(fbi, Year &gt;= 2017 &amp; State == "Iowa")`
 
 
 ---
@@ -242,17 +240,16 @@ head(mutate(fbi, Rate = Count/Population*1000))
 ## Using the pipe `%&gt;%`
 
 ```
-dat &lt;- filter(fbi, Type=="Murder.and.nonnegligent.Manslaughter")
-ggplot(data = dat, aes(x = Year, y = Count)) + geom_point()
+dat &lt;- select(fbi, -Abb)
+dat1 &lt;- filter(dat, State == "Iowa" &amp; Year == 2017)
 ```
 
 becomes
 
 ```
 fbi %&gt;% 
-  filter(Type=="Murder.and.nonnegligent.Manslaughter") %&gt;%
-  ggplot(aes(x = Year, y = Count)) + 
-    geom_point()
+  select(-Abb) %&gt;%
+  filter(State == "Iowa" &amp; Year == 2017)
 ```
 
 ---
@@ -311,13 +308,14 @@ summarize (or aggregates) observations into a (set of) one-number statistic(s):
 
 ```r
 summarize(fbi, 
-  mean_rate = mean(Count/Population*1000, na.rm=TRUE), 
-  sd_rate = sd(Count/Population*1000, na.rm = TRUE))
+          mean = mean(Count, na.rm=TRUE),
+          sd = sd(Count, na.rm=TRUE),
+          nrows = n())
 ```
 
 ```
-##   mean_rate  sd_rate
-## 1  5.650691 8.714272
+##       mean       sd nrows
+## 1 29341.55 72901.28 23672
 ```
 
 ---
@@ -326,25 +324,27 @@ summarize(fbi,
 
 
 ```r
-fbi2017 &lt;- fbi %&gt;% filter(Year == 2017)
+fbi2017 &lt;- fbi %&gt;% 
+  select(State, Year, Type, Count) %&gt;% 
+  filter(Year == 2017 &amp; 
+           Type != "Legacy.rape")
 fbi2017 %&gt;%
-    group_by(Type) %&gt;%
-    summarize(mean_rate = mean(Count/Population*1000, na.rm=TRUE), 
-              sd_rate = sd(Count/Population*1000, na.rm = TRUE))
+  group_by(Type) %&gt;% 
+  summarize(mean = mean(Count, na.rm=TRUE),
+            sd = sd(Count, na.rm=TRUE)) 
 ```
 
 ```
-## # A tibble: 8 x 3
-##   Type                                 mean_rate sd_rate
-##   &lt;fct&gt;                                    &lt;dbl&gt;   &lt;dbl&gt;
-## 1 Aggravated.assault                      2.51    1.20  
-## 2 Burglary                                4.33    1.67  
-## 3 Larceny.theft                          17.2     4.95  
-## 4 Legacy.rape                           NaN      NA     
-## 5 Motor.vehicle.theft                     2.32    1.20  
-## 6 Murder.and.nonnegligent.Manslaughter    0.0553  0.0369
-## 7 Rape                                    0.453   0.169 
-## 8 Robbery                                 0.844   0.580
+## # A tibble: 7 x 3
+##   Type                                    mean      sd
+##   &lt;fct&gt;                                  &lt;dbl&gt;   &lt;dbl&gt;
+## 1 Aggravated.assault                    15666.  19271.
+## 2 Burglary                              27111.  31935.
+## 3 Larceny.theft                        106514. 122376.
+## 4 Motor.vehicle.theft                   14937.  24593.
+## 5 Murder.and.nonnegligent.Manslaughter    345.    373.
+## 6 Rape                                   2615.   3002.
+## 7 Robbery                                6200.   9378.
 ```
 
 ---
