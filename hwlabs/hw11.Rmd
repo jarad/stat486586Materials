@@ -23,6 +23,12 @@ You can then access the data by loading the package using `library(palmerpenguin
 The `penguins` data includes size measurements for adult penguins near Palmer Station, Antarctica.
 For more details, check out `?penguins`.
 
+1. Create the following graphics using `ggplot2`
+    a. Create a histogram for the body mass. Make sure to label the x-, y-axis, and title.
+    a. Create a side-by-side boxplot for the body mass of the penguins grouped by sex. 
+    a. Create a barchart to display the number of penguins with different species.
+    a. Create a scatterplot for body mass versus flipper length. Use color to indicate sex. Also add nonlinear regression curves (one for each sex) to the plot. (Note: A versus B usually means A is shown on the y-axis and B is on the x-axis)
+    
 1. Perform the following data manipulation using `dplyr`
 
     a. Find the species of the 5 largest penguins in terms of body mass. (Hint: use `arrange`, `select`, and `head`)
@@ -33,10 +39,5 @@ For more details, check out `?penguins`.
 
     a. Create a data frame containing all the female penguins with bill length at least 55mm. Keep only the `species` and `sex` columns. Print out the data frame.
     
-1. Create the following graphics using `ggplot2`
-    a. Create a histogram for the body mass. Make sure to label the x-, y-axis, and title.
-    a. Create a side-by-side boxplot for the body mass of the penguins grouped by sex. 
-    a. Create a barchart to display the number of penguins with different species.
-    a. Create a scatterplot for body mass versus flipper length. Use color to indicate sex. Also add nonlinear regression curves (one for each sex) to the plot. (Note: A versus B usually means A is shown on the y-axis and B is on the x-axis)
 
 <!-- 6. [*Optional for STAT 486 students but required for STAT 586 students*] Which island has the largest penguins? Use graphs *and* summary statistics to answer this question. Make sure to explain how you define what does "the largest" mean. -->
