@@ -38,6 +38,8 @@ class: big, middle
 
 - has convenient and neat syntax
 
+- works well with other `tidyverse` packages because the input/output format are unified (data frames)
+
 ---
 
 ## `dplyr` 
