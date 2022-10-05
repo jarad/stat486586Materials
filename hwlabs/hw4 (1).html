@@ -204,19 +204,19 @@ pre code {
 <li>Extract the first row of <span class="math inline">\(A\)</span> as a vector</li>
 <li>Set the (2,2) element of <span class="math inline">\(B\)</span> to 0</li>
 <li>Add 1, 2, 3, and 4 to each row of <span class="math inline">\(A\)</span>, respectively</li>
-<li>Create a new matrix <span class="math inline">\(G = [E F^T]\)</span></li>
+<li>Create a new matrix <span class="math inline">\(G = [E\; F^T]\)</span> (namely, a matrix containing <span class="math inline">\(E\)</span> and <span class="math inline">\(F^T\)</span> side by side)</li>
 <li>Create a new matrix <span class="math inline">\(H=\left[\begin{array}{c} E^{T}\\ F \end{array}\right]\)</span></li>
 </ol></li>
 <li>Calculate the following matrix calculation. Note that for matrices <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> and a scalar <span class="math inline">\(c \in \mathbb{R}\)</span>, <span class="math inline">\(XY\)</span> means the matrix multiplication of two matrices, and <span class="math inline">\(cX\)</span> means the matrix whose entries are obtained by multiplying each entry of <span class="math inline">\(X\)</span> by <span class="math inline">\(c\)</span>.
 <ol style="list-style-type: lower-roman">
-<li><span class="math inline">\(EF\)</span></li>
+<li><span class="math inline">\(FE\)</span></li>
 <li><span class="math inline">\(D^TD\)</span>. Make sure your answer is a scalar but not a matrix</li>
 <li><span class="math inline">\(5B + DD^T\)</span></li>
 <li>Add <span class="math inline">\(D\)</span> to each column of <span class="math inline">\(B\)</span></li>
 <li>Extract the diagonal elements in <span class="math inline">\(B\)</span></li>
 <li>Find <span class="math inline">\((F^TF)^{-1}E\)</span></li>
-<li>Find the eigenvalues of <span class="math inline">\(F^TF\)</span></li>
-<li>Find the determinant of <span class="math inline">\(F^TF\)</span>. Make sure it is a scalar</li>
+<li>(Optional) Find the eigenvalues of <span class="math inline">\(F^TF\)</span></li>
+<li>(Optional) Find the determinant of <span class="math inline">\(F^TF\)</span>. Make sure it is a scalar</li>
 </ol></li>
 </ol></li>
 <li><p>We are going to predict the iris species using the <em>ridge regression</em>.</p>
@@ -224,18 +224,19 @@ pre code {
 <li>Create a sub-data frame <code>dat</code> containing only the setosa and versicolor species in the <code>iris</code> dataset. All subsequent questions are based on this sub-data frame.</li>
 <li>Create a response variable <span class="math inline">\(Y\)</span> which should be <code>1</code> if the corresponding row in <code>dat</code> is setosa, and <code>0</code> if the species is versicolor. Make it a matrix with one column. [Hint: You can use <code>ifelse</code>]</li>
 <li>We are going to predict <span class="math inline">\(Y\)</span> using 4 predictors, which are <code>Sepal.Length</code>, <code>Sepal.Width</code>, <code>Petal.Length</code>, and <code>Petal.Width</code>. Create the design matrix <span class="math inline">\(X\)</span> containing the intercept and these four predictors in its columns. Make sure it is a matrix but not a data frame.</li>
-<li>Calculate the condition number of <span class="math inline">\(X^TX\)</span>. A very large condition number means the matrix is non-invertible.</li>
-<li>Add a column that equals to the avaerge of the sepal length and sepal width to the design matrix <span class="math inline">\(X\)</span>. Now, realculate the condition number of <span class="math inline">\(X^TX\)</span>.</li>
+<li>(Optional) Calculate the condition number of <span class="math inline">\(X^TX\)</span>. A very large condition number means the matrix is non-invertible.</li>
+<li>Add a column to the design matrix <span class="math inline">\(X\)</span> where each entry equals the average of the sepal length and sepal width of the corresponding iris.</li>
+<li>(Optional) Now, recalculate the condition number of <span class="math inline">\(X^TX\)</span>.</li>
 <li>Can you calculate the least squares estimate <span class="math inline">\(\hat{\boldsymbol{\beta}}=({X}^{T}{X})^{-1}{X}^T{Y}\)</span> for the multiple linear regression model, and why?</li>
-<li>We now calculate the ridge regression coefficient estimate <span class="math inline">\(\hat{\boldsymbol{\beta}}_\lambda=({X}^{T}{X} + \lambda {X})^{-1}{X}^T{Y}\)</span>, where <span class="math inline">\(\lambda &gt; 0\)</span> is a scalar. Feel free to set the <span class="math inline">\(\lambda\)</span> as you wish (say <span class="math inline">\(\lambda=1\)</span>)</li>
+<li>We now calculate the ridge regression coefficient estimate <span class="math inline">\(\hat{\boldsymbol{\beta}}_\lambda=({X}^{T}{X} + \lambda I)^{-1}{X}^T{Y}\)</span>, where <span class="math inline">\(\lambda &gt; 0\)</span> is a scalar and <span class="math inline">\(I\)</span> is the identity matrix. Feel free to set the <span class="math inline">\(\lambda\)</span> to any positive number as you wish (say <span class="math inline">\(\lambda=1\)</span>) (Note: This is a slightly difference version of ridge regression as we will cover later)</li>
 <li>Calculate the fitted values <span class="math inline">\(\hat{Y}_\lambda = X\hat{\boldsymbol{\beta}}_\lambda\)</span> and the residual sum of squares (RSS) <span class="math inline">\((Y - \hat{Y}_\lambda)^T(Y - \hat{Y}_\lambda)\)</span>. Store <span class="math inline">\(\hat{\boldsymbol{\beta}}_\lambda\)</span>, <span class="math inline">\(\hat{Y}_\lambda\)</span>, and the RSS in a list. Name the entries of the list appropriately.</li>
 <li>Try three different values of <span class="math inline">\(\lambda\)</span>, and see which one gives you the smallest RSS.</li>
-<li>Set <span class="math inline">\(\lambda\)</span> to the value that gave you the smallest RSS. Our fitted values are fractional numbers but not (0, 1) labels yet. To obtain (0, 1) predictions for the iris species, set the predicted label to 0 if <span class="math inline">\(\hat{Y}_\lambda &lt; 0.5\)</span>, and 1 otherwise. Calculate how many cases do you misclassify (i.e., the predicted label is different from the truth label in <span class="math inline">\(Y\)</span>).</li>
+<li>Set <span class="math inline">\(\lambda\)</span> to the value that gave you the smallest RSS. Our fitted values are fractional numbers but not (0, 1) labels yet. To obtain (0, 1) predictions for the iris species, set the predicted label to 0 if <span class="math inline">\(\hat{Y}_\lambda &lt; 0.5\)</span>, and 1 otherwise. Calculate how many cases do you misclassify (a misclassified case occurs when the predicted label is different from the truth label <span class="math inline">\(Y\)</span>).</li>
 </ol></li>
 <li><p>Perform the following list operations.</p>
 <ol style="list-style-type: lower-alpha">
 <li>Create a list containing a string, a vector of numbers, a logical values, and a list. Name the entries appropriately.</li>
-<li>Create a list of 20 entries. The <span class="math inline">\(i\)</span> entry should contain just the number <span class="math inline">\(i\)</span>. Show the structure of the list (namely, <code>str(yourList)</code>).</li>
+<li>Create a list of 10 entries. The <span class="math inline">\(i\)</span> entry should contain just the number <span class="math inline">\(i\)</span>. Show the structure of the list (namely, <code>str(yourList)</code>).</li>
 </ol></li>
 <li><p>Set</p>
 <pre><code>l &lt;- list(A = c(&quot;Red&quot;, &quot;Green&quot;, &quot;Black&quot;), 
@@ -247,21 +248,21 @@ pre code {
 <li>Extract the third entry in <code>l</code>. Make sure it is a list but not a nested list</li>
 <li>Create a sublist containing only the third entry in <code>l</code>. Make sure it is a nested list this time.</li>
 <li>Extract the second row of the matrix <code>B</code> in <code>l</code>, using a single line of code.</li>
-<li>Add 1 to each entry in <code>B</code>. Show the structure updated <code>l</code> (namely, <code>str(l)</code>).</li>
+<li>Add 1 to each entry in <code>B</code>. Show the structure of the updated <code>l</code> (namely, <code>str(l)</code>).</li>
 <li>Remove entry <code>A</code></li>
-<li>Add an entry <code>D</code> containing the data frame <code>iris</code></li>
+<li>Add a single entry <code>D</code> containing the data frame <code>iris</code>. Show the structure of the updated <code>l</code></li>
 </ol></li>
-<li><p>Work on a barley yield data. The dataset is named <code>barley</code>, available to you after loading the package <code>lattice</code>. It is a good idea to make a copy of the original data frame in case anything is messed up. Show the structure of the data frame after you performed the opeartions, unless otherwise instructed.</p>
+<li><p>Work on a barley yield data. The dataset is named <code>barley</code>, available to you after loading the package <code>lattice</code>. Work on a copy <code>barley1 &lt;- barley</code> of the dataset to prevent messing up the original data.</p>
 <ol style="list-style-type: lower-alpha">
-<li>Find the dimensions of the data frame.</li>
+<li>Find the dimensions of the data frame</li>
 <li>Find the number of variables.</li>
-<li>Remove the first row in <code>barley</code>.</li>
-<li>Add a row to the end of <code>barley</code> containing a new record with yield 50, variety Svansota, year 1931, and site Duluth.</li>
-<li>Shows the first 3 rows of <code>barley</code> using <code>head()</code> (Hint: check out <code>?head</code>), and last 6 rows using <code>tail()</code>.</li>
-<li>Convert the year column to a numeric. (Check your results!)</li>
-<li>Add a new column <code>newYield</code> containing the yield in bushels/hectare. 1 acre is 0.4047 hectares. (Read <code>?barley</code>)</li>
-<li>Remove the <code>yield</code> column.</li>
-<li>Create a data frame containing only variety with a name starting with <code>No.</code>. Retain only the yield, variety, and site columns.</li>
+<li>Remove the first row in <code>barley1</code></li>
+<li>Add a row to the end of <code>barley1</code> containing a new record with yield 50, variety Svansota, year 1931, and site Duluth.</li>
+<li>Shows the first 3 rows of <code>barley1</code> using <code>head()</code> (Hint: check out <code>?head</code>), and last 6 rows using <code>tail()</code>.</li>
+<li>Convert the year column to a numeric. (Check your results!) Show the structure of the data frame</li>
+<li>Add a new column <code>newYield</code> containing the yield in bushels/hectare. 1 acre is 0.4047 hectares. (Read <code>?barley</code>) Show the structure of the data frame</li>
+<li>Remove the <code>yield</code> column</li>
+<li>Create a data frame containing only variety with a name starting with <code>No.</code>. Retain only the newYield, variety, and site columns. Show the structure of the data frame</li>
 </ol></li>
 </ol>
 </div>

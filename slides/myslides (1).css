@@ -23,7 +23,7 @@ a, a > code {
 .remark-code-line-highlighted     { 
   background-color: #ffff88; 
 }
-.inverse .remark-code , .inverse .remark-inline-code { 
+.inverse  .remark-code-line, .inverse .remark-inline-code { 
   background: #B0102E;
 }
 .remark-slide-content h1 {
@@ -163,3 +163,9 @@ th, td { padding: 5px; }
 /* .mjx-math { */
 /*   font-size: 100%; */
 /* } */
+
+
+.scroll-output {
+  height: 90%;
+  overflow-y: scroll;
+}

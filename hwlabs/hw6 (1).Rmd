@@ -13,22 +13,29 @@ Remove any `View()` or `install.packages()` commands in your `Rmd` file. These c
 
 ## Applying functions
 
-1. Repeat Homework 5 Question 1a and 1b, but this time using functions in `purrr`.
+1. (This is more or less a repeat of [Homework 5](hw5.html) Question 1a and 1b)
+For this question, use only `purrr` functions `map_dbl` etc but not loops or vectorized operations. You may use `sum()`
+
+    a. Use `map_dbl` to generate a vector containing $1/i$ in its $i$th entry, for $i=1,\dots,n$. Then sum up the numbers
+    a. Use `map`, `map_dbl`, and `do.call` to generate a matrix containing  $2^{-ij}$ in its $(i,j)$th entry, for $i=1,\dots,n$ and $j=1,\dots,m$. Then sum up the values in the matrix
+    a. Use `system.time` to time how long did the code run in each of the previous subquestions. Compare the run times with your previous results using loops and vectorized operations. Set a large enough $n$ so that the speed difference between the two methods is distinguishable. State what you find (e.g., which approach is the fastest, which is the slowest).
 
 1. Perform the following using `purrr` functions as much as possible.
 
-    a. Compute the median of every variable in `mtcars`. The result should be a vector.
-    a. Find the means of all columns in `mtcars` by the number of cylinders.
-    a. Find the class of each column in `classdata::cities`. The result should be a vector.
-    a. Compute the number of unique values in each column of `iris`.
-    a. Use `map2_dbl` to calculate the product of the sepal length and sepal width in `iris`.
-    a. Use `pmap_dbl` to calculate the sum of the sepal length, sepal width, petal length, and petal width columns in `iris`.
+    a. Compute the medians of all variables in `mtcars`. The result should be a vector.
+    a. Find the means of all columns in `mtcars` grouped by the number of cylinders. Arrange the results in a matrix or table, and make sure the rows and columns are named.
+    a. Find the variable type (using `class`) of each column in `classdata::cities`. The result should be a character vector.
+    a. Compute the number of unique values in each column of `iris`. The result should be a numeric vector.
+    a. Use `map2_dbl` to calculate, for each record in `iris`, the product of the sepal length and sepal width.
+    a. Use `pmap_dbl` to calculate, for each record in `iris`, the sum of the sepal length, sepal width, petal length, and petal width columns in `iris`.
 
-1. Work on a list containing information of Game of Thrones characters. Install `repurrrsive` using `install.packages("repurrrsive")`, and load it. The list `got_chars` is what you will use. Check out what does it contain before you start.
-    a. Extract all the character names (the `name` field) and the corresponding actor names (the `playedBy` field) as two separate character vectors
-    a. Create a new file for each character. The file name should be `characterName.txt`, replacing the corresponding character name, and the content should be just the name of the actor. 
+1. Work on a list containing information of Game of Thrones characters. Install `repurrrsive` using `install.packages("repurrrsive")`, and load it using `library(repurrrsive)`. The list `got_chars` is what you will use. Check out what does it contain before you start.
+    a. Extract all the character names (the `name` field) and the corresponding actor names (the `playedBy` field) as two separate character vectors. [Hint: Some characters are played by more than one actors, in which case you will combine the actor names]
+    a. Create a new file for each character. The file name should be `characterName.txt` (replace the placeholder by the corresponding character name), and the content should be just the name(s) of the actor(s). Use `writeLines(charVec, fileName)` to write the contents of a character vector `charVec` into a file `fileName`.
     a. Create a new file containing all the information for each character. 
-    The file name should be `characterNameAll.txt`, replacing the corresponding character name. Here is an example content for the first character:
+    The file name should be `characterNameAll.txt` (replace the placeholder by the corresponding character name). [Hint: You can use RStudio to open the `.txt` files and check your results. Click File -- Open File] 
+    
+        Here is an example content for the file `Theon GreyjoyAll.txt` for the first character. It is not expected that your output matches the example content exactly. You will receive full credit as long as the output is formatted in a very reader-friendly fashion.
     
         ```{r, echo=FALSE, comment=''}
         library(repurrrsive)
@@ -48,12 +55,12 @@ Remove any `View()` or `install.packages()` commands in your `Rmd` file. These c
     )
     ```
     
-    a. Use `purrr::reduce` to find the *matrix product* of all matrices in `l`. (The order of the matrices should follow their order in `l`.)
+    a. Use `purrr::reduce` to find the product of all matrices in `l`. The order of the matrices should follow their order in `l`. (We are finding the matrix product but not scalar product.)
     b. Use `purrr::accumulate` to find the cumulative sum of all matrices in `l`.
 
 ## Advanced functions
 
-1. What does the following code output? Make a prediction before running the code. Use the principles (could be more than 1) covered in [the lecture](../slides/02_03_functional_programming.html) to explain.
+1. Reason with each of the following code (run them in your head). Make a prediction of the output before running the code (note that the last two questions may have multiple outputs). Use the principles (could be more than 1 for each question) covered in [the lecture](../slides/02_04_advanced_functions.html) to explain why the output makes sense.
 
     a. 
         ```{R, eval=FALSE} 
@@ -94,26 +101,49 @@ Remove any `View()` or `install.packages()` commands in your `Rmd` file. These c
         ```
         
 
-1. Write a function to calculate the definite integral 
+
+1. We are going to write a function to calculate the definite integral 
 $$\int_l^u f(x) dx$$
 of an arbitrary polynomial
 $$f(x) = a_0 + a_1 x + a_2 x^2 + \dots + a_n x^n, \quad x\in \mathbb{R}$$
-for $n \ge 0$. The user will input a vector `a` specifying the coefficients (`a[1]`=$a_0$, `a[2]`=$a_1$, etc), a lower bound `lower` ($l$), and an upper bound `upper` ($u$). 
-You function should perform the integral *numerically*, so do not apply integral rules learned in Calculus for this question.
-Test that TODO
+for $n \ge 0$. 
+The user will input a vector `a` specifying the coefficients (`a[1]`=$a_0$, `a[2]`=$a_1$, etc), a lower bound `lower` ($l$), and an upper bound `upper` ($u$). 
 
-    [Hint: First create a function factory, and then apply `integrate`]
+    You function should perform the integral *numerically* (instead of applying integral rules learned in Calculus). Follow the following steps:
 
-1. Write a function factory to obtain the log-likelihood function of a Gamma$(\alpha,\beta)$ distribution, where $\alpha > 0$ and $\beta > 0$. The pdf is 
+    a. create a function factory, namely, a function that takes in the coefficients `a` and outputs a polynomial function. If you input a vector to a manufactured function, it should output a vector with the same length
+    a. Test that your function factory behaves as expected, by writing at least a unit test for each of the following aspects:
+        i. The output of your function factory is a function
+        i. Manufacture a function with $a_0 = 2$. Given a vector input `x`, the manufactured function returns a vector of all `2` with the same length as `x`
+        i. Manufacture a function with $a_0 = 1$ and $a_1 = -1$. The manufactured function works well given a vector input `x`
+    a. Manufacture a polynomial function with $a_0 = 1$, $a_1 = 0$, and $a_2 = 1$, and apply the `integrate` function to evaluate the definite integral of the manufactured function from 0 to 10
+    a. Wrap the entire procedure for making a polynomial and then calculating integral into a function
+    
+    
+1. (Optional)  In this question, you will write a function factory to obtain the log-likelihood function of a Gamma$(\alpha,\beta)$ distribution.
+The probability density function (pdf) of a Gamma$(\alpha,\beta)$ distribution is, for $\alpha > 0$ and $\beta > 0$,
 $$f(x;\,\alpha,\beta)={\frac {\beta ^{\alpha }}{\Gamma (\alpha )}}x^{\alpha -1}e^{-\beta x}, \quad x > 0$$
 where $\Gamma (\alpha)=\int _{0}^{\infty }x^{\alpha-1}e^{-x}\,dx$ is the gamma function. 
-Given dataset $\{X_1, \dots, X_n\}$, the log-likelihood function is 
-$$l(\alpha, \beta) = \sum_{i=1} \log f(x;\,\alpha,\beta).$$
-You can use `lgamma` to find the log of the gamma function, but do not use `dgamma` to find the Gamma density for this question.
-Test that TODO
+Given dataset $\{X_1, \dots, X_n\}$, the log-likelihood function, is 
+$$l(\alpha, \beta) = \sum_{i=1} \log f(X_i;\,\alpha,\beta).$$
 
-    Note: The reason to always operate on the log scale when solving optimization involving likelihood is that when dataset becomes large, the likelihood function can get very large or small, so calculation can lose considerable precision. 
+    Implement a function factory to manufacture the log-likelihood function. The function factory should take a vector `x` input for the dataset and output the log-likelihood function corresponding to `x`. The manufactured function should take a single input `par`, which is a vector of length 2 where the first entry stands for `alpha` and the second entry stands for `beta`.
+    
+    a. Implement the function factory
+    b. Manufacture a log-likelihood function using input `c(0.289, 0.468, 0.035, 2.114, 0.281)`
+    c. Plot the log-likihood function you manufactured, fixing $\alpha=1$ and let $\beta$ vary from 0.1 to 2
 
-1. Use the `optim` function to find the maximum likehood estimation for the following dataset TODO, assuming they come from a gamma distribution.
+    [Hint: You can use `lgamma` to find the log of the gamma function. The reason to always operate on the log-likelihood instead of just the likelihood is that when dataset becomes large, the likelihood function defined through multiplication can get very large or small, so calculation can lose considerable precision. ]
+
+1. (Optional) Use the `optim` function to find the maximum likehood estimation for the following dataset
+
+    ```
+    x <- c(0.104, 0.069, 0.034, 0.906, 0.75, 
+           0.484, 0.574, 1.747, 0.254, 0.591, 
+           0.088, 0.643, 0.754, 0.004, 0.495, 
+           1.499, 0.802, 0.495, 0.105, 0.64)
+    ```
+assuming the data are independent and identical observations from a gamma distribution.
 
     [Hint: Check out `?optim` to learn how to use it, especially the examples. You will be needing only the very basic usage involving just the first two arguments, namely `par` and `fn`. Set the initial value `par` to be `c(1, 1)` should give you a reasonable starting value. Also set `control = list(fnscale = -1)` to ask `optim` to perform a maximization instead of minimization.]
+    
